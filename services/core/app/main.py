@@ -6,12 +6,13 @@ app/api/v1/** are what matters, not this file."""
 
 from fastapi import FastAPI
 
-from app.api.v1 import emergencies, offers
+from app.api.v1 import ambulance, emergencies, offers
 from app.realtime.ws import router as ws_router
 
 app = FastAPI(title="GoldenHour Core (draft)", version="0.1.0")
 app.include_router(emergencies.router, prefix="/api/v1", tags=["emergencies"])
 app.include_router(offers.router, prefix="/api/v1/ambulance", tags=["dispatch"])
+app.include_router(ambulance.router, prefix="/api/v1/ambulance", tags=["ambulance"])
 app.include_router(ws_router, tags=["realtime"])
 
 
