@@ -1,0 +1,58 @@
+{
+  "protocol_id": "hands_only_cpr",
+  "title": {
+    "en": "Hands-only CPR",
+    "hi": "हैंड्स-ओनली सीपीआर",
+    "mr": "हँड्स-ओन्ली सीपीआर"
+  },
+  "steps": {
+    "en": [
+      "Check the person is not breathing normally and not responding.",
+      "Call for an ambulance / ask someone else to call while you start.",
+      "Kneel beside the chest. Place the heel of one hand on the center of the chest, other hand on top, fingers interlocked.",
+      "Push hard and fast, straight down at least 5 cm, at 100-120 pushes per minute.",
+      "Let the chest come back up fully between pushes. Do not stop until help arrives or the person starts breathing."
+    ],
+    "hi": [
+      "जांचें कि व्यक्ति सामान्य रूप से सांस नहीं ले रहा और प्रतिक्रिया नहीं दे रहा।",
+      "एम्बुलेंस बुलाएं / शुरू करते समय किसी और से बुलाने को कहें।",
+      "छाती के पास घुटनों के बल बैठें। एक हाथ की एड़ी छाती के बीच में रखें, दूसरा हाथ ऊपर, उंगलियां आपस में जुड़ी हों।",
+      "ज़ोर से और तेज़ी से, सीधे नीचे कम से कम 5 सेमी दबाएं, प्रति मिनट 100-120 बार।",
+      "हर दबाव के बीच छाती को पूरी तरह ऊपर आने दें। मदद आने या व्यक्ति के सांस लेने तक न रुकें।"
+    ],
+    "mr": [
+      "व्यक्ती सामान्यपणे श्वास घेत नाही आणि प्रतिसाद देत नाही हे तपासा.",
+      "रुग्णवाहिका बोलवा / सुरुवात करताना दुसऱ्या कोणाला बोलवायला सांगा.",
+      "छातीजवळ गुडघ्यावर बसा. एका हाताचा तळवा छातीच्या मध्यभागी ठेवा, दुसरा हात वर, बोटे एकमेकांत गुंफलेली.",
+      "जोरात आणि वेगाने, सरळ खाली किमान 5 सेमी दाबा, दर मिनिटाला 100-120 वेळा.",
+      "प्रत्येक दाबानंतर छाती पूर्ण वर येऊ द्या. मदत येईपर्यंत किंवा व्यक्ती श्वास घेऊ लागेपर्यंत थांबू नका."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not give mouth-to-mouth breaths unless trained.",
+      "Do not stop compressions to check for a pulse repeatedly.",
+      "Do not move the person unless they are in danger where they are."
+    ],
+    "hi": [
+      "प्रशिक्षित न हों तो मुंह से सांस न दें।",
+      "नब्ज़ जांचने के लिए बार-बार दबाव न रोकें।",
+      "व्यक्ति को तब तक न हिलाएं जब तक वह खतरे में न हो।"
+    ],
+    "mr": [
+      "प्रशिक्षित नसल्यास तोंडावाटे श्वास देऊ नका.",
+      "नाडी तपासण्यासाठी वारंवार दाब थांबवू नका.",
+      "व्यक्ती धोक्यात नसेल तर त्याला हलवू नका."
+    ]
+  },
+  "audio": {
+    "en": "hands_only_cpr_en.wav",
+    "hi": "hands_only_cpr_hi.wav",
+    "mr": "hands_only_cpr_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "breathing": "absent"
+  }
+}
