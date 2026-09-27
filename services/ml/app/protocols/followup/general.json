@@ -1,0 +1,91 @@
+{
+  "facility": "general",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "g_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "g_conscious_en.wav",
+        "hi": "g_conscious_hi.wav",
+        "mr": "g_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "g_breathing",
+      "field": "breathing",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient breathing normally, with difficulty, or not at all?",
+        "hi": "क्या मरीज़ सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा है?",
+        "mr": "रुग्ण नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"
+      },
+      "audio": {
+        "en": "g_breathing_en.wav",
+        "hi": "g_breathing_hi.wav",
+        "mr": "g_breathing_mr.wav"
+      },
+      "choices": [
+        "normal",
+        "difficult",
+        "absent"
+      ]
+    },
+    {
+      "id": "g_main_complaint",
+      "field": "chief_complaint",
+      "answer_type": "free",
+      "priority": 1,
+      "text": {
+        "en": "What is the main problem right now?",
+        "hi": "अभी सबसे बड़ी समस्या क्या है?",
+        "mr": "सध्या मुख्य समस्या काय आहे?"
+      },
+      "audio": {
+        "en": "g_main_complaint_en.wav",
+        "hi": "g_main_complaint_hi.wav",
+        "mr": "g_main_complaint_mr.wav"
+      }
+    },
+    {
+      "id": "g_duration",
+      "field": "symptom_duration_min",
+      "answer_type": "number",
+      "priority": 2,
+      "text": {
+        "en": "How long has this been going on, in minutes?",
+        "hi": "यह कितनी देर से हो रहा है (मिनटों में)?",
+        "mr": "हे किती वेळापासून होत आहे (मिनिटांत)?"
+      },
+      "audio": {
+        "en": "g_duration_en.wav",
+        "hi": "g_duration_hi.wav",
+        "mr": "g_duration_mr.wav"
+      }
+    },
+    {
+      "id": "g_history",
+      "field": "known_conditions",
+      "answer_type": "yes_no",
+      "priority": 3,
+      "text": {
+        "en": "Does the patient have any known medical conditions?",
+        "hi": "क्या मरीज़ को कोई ज्ञात बीमारी है?",
+        "mr": "रुग्णाला काही ज्ञात आजार आहे का?"
+      },
+      "audio": {
+        "en": "g_history_en.wav",
+        "hi": "g_history_hi.wav",
+        "mr": "g_history_mr.wav"
+      }
+    }
+  ]
+}

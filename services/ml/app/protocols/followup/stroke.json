@@ -1,0 +1,86 @@
+{
+  "facility": "stroke",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "s_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "s_conscious_en.wav",
+        "hi": "s_conscious_hi.wav",
+        "mr": "s_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "s_face_droop",
+      "field": "face_droop",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is one side of the face drooping?",
+        "hi": "क्या चेहरे का एक हिस्सा लटक रहा है?",
+        "mr": "चेहर्याची एक बाजू लोंबकळत आहे का?"
+      },
+      "audio": {
+        "en": "s_face_droop_en.wav",
+        "hi": "s_face_droop_hi.wav",
+        "mr": "s_face_droop_mr.wav"
+      }
+    },
+    {
+      "id": "s_arm_weak",
+      "field": "arm_weakness",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is one arm weak or unable to lift?",
+        "hi": "क्या एक हाथ कमज़ोर है या उठा नहीं पा रहा?",
+        "mr": "एक हात कमकुवत आहे किंवा उचलता येत नाही का?"
+      },
+      "audio": {
+        "en": "s_arm_weak_en.wav",
+        "hi": "s_arm_weak_hi.wav",
+        "mr": "s_arm_weak_mr.wav"
+      }
+    },
+    {
+      "id": "s_speech",
+      "field": "speech_slurred",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the speech slurred or confused?",
+        "hi": "क्या बोलने में लड़खड़ाहट या उलझन है?",
+        "mr": "बोलणे अस्पष्ट किंवा गोंधळलेले आहे का?"
+      },
+      "audio": {
+        "en": "s_speech_en.wav",
+        "hi": "s_speech_hi.wav",
+        "mr": "s_speech_mr.wav"
+      }
+    },
+    {
+      "id": "s_onset_time",
+      "field": "symptom_onset_min",
+      "answer_type": "number",
+      "priority": 2,
+      "text": {
+        "en": "How many minutes ago did symptoms start?",
+        "hi": "लक्षण कितने मिनट पहले शुरू हुए?",
+        "mr": "लक्षणे किती मिनिटांपूर्वी सुरू झाली?"
+      },
+      "audio": {
+        "en": "s_onset_time_en.wav",
+        "hi": "s_onset_time_hi.wav",
+        "mr": "s_onset_time_mr.wav"
+      }
+    }
+  ]
+}

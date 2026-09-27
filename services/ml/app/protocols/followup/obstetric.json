@@ -1,0 +1,86 @@
+{
+  "facility": "obstetric",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "o_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "o_conscious_en.wav",
+        "hi": "o_conscious_hi.wav",
+        "mr": "o_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "o_weeks",
+      "field": "pregnancy_weeks",
+      "answer_type": "number",
+      "priority": 1,
+      "text": {
+        "en": "How many weeks pregnant, if known?",
+        "hi": "अगर पता हो, तो गर्भावस्था के कितने सप्ताह हैं?",
+        "mr": "माहीत असल्यास, गर्भधारणेचे किती आठवडे झाले आहेत?"
+      },
+      "audio": {
+        "en": "o_weeks_en.wav",
+        "hi": "o_weeks_hi.wav",
+        "mr": "o_weeks_mr.wav"
+      }
+    },
+    {
+      "id": "o_contractions",
+      "field": "contractions_regular",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Are contractions regular and close together?",
+        "hi": "क्या संकुचन नियमित और करीब-करीब हो रहे हैं?",
+        "mr": "कळा नियमित आणि जवळजवळ येत आहेत का?"
+      },
+      "audio": {
+        "en": "o_contractions_en.wav",
+        "hi": "o_contractions_hi.wav",
+        "mr": "o_contractions_mr.wav"
+      }
+    },
+    {
+      "id": "o_bleeding",
+      "field": "vaginal_bleeding",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is there any vaginal bleeding?",
+        "hi": "क्या योनि से खून बह रहा है?",
+        "mr": "योनीमार्गे रक्तस्त्राव होत आहे का?"
+      },
+      "audio": {
+        "en": "o_bleeding_en.wav",
+        "hi": "o_bleeding_hi.wav",
+        "mr": "o_bleeding_mr.wav"
+      }
+    },
+    {
+      "id": "o_crowning",
+      "field": "baby_visible",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the head visible already?",
+        "hi": "क्या सिर पहले से दिख रहा है?",
+        "mr": "डोके आधीच दिसत आहे का?"
+      },
+      "audio": {
+        "en": "o_crowning_en.wav",
+        "hi": "o_crowning_hi.wav",
+        "mr": "o_crowning_mr.wav"
+      }
+    }
+  ]
+}
