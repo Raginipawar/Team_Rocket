@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://goldenhour/contracts/ws-events.schema.json",
+  "title": "GoldenHour WebSocket contract",
+  "description": "Source of truth for technical.md §8. Owner: Person A (ws-events.schema.json). Envelope + one schema per event under $defs.events.<eventName>.",
+
+  "$defs": {
+    "envelope": {
+      "type": "object",
+      "required": ["event", "channel", "seq", "ts", "data"],
+      "properties": {
+        "event": { "type": "string", "enum": [
+          "emergency.status", "emergency.triage", "emergency.followup", "emergency.first_aid",
+          "offer.new", "offer.revoked",
+          "ambulance.location", "ambulance.signal",
+          "hospital.request.new", "hospital.request.revoked",
+          "hospital.selected",
+          "handoff.ready",
+          "reservation.changed",
+          "room.changed", "resource.changed",
+          "reroute",
+          "alert",
+          "escalation.open", "escalation.claimed", "escalation.resolved", "escalation.auto_defaulted"
+        ]},
+        "channel": { "type": "string", "description": "e.g. emergency:{id}, track:{token}, ambulance:{id}, hospital:{id}, ops" },
+        "seq": { "type": "integer", "minimum": 0, "description": "Monotonic per channel. Clients ignore out-of-order seq and REST-resync on a gap." },
+        "ts": { "type": "string", "format": "date-time" },
+        "data": { "type": "object", "description": "Shape depends on `event`; see $defs.events.<event>." }
+      },
+      "additionalProperties": false
+    },
+
+    "clientOp": {
+      "type": "object",
+      "required": ["op"],
+      "oneOf": [
+        { "properties": { "op": { "const": "subscribe" }, "channel": { "type": "string" } }, "required": ["channel"] },
+        { "properties": { "op": { "const": "unsubscribe" }, "channel": { "type": "string" } }, "required": ["channel"] },
+        { "properties": { "op": { "const": "heartbeat" }, "data": { "$ref": "#/$defs/events/ambulance.heartbeat_in" } }, "required": ["data"], "description": "paramedic only" },
+        { "properties": { "op": { "const": "ping" } } }
+      ]
+    },
+
+    "channels": {
+      "emergency:{id}": ["emergency.status", "emergency.triage", "emergency.followup", "emergency.first_aid",
+        "ambulance.location", "ambulance.signal", "hospital.selected", "handoff.ready", "reservation.changed",
+        "reroute", "escalation.*"],
+      "track:{token}": ["emergency.status", "ambulance.location", "hospital.selected", "handoff.ready", "reroute"],
+      "ambulance:{id}": ["offer.new", "offer.revoked", "alert"],
+      "hospital:{id}": ["hospital.request.new", "hospital.request.revoked", "ambulance.location",
+        "ambulance.signal", "reservation.changed", "room.changed", "resource.changed", "alert"],
+      "ops": ["emergency.triage", "ambulance.location", "reservation.changed", "room.changed",
+        "resource.changed", "escalation.*"]
+    },
+
+    "events": {
+      "emergency.status": {
+        "type": "object", "required": ["status", "version"], "additionalProperties": false,
+        "properties": {
+          "status": { "$ref": "enums.json#/EmergencyStatus" },
+          "version": { "type": "integer" }
+        }
+      },
+      "emergency.triage": {
+        "type": "object", "required": ["acuity", "facility", "confidence", "needs_review", "confirmed"], "additionalProperties": false,
+        "properties": {
+          "acuity": { "$ref": "enums.json#/Acuity" },
+          "facility": { "$ref": "enums.json#/Facility" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "needs_review": { "type": "boolean" },
+          "confirmed": { "type": "boolean" }
+        }
+      },
+      "emergency.followup": {
+        "type": "object", "additionalProperties": false,
+        "oneOf": [
+          { "properties": { "question": { "type": "string" } }, "required": ["question"] },
+          { "properties": { "done": { "const": true } }, "required": ["done"] }
+        ]
+      },
+      "emergency.first_aid": {
+        "type": "object", "required": ["protocol_id", "steps"], "additionalProperties": false,
+        "properties": {
+          "protocol_id": { "type": "string" },
+          "steps": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "offer.new": {
+        "type": "object", "required": ["offer_id", "emergency_id", "expires_at"], "additionalProperties": true,
+        "properties": {
+          "offer_id": { "type": "string", "format": "uuid" },
+          "emergency_id": { "type": "string", "format": "uuid" },
+          "acuity": { "$ref": "enums.json#/Acuity" },
+          "pickup_lat": { "type": "number" },
+          "pickup_lng": { "type": "number" },
+          "eta_sec": { "type": "integer" },
+          "expires_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "offer.revoked": {
+        "type": "object", "required": ["offer_id", "reason"], "additionalProperties": false,
+        "properties": {
+          "offer_id": { "type": "string", "format": "uuid" },
+          "reason": { "type": "string", "enum": ["taken", "expired", "cancelled"] }
+        }
+      },
+      "ambulance.location": {
+        "type": "object", "required": ["lat", "lng", "heading", "speed_kmh", "signal"], "additionalProperties": false,
+        "properties": {
+          "lat": { "type": "number" },
+          "lng": { "type": "number" },
+          "heading": { "type": "number", "minimum": 0, "maximum": 360 },
+          "speed_kmh": { "type": "number", "minimum": 0 },
+          "eta_sec": { "type": "integer" },
+          "eta_low_sec": { "type": "integer" },
+          "eta_high_sec": { "type": "integer" },
+          "signal": { "type": "string", "enum": ["ok", "weak", "lost"] }
+        }
+      },
+      "ambulance.signal": {
+        "type": "object", "required": ["signal", "last_seen_at"], "additionalProperties": false,
+        "properties": {
+          "signal": { "type": "string", "enum": ["ok", "weak", "lost"] },
+          "last_seen_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ambulance.heartbeat_in": {
+        "type": "object", "required": ["lat", "lng"], "additionalProperties": false,
+        "properties": {
+          "lat": { "type": "number" },
+          "lng": { "type": "number" },
+          "heading": { "type": "number" },
+          "speed_kmh": { "type": "number" }
+        }
+      },
+      "hospital.request.new": {
+        "type": "object", "required": ["request_id", "emergency_id"], "additionalProperties": true,
+        "properties": {
+          "request_id": { "type": "string", "format": "uuid" },
+          "emergency_id": { "type": "string", "format": "uuid" },
+          "acuity": { "$ref": "enums.json#/Acuity" },
+          "facility": { "$ref": "enums.json#/Facility" },
+          "eta_sec": { "type": "integer" }
+        }
+      },
+      "hospital.request.revoked": {
+        "type": "object", "required": ["request_id", "reason"], "additionalProperties": false,
+        "properties": {
+          "request_id": { "type": "string", "format": "uuid" },
+          "reason": { "type": "string" }
+        }
+      },
+      "hospital.selected": {
+        "type": "object", "required": ["hospital", "rank_explanation", "eta"], "additionalProperties": false,
+        "properties": {
+          "hospital": { "type": "object" },
+          "rank_explanation": { "type": "object", "description": "SHAP-style top factors, ops/hospital view only" },
+          "eta": { "type": "integer" }
+        }
+      },
+      "handoff.ready": {
+        "type": "object", "required": ["room_location_note", "receiving_team", "entrance_note"], "additionalProperties": false,
+        "properties": {
+          "room_location_note": { "type": "string" },
+          "receiving_team": { "type": "string" },
+          "entrance_note": { "type": "string" }
+        }
+      },
+      "reservation.changed": {
+        "type": "object", "required": ["reservation_id", "status"], "additionalProperties": false,
+        "properties": {
+          "reservation_id": { "type": "string", "format": "uuid" },
+          "status": { "$ref": "enums.json#/ReservationStatus" }
+        }
+      },
+      "room.changed": {
+        "type": "object", "required": ["id", "status", "version"], "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "status": { "$ref": "enums.json#/RoomStatus" },
+          "version": { "type": "integer" }
+        }
+      },
+      "resource.changed": {
+        "type": "object", "required": ["id", "version"], "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "version": { "type": "integer" }
+        }
+      },
+      "reroute": {
+        "type": "object", "required": ["from_hospital", "to_hospital", "reason"], "additionalProperties": false,
+        "properties": {
+          "from_hospital": { "type": "string" },
+          "to_hospital": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      },
+      "alert": {
+        "type": "object", "required": ["kind", "message"], "additionalProperties": false,
+        "properties": {
+          "kind": { "type": "string", "enum": ["offload_delay", "idle", "stale_data", "wrong_way", "breakdown", "system_anomaly"] },
+          "message": { "type": "string" }
+        }
+      },
+      "escalation.*": {
+        "type": "object", "required": ["escalation_id", "status"], "additionalProperties": true,
+        "properties": {
+          "escalation_id": { "type": "string", "format": "uuid" },
+          "type": { "$ref": "enums.json#/EscalationType" },
+          "status": { "$ref": "enums.json#/EscalationStatus" }
+        }
+      }
+    }
+  }
+}
