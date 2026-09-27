@@ -1,0 +1,55 @@
+{
+  "protocol_id": "poisoning",
+  "title": {
+    "en": "Poisoning",
+    "hi": "ज़हर",
+    "mr": "विषबाधा"
+  },
+  "steps": {
+    "en": [
+      "Try to find out what was consumed, how much, and when -- keep the container/packaging for the ambulance crew.",
+      "If the substance is on the skin or in the eyes, rinse with plenty of clean water.",
+      "Keep the person calm and, if drowsy, in the recovery position on their side.",
+      "Monitor breathing closely.",
+      "Do not delay -- get moving to hospital care regardless of how the person currently looks."
+    ],
+    "hi": [
+      "पता लगाने की कोशिश करें कि क्या, कितना, और कब लिया गया -- एम्बुलेंस टीम के लिए पैकेजिंग रखें।",
+      "अगर पदार्थ त्वचा या आंखों पर है, तो खूब साफ पानी से धोएं।",
+      "व्यक्ति को शांत रखें और अगर नींद में हो, तो करवट (रिकवरी पोजीशन) में लिटाएं।",
+      "सांस पर बारीकी से नज़र रखें।",
+      "देर न करें -- व्यक्ति फिलहाल कैसा भी दिख रहा हो, अस्पताल की ओर बढ़ें।"
+    ],
+    "mr": [
+      "काय, किती आणि केव्हा घेतले गेले हे शोधण्याचा प्रयत्न करा -- रुग्णवाहिका टीमसाठी पॅकेजिंग ठेवा.",
+      "पदार्थ त्वचेवर किंवा डोळ्यात असल्यास, भरपूर स्वच्छ पाण्याने धुवा.",
+      "व्यक्तीला शांत ठेवा आणि गुंगीत असल्यास, कुशीवर (रिकव्हरी पोझिशन) झोपवा.",
+      "श्वासावर बारकाईने लक्ष ठेवा.",
+      "उशीर करू नका -- व्यक्ती सध्या कशीही दिसत असली तरी रुग्णालयाकडे निघा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not try to make the person vomit.",
+      "Do not give milk or water unless told to by medical staff."
+    ],
+    "hi": [
+      "व्यक्ति को उल्टी कराने की कोशिश न करें।",
+      "चिकित्सा कर्मियों के कहने तक दूध या पानी न दें।"
+    ],
+    "mr": [
+      "व्यक्तीला उलटी करण्याचा प्रयत्न करू नका.",
+      "वैद्यकीय कर्मचाऱ्यांनी सांगेपर्यंत दूध किंवा पाणी देऊ नका."
+    ]
+  },
+  "audio": {
+    "en": "poisoning_en.wav",
+    "hi": "poisoning_hi.wav",
+    "mr": "poisoning_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "facility": "poisoning"
+  }
+}

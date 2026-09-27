@@ -1,0 +1,55 @@
+{
+  "protocol_id": "choking",
+  "title": {
+    "en": "Choking (conscious adult/child)",
+    "hi": "दम घुटना (होश में वयस्क/बच्चा)",
+    "mr": "गुदमरणे (शुद्धीत असलेला प्रौढ/मूल)"
+  },
+  "steps": {
+    "en": [
+      "Ask 'Are you choking?' If they cannot speak, cough, or breathe, act immediately.",
+      "Give 5 sharp back blows between the shoulder blades with the heel of your hand.",
+      "If that fails, give 5 abdominal thrusts (Heimlich): stand behind, fist above navel, pull sharply inward and upward.",
+      "Alternate 5 back blows and 5 abdominal thrusts until the object comes out or the person becomes unresponsive.",
+      "If unresponsive, lower them to the ground and start hands-only CPR."
+    ],
+    "hi": [
+      "पूछें 'क्या आपका दम घुट रहा है?' अगर वे बोल, खांस या सांस नहीं ले पा रहे तो तुरंत कार्रवाई करें।",
+      "कंधे की हड्डियों के बीच हाथ की एड़ी से 5 तेज़ थपकी दें।",
+      "अगर यह काम न करे, तो 5 पेट पर धक्के दें: पीछे खड़े हों, नाभि के ऊपर मुट्ठी रखें, तेज़ी से अंदर और ऊपर खींचें।",
+      "5 पीठ पर थपकी और 5 पेट के धक्कों को तब तक बदलते रहें जब तक वस्तु बाहर न आ जाए या व्यक्ति बेहोश न हो जाए।",
+      "अगर बेहोश हो जाए, तो उन्हें ज़मीन पर लिटाएं और हैंड्स-ओनली सीपीआर शुरू करें।"
+    ],
+    "mr": [
+      "विचारा 'तुझा गुदमरत आहे का?' जर ते बोलू, खोकू किंवा श्वास घेऊ शकत नसतील तर लगेच कृती करा.",
+      "खांद्याच्या हाडांमध्ये हाताच्या तळव्याने 5 जोरदार थाप द्या.",
+      "हे काम करत नसेल तर 5 पोटावर धक्के द्या: मागे उभे राहा, नाभीच्या वर मूठ ठेवा, जोरात आत आणि वर खेचा.",
+      "5 पाठीवर थाप आणि 5 पोटाचे धक्के वस्तू बाहेर येईपर्यंत किंवा व्यक्ती बेशुद्ध होईपर्यंत बदलत राहा.",
+      "बेशुद्ध झाल्यास, त्यांना जमिनीवर झोपवा आणि हँड्स-ओन्ली सीपीआर सुरू करा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not slap the back of a person who can still cough forcefully -- let them cough.",
+      "Do not perform abdominal thrusts on a pregnant woman or infant -- use chest thrusts instead."
+    ],
+    "hi": [
+      "जो व्यक्ति अभी भी ज़ोर से खांस सकता है, उसकी पीठ पर न थपथपाएं -- उसे खांसने दें।",
+      "गर्भवती महिला या शिशु पर पेट के धक्के न दें -- इसके बजाय छाती पर धक्के दें।"
+    ],
+    "mr": [
+      "जो जोरात खोकू शकतो त्याच्या पाठीवर थाप देऊ नका -- त्याला खोकू द्या.",
+      "गरोदर स्त्री किंवा लहान बाळावर पोटाचे धक्के देऊ नका -- त्याऐवजी छातीवर धक्के द्या."
+    ]
+  },
+  "audio": {
+    "en": "choking_en.wav",
+    "hi": "choking_hi.wav",
+    "mr": "choking_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "symptoms_contains": "choking"
+  }
+}

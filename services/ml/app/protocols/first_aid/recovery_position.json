@@ -1,0 +1,56 @@
+{
+  "protocol_id": "recovery_position",
+  "title": {
+    "en": "Unconscious but breathing -- recovery position",
+    "hi": "बेहोश लेकिन सांस ले रहा है -- रिकवरी पोजीशन",
+    "mr": "बेशुद्ध पण श्वास घेत आहे -- रिकव्हरी पोझिशन"
+  },
+  "steps": {
+    "en": [
+      "Confirm the person is breathing normally but not responding.",
+      "Kneel beside them; place the near arm at a right angle to the body, palm up.",
+      "Bring the far arm across the chest, back of hand against the near cheek.",
+      "Bend the far knee up, then pull it to roll the person toward you onto their side.",
+      "Tilt the head back slightly to keep the airway open, and keep watching their breathing until help arrives."
+    ],
+    "hi": [
+      "सुनिश्चित करें कि व्यक्ति सामान्य रूप से सांस ले रहा है लेकिन प्रतिक्रिया नहीं दे रहा।",
+      "उनके पास घुटनों के बल बैठें; पास वाला हाथ शरीर से समकोण पर रखें, हथेली ऊपर।",
+      "दूर वाले हाथ को छाती के आर-पार लाएं, हाथ का पिछला हिस्सा पास वाले गाल पर रखें।",
+      "दूर वाला घुटना मोड़ें, फिर उसे खींचकर व्यक्ति को अपनी ओर करवट पर घुमाएं।",
+      "सांस की नली खुली रखने के लिए सिर थोड़ा पीछे झुकाएं, और मदद आने तक सांस देखते रहें।"
+    ],
+    "mr": [
+      "व्यक्ती सामान्यपणे श्वास घेत आहे पण प्रतिसाद देत नाही याची खात्री करा.",
+      "त्यांच्याजवळ गुडघ्यावर बसा; जवळचा हात शरीराशी काटकोनात ठेवा, तळवा वर.",
+      "दूरचा हात छातीवरून आणा, हाताचा मागचा भाग जवळच्या गालावर ठेवा.",
+      "दूरचा गुडघा वाकवा, मग तो खेचून व्यक्तीला आपल्याकडे कुशीवर वळवा.",
+      "श्वासनलिका मोकळी ठेवण्यासाठी डोके थोडे मागे कलवा, आणि मदत येईपर्यंत श्वासावर लक्ष ठेवा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not leave the person on their back.",
+      "Do not give up watching their breathing even once positioned."
+    ],
+    "hi": [
+      "व्यक्ति को पीठ के बल न छोड़ें।",
+      "स्थिति में आने के बाद भी सांस देखना न छोड़ें।"
+    ],
+    "mr": [
+      "व्यक्तीला पाठीवर सोडू नका.",
+      "स्थितीत आणल्यावरही श्वासावर लक्ष ठेवणे सोडू नका."
+    ]
+  },
+  "audio": {
+    "en": "recovery_position_en.wav",
+    "hi": "recovery_position_hi.wav",
+    "mr": "recovery_position_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "conscious": false,
+    "breathing": "normal"
+  }
+}

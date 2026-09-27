@@ -1,0 +1,91 @@
+{
+  "facility": "pediatric",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "p_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the child awake and responding?",
+        "hi": "क्या बच्चा होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "मूल शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "p_conscious_en.wav",
+        "hi": "p_conscious_hi.wav",
+        "mr": "p_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "p_breathing",
+      "field": "breathing",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "Is the child breathing normally, with difficulty, or not at all?",
+        "hi": "क्या बच्चा सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा?",
+        "mr": "मूल नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"
+      },
+      "audio": {
+        "en": "p_breathing_en.wav",
+        "hi": "p_breathing_hi.wav",
+        "mr": "p_breathing_mr.wav"
+      },
+      "choices": [
+        "normal",
+        "difficult",
+        "absent"
+      ]
+    },
+    {
+      "id": "p_age",
+      "field": "child_age_years",
+      "answer_type": "number",
+      "priority": 1,
+      "text": {
+        "en": "How old is the child, in years (or months if under 1)?",
+        "hi": "बच्चे की उम्र कितनी है (साल में, या 1 साल से कम हो तो महीनों में)?",
+        "mr": "मुलाचे वय किती आहे (वर्षात, किंवा 1 वर्षाखालील असल्यास महिन्यांत)?"
+      },
+      "audio": {
+        "en": "p_age_en.wav",
+        "hi": "p_age_hi.wav",
+        "mr": "p_age_mr.wav"
+      }
+    },
+    {
+      "id": "p_fever",
+      "field": "high_fever",
+      "answer_type": "yes_no",
+      "priority": 2,
+      "text": {
+        "en": "Does the child have a high fever?",
+        "hi": "क्या बच्चे को तेज़ बुखार है?",
+        "mr": "मुलाला जास्त ताप आहे का?"
+      },
+      "audio": {
+        "en": "p_fever_en.wav",
+        "hi": "p_fever_hi.wav",
+        "mr": "p_fever_mr.wav"
+      }
+    },
+    {
+      "id": "p_fluids",
+      "field": "taking_fluids",
+      "answer_type": "yes_no",
+      "priority": 2,
+      "text": {
+        "en": "Is the child able to drink fluids?",
+        "hi": "क्या बच्चा तरल पदार्थ पी पा रहा है?",
+        "mr": "मूल द्रवपदार्थ घेऊ शकत आहे का?"
+      },
+      "audio": {
+        "en": "p_fluids_en.wav",
+        "hi": "p_fluids_hi.wav",
+        "mr": "p_fluids_mr.wav"
+      }
+    }
+  ]
+}

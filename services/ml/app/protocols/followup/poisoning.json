@@ -1,0 +1,97 @@
+{
+  "facility": "poisoning",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "po_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "po_conscious_en.wav",
+        "hi": "po_conscious_hi.wav",
+        "mr": "po_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "po_breathing",
+      "field": "breathing",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient breathing normally, with difficulty, or not at all?",
+        "hi": "क्या मरीज़ सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा है?",
+        "mr": "रुग्ण नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"
+      },
+      "audio": {
+        "en": "po_breathing_en.wav",
+        "hi": "po_breathing_hi.wav",
+        "mr": "po_breathing_mr.wav"
+      },
+      "choices": [
+        "normal",
+        "difficult",
+        "absent"
+      ]
+    },
+    {
+      "id": "po_substance",
+      "field": "substance_type",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "What was consumed: medicine, chemical, gas, or unknown?",
+        "hi": "क्या लिया गया: दवा, रसायन, गैस, या अज्ञात?",
+        "mr": "काय घेतले गेले: औषध, रसायन, वायू, की अज्ञात?"
+      },
+      "audio": {
+        "en": "po_substance_en.wav",
+        "hi": "po_substance_hi.wav",
+        "mr": "po_substance_mr.wav"
+      },
+      "choices": [
+        "medicine",
+        "chemical",
+        "gas",
+        "unknown"
+      ]
+    },
+    {
+      "id": "po_time",
+      "field": "time_since_min",
+      "answer_type": "number",
+      "priority": 2,
+      "text": {
+        "en": "How many minutes ago did this happen?",
+        "hi": "यह कितने मिनट पहले हुआ?",
+        "mr": "हे किती मिनिटांपूर्वी घडले?"
+      },
+      "audio": {
+        "en": "po_time_en.wav",
+        "hi": "po_time_hi.wav",
+        "mr": "po_time_mr.wav"
+      }
+    },
+    {
+      "id": "po_vomit",
+      "field": "vomiting",
+      "answer_type": "yes_no",
+      "priority": 2,
+      "text": {
+        "en": "Has the patient vomited?",
+        "hi": "क्या मरीज़ को उल्टी हुई है?",
+        "mr": "रुग्णाला उलटी झाली आहे का?"
+      },
+      "audio": {
+        "en": "po_vomit_en.wav",
+        "hi": "po_vomit_hi.wav",
+        "mr": "po_vomit_mr.wav"
+      }
+    }
+  ]
+}
