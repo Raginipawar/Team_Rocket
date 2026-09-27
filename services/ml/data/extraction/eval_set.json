@@ -1,0 +1,1952 @@
+[
+  {
+    "text": "My mother has severe chest pain and is sweating",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother is having trouble breathing and lips are turning blue",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My son is having trouble breathing and lips are turning blue",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे मम्मी को सांस लेने में तकलीफ हो रही है और होंठ नीले पड़ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मैं गर्भवती हूं और मुझे प्रसव पीड़ा हो रही है, संकुचन पास पास आ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "मेरा बेटे सड़क दुर्घटना में है, बेहोश है, पैर से खून बह रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे बेटे ने गलती से कोई रसायन पी लिया है और उल्टी कर रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera bete sadak durghatna mein hai, behosh hai, pair se khoon beh raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे भाई का हाथ गरम पानी से जल गया है, दर्द से चिल्ला रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे बेटे का हाथ गरम पानी से जल गया है, दर्द से चिल्ला रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera papa gir gaya hai aur sar se bahut khoon beh raha hai, hosh mein nahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere pati bujurg hain, subah se confused hain aur unki baat lardkhadaa rahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bhai ko saans lene mein takleef ho rahi hai aur hoth neele pad rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My son is an old man, confused and his speech is slurred since morning",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My mother fell down and is bleeding heavily from the head, not responding",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "main pregnant hoon aur mujhe labour pain ho raha hai, contractions paas paas aa rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "मेरा भाई गिर गया है और सर से बहुत खून बह रहा है, होश में नहीं है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे बेटे बुजुर्ग हैं, सुबह से भ्रमित हैं और उनकी बात लड़खड़ा रही है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पति को सांस लेने में तकलीफ हो रही है और होंठ नीले पड़ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father fell down and is bleeding heavily from the head, not responding",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother is an old man, confused and his speech is slurred since morning",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere mummy ko seene mein bahut dard ho raha hai aur paseena aa raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे भाई बुजुर्ग हैं, सुबह से भ्रमित हैं और उनकी बात लड़खड़ा रही है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bhai bujurg hain, subah se confused hain aur unki baat lardkhadaa rahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My mother is having trouble breathing and lips are turning blue",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पति को सीने में बहुत दर्द हो रहा है और पसीना आ रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "main pregnant hoon aur mujhe labour pain ho raha hai, contractions paas paas aa rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "मेरा मम्मी गिर गया है और सर से बहुत खून बह रहा है, होश में नहीं है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे मम्मी का हाथ गरम पानी से जल गया है, दर्द से चिल्ला रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother was burned by hot water in the kitchen, screaming in pain",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "main pregnant hoon aur mujhe labour pain ho raha hai, contractions paas paas aa rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "My husband has severe chest pain and is sweating",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bhai ne galti se koi chemical pi liya hai aur ulti kar raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bete ka haath garam pani se jal gaya hai, dard se chilla raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother fell down and is bleeding heavily from the head, not responding",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My son fell down and is bleeding heavily from the head, not responding",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मैं गर्भवती हूं और मुझे प्रसव पीड़ा हो रही है, संकुचन पास पास आ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "मेरे पति का हाथ गरम पानी से जल गया है, दर्द से चिल्ला रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My son has severe chest pain and is sweating",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे बेटे को सांस लेने में तकलीफ हो रही है और होंठ नीले पड़ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father was burned by hot water in the kitchen, screaming in pain",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पापा ने गलती से कोई रसायन पी लिया है और उल्टी कर रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bete ne galti se koi chemical pi liya hai aur ulti kar raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere papa ka haath garam pani se jal gaya hai, dard se chilla raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father is having trouble breathing and lips are turning blue",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My husband was in a road accident, unconscious, bleeding from the leg",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere papa ko seene mein bahut dard ho raha hai aur paseena aa raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bhai ko seene mein bahut dard ho raha hai aur paseena aa raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पापा को सीने में बहुत दर्द हो रहा है और पसीना आ रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera bhai sadak durghatna mein hai, behosh hai, pair se khoon beh raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My husband is having trouble breathing and lips are turning blue",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere mummy bujurg hain, subah se confused hain aur unki baat lardkhadaa rahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother drank some chemical by mistake and is vomiting",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे भाई को सांस लेने में तकलीफ हो रही है और होंठ नीले पड़ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera pati gir gaya hai aur sar se bahut khoon beh raha hai, hosh mein nahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा मम्मी सड़क दुर्घटना में है, बेहोश है, पैर से खून बह रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My mother is an old man, confused and his speech is slurred since morning",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "I am pregnant and having contractions, they are close together",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "I am pregnant and having contractions, they are close together",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "mera pati sadak durghatna mein hai, behosh hai, pair se khoon beh raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे मम्मी ने गलती से कोई रसायन पी लिया है और उल्टी कर रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere pati ko seene mein bahut dard ho raha hai aur paseena aa raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे भाई को सीने में बहुत दर्द हो रहा है और पसीना आ रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father was in a road accident, unconscious, bleeding from the leg",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother has severe chest pain and is sweating",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "main pregnant hoon aur mujhe labour pain ho raha hai, contractions paas paas aa rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "My son was burned by hot water in the kitchen, screaming in pain",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "I am pregnant and having contractions, they are close together",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "mere pati ne galti se koi chemical pi liya hai aur ulti kar raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे भाई ने गलती से कोई रसायन पी लिया है और उल्टी कर रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere pati ka haath garam pani se jal gaya hai, dard se chilla raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera papa sadak durghatna mein hai, behosh hai, pair se khoon beh raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा बेटे गिर गया है और सर से बहुत खून बह रहा है, होश में नहीं है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My son was in a road accident, unconscious, bleeding from the leg",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father has severe chest pain and is sweating",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मैं गर्भवती हूं और मुझे प्रसव पीड़ा हो रही है, संकुचन पास पास आ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "mere mummy ko saans lene mein takleef ho rahi hai aur hoth neele pad rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे मम्मी को सीने में बहुत दर्द हो रहा है और पसीना आ रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पति बुजुर्ग हैं, सुबह से भ्रमित हैं और उनकी बात लड़खड़ा रही है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bete ko saans lene mein takleef ho rahi hai aur hoth neele pad rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "I am pregnant and having contractions, they are close together",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "My husband was burned by hot water in the kitchen, screaming in pain",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere papa bujurg hain, subah se confused hain aur unki baat lardkhadaa rahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bete ko seene mein bahut dard ho raha hai aur paseena aa raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere pati ko saans lene mein takleef ho rahi hai aur hoth neele pad rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "I am pregnant and having contractions, they are close together",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "mere bete bujurg hain, subah se confused hain aur unki baat lardkhadaa rahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My son drank some chemical by mistake and is vomiting",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा पति सड़क दुर्घटना में है, बेहोश है, पैर से खून बह रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera mummy gir gaya hai aur sar se bahut khoon beh raha hai, hosh mein nahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere mummy ka haath garam pani se jal gaya hai, dard se chilla raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father is an old man, confused and his speech is slurred since morning",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पापा बुजुर्ग हैं, सुबह से भ्रमित हैं और उनकी बात लड़खड़ा रही है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा पापा सड़क दुर्घटना में है, बेहोश है, पैर से खून बह रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My husband fell down and is bleeding heavily from the head, not responding",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My father drank some chemical by mistake and is vomiting",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My mother drank some chemical by mistake and is vomiting",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पापा का हाथ गरम पानी से जल गया है, दर्द से चिल्ला रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा भाई सड़क दुर्घटना में है, बेहोश है, पैर से खून बह रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My husband is an old man, confused and his speech is slurred since morning",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मैं गर्भवती हूं और मुझे प्रसव पीड़ा हो रही है, संकुचन पास पास आ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "mere mummy ne galti se koi chemical pi liya hai aur ulti kar raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे मम्मी बुजुर्ग हैं, सुबह से भ्रमित हैं और उनकी बात लड़खड़ा रही है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "confusion",
+        "slurred_speech"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मैं गर्भवती हूं और मुझे प्रसव पीड़ा हो रही है, संकुचन पास पास आ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "मेरे पति ने गलती से कोई रसायन पी लिया है और उल्टी कर रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My husband drank some chemical by mistake and is vomiting",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "main pregnant hoon aur mujhe labour pain ho raha hai, contractions paas paas aa rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "labour_pain"
+      ],
+      "pregnant": true,
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1
+    }
+  },
+  {
+    "text": "mera mummy sadak durghatna mein hai, behosh hai, pair se khoon beh raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My mother was burned by hot water in the kitchen, screaming in pain",
+    "language": "en",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे पापा को सांस लेने में तकलीफ हो रही है और होंठ नीले पड़ रहे हैं",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरे बेटे को सीने में बहुत दर्द हो रहा है और पसीना आ रहा है",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "chest_pain",
+        "sweating"
+      ],
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": null,
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere bhai ka haath garam pani se jal gaya hai, dard se chilla raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "burn_pain"
+      ],
+      "mechanism": "burn",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा पापा गिर गया है और सर से बहुत खून बह रहा है, होश में नहीं है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere papa ko saans lene mein takleef ho rahi hai aur hoth neele pad rahe hain",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "breathlessness"
+      ],
+      "breathing": "difficult",
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "मेरा पति गिर गया है और सर से बहुत खून बह रहा है, होश में नहीं है",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "husband",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera bhai gir gaya hai aur sar se bahut khoon beh raha hai, hosh mein nahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mere papa ne galti se koi chemical pi liya hai aur ulti kar raha hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [
+        "vomiting"
+      ],
+      "mechanism": "poisoning",
+      "breathing": null,
+      "bleeding": "none",
+      "conscious": true,
+      "for_whom": "father",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "mera bete gir gaya hai aur sar se bahut khoon beh raha hai, hosh mein nahi hai",
+    "language": "hi",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "severe",
+      "conscious": false,
+      "mechanism": "fall",
+      "for_whom": "son",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My mother was in a road accident, unconscious, bleeding from the leg",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "mother",
+      "sex": "F",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  },
+  {
+    "text": "My brother was in a road accident, unconscious, bleeding from the leg",
+    "language": "en",
+    "true": {
+      "symptoms": [],
+      "breathing": null,
+      "bleeding": "mild",
+      "conscious": false,
+      "mechanism": "road_accident",
+      "for_whom": "brother",
+      "sex": "M",
+      "patient_count": 1,
+      "pregnant": false
+    }
+  }
+]
