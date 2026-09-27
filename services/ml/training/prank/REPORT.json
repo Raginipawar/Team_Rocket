@@ -1,0 +1,9 @@
+{
+  "auc": 1.0,
+  "precision": 0.7442,
+  "recall": 1.0,
+  "f1": 0.8533,
+  "threshold": 0.0,
+  "n_train": 3840,
+  "n_test": 960
+}
