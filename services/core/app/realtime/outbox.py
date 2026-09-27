@@ -30,6 +30,6 @@ async def emit(session: AsyncSession, *, channel: str, event: str, data: dict) -
             "INSERT INTO outbox (channel, event, seq, data) "
             "VALUES (:channel, :event, :seq, CAST(:data AS jsonb))"
         ),
-        {"channel": channel, "event": event, "seq": seq, "data": json.dumps(data)},
+        {"channel": channel, "event": event, "seq": seq, "data": json.dumps(data, default=str)},
     )
     logger.debug("outbox.emit channel=%s event=%s seq=%s", channel, event, seq)

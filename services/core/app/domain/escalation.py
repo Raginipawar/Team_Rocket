@@ -26,7 +26,7 @@ async def raise_escalation(
             "emergency_id": str(emergency_id) if emergency_id else None,
             "incident_id": str(incident_id) if incident_id else None,
             "summary": context.get("summary", f"{type} escalation (stub engine, no Telegram yet)"),
-            "options": json.dumps(context.get("options", [])),
+            "options": json.dumps(context.get("options", []), default=str),
             "default_option_id": context.get("default_option_id"),
         },
     )).scalar_one()
