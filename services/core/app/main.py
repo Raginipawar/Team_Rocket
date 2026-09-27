@@ -6,7 +6,7 @@ app/api/v1/** are what matters, not this file."""
 
 from fastapi import FastAPI
 
-from app.api.v1 import ambulance, auth, emergencies, offers
+from app.api.v1 import ambulance, analytics, auth, emergencies, offers
 from app.realtime.ws import router as ws_router
 from app.security.middleware import CorrelationIdMiddleware, IdempotencyMiddleware
 
@@ -19,6 +19,7 @@ app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
 app.include_router(emergencies.router, prefix="/api/v1", tags=["emergencies"])
 app.include_router(offers.router, prefix="/api/v1/ambulance", tags=["dispatch"])
 app.include_router(ambulance.router, prefix="/api/v1/ambulance", tags=["ambulance"])
+app.include_router(analytics.router, prefix="/api/v1", tags=["analytics"])
 app.include_router(ws_router, tags=["realtime"])
 
 
