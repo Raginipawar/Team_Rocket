@@ -1,0 +1,55 @@
+{
+  "protocol_id": "labour",
+  "title": {
+    "en": "Labour / childbirth about to happen",
+    "hi": "प्रसव / बच्चे का जन्म होने वाला है",
+    "mr": "प्रसूती / बाळंतपण होणार आहे"
+  },
+  "steps": {
+    "en": [
+      "Reassure the mother; find a clean, private, warm space if possible.",
+      "Let her choose a comfortable position -- do not force her to lie flat.",
+      "Wash your hands if possible. Do not pull on the baby -- let it emerge on its own.",
+      "Once born, dry the baby immediately with a clean cloth and place skin-to-skin on the mother's chest, then cover both.",
+      "Note the exact time of birth for the medical team."
+    ],
+    "hi": [
+      "मां को आश्वस्त करें; अगर संभव हो तो साफ, निजी, गर्म जगह ढूंढें।",
+      "उसे आरामदायक स्थिति चुनने दें -- उसे सीधा लेटने के लिए मजबूर न करें।",
+      "अगर संभव हो तो हाथ धोएं। बच्चे को न खींचें -- उसे खुद बाहर आने दें।",
+      "जन्म होते ही, बच्चे को साफ कपड़े से तुरंत सुखाएं और मां की छाती पर त्वचा से त्वचा रखें, फिर दोनों को ढकें।",
+      "चिकित्सा टीम के लिए जन्म का सटीक समय नोट करें।"
+    ],
+    "mr": [
+      "आईला धीर द्या; शक्य असल्यास स्वच्छ, खाजगी, उबदार जागा शोधा.",
+      "तिला आरामदायक स्थिती निवडू द्या -- तिला सरळ झोपण्यास भाग पाडू नका.",
+      "शक्य असल्यास हात धुवा. बाळाला ओढू नका -- त्याला स्वतः बाहेर येऊ द्या.",
+      "जन्मताच, बाळाला स्वच्छ कापडाने लगेच कोरडे करा आणि आईच्या छातीवर त्वचेला त्वचा टेकवून ठेवा, मग दोघांना झाका.",
+      "वैद्यकीय टीमसाठी जन्माची अचूक वेळ नोंदवा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not pull the umbilical cord.",
+      "Do not attempt to cut the cord unless a paramedic instructs you how."
+    ],
+    "hi": [
+      "गर्भनाल को न खींचें।",
+      "पैरामेडिक के बताए बिना गर्भनाल काटने की कोशिश न करें।"
+    ],
+    "mr": [
+      "नाळ ओढू नका.",
+      "पॅरामेडिकने सांगितल्याशिवाय नाळ कापण्याचा प्रयत्न करू नका."
+    ]
+  },
+  "audio": {
+    "en": "labour_en.wav",
+    "hi": "labour_hi.wav",
+    "mr": "labour_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "facility": "obstetric"
+  }
+}
