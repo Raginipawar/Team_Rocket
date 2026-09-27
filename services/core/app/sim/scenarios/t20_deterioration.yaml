@@ -1,0 +1,257 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Scenario T20: Patient Deterioration — Divert Only If ≥ 3 min Gain
+# Technical.md §14 T20 🎬
+#
+# A paramedic taps 'Critical' while en route to a hospital that was selected
+# for an 'urgent general' case.  The system must re-evaluate hospital selection
+# with the updated acuity (critical cardiac).
+#
+# Divert logic (§11.8):
+#   Divert ONLY if:
+#     new_best_ETA_to_definitive_care < current_hospital_ETA_to_definitive_care
+#                                        - DETERIORATION_DIVERT_GAIN_SEC (180 s)
+#   Otherwise keep the current confirmed hospital (no unnecessary reroute).
+#
+# Two sub-cases are tested:
+#   Case A: A much better hospital is available → DIVERT (reroute event fired)
+#   Case B: No significant gain → NO DIVERT (current hospital kept)
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: t20_deterioration
+description: |
+  Paramedic taps 'Critical' en route. System re-evaluates hospital ranking.
+  Divert fires only when the new best hospital is ≥ 3 minutes faster to
+  definitive care (DETERIORATION_DIVERT_GAIN_SEC = 180 s).
+  Case A: large gain → reroute event sent.
+  Case B: small gain (< 180 s) → no reroute, current hospital kept.
+demo: true  # 🎬 marked scenario
+tags: [deterioration, divert, hospital_selection, acuity]
+
+# ── Shared setup ──────────────────────────────────────────────────────────────
+setup:
+  reset_sim: true
+
+  ambulance:
+    id: amb_t20
+    registration_no: MH12T201
+    type: ALS
+    status: transporting
+    location: {lat: 18.530, lng: 73.860}   # mid-route
+
+  # Hospital A — currently confirmed (general ER, no cath lab).
+  hospital_current:
+    id: hosp_current
+    name: General Hospital (current)
+    location: {lat: 18.560, lng: 73.880}
+    capabilities: [general_er]
+    stabilization_capable: true
+    rooms:
+      - {type: er_bed, status: free}
+
+  # Hospital B — alternative with cath lab, much closer (Case A).
+  hospital_better:
+    id: hosp_better
+    name: Cardiac Centre (better, Case A)
+    location: {lat: 18.535, lng: 73.862}  # very close — ~3 km vs 8 km
+    capabilities: [cardiac_cathlab, general_er]
+    stabilization_capable: true
+    rooms:
+      - {type: resus_bay, status: free}
+    resources:
+      - {type: cath_lab, total: 1, available: 1}
+
+  # Hospital C — alternative with cath lab, only slightly closer (Case B).
+  hospital_marginal:
+    id: hosp_marginal
+    name: Cardiac Centre (marginal, Case B)
+    location: {lat: 18.558, lng: 73.877}  # almost same ETA — < 3 min gain
+    capabilities: [cardiac_cathlab, general_er]
+    stabilization_capable: true
+    rooms:
+      - {type: resus_bay, status: free}
+    resources:
+      - {type: cath_lab, total: 1, available: 1}
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CASE A: Large ETA gain → should divert
+# ══════════════════════════════════════════════════════════════════════════════
+
+sub_scenarios:
+  - name: case_a_should_divert
+    description: |
+      hosp_better is ~5 min closer. With DETERIORATION_DIVERT_GAIN_SEC=180 s
+      the divert condition is met → reroute event must fire.
+
+    setup_override:
+      emergency:
+        id: em_t20_a
+        status: hospital_confirmed
+        acuity: urgent          # was 'urgent general'
+        facility: general
+        ambulance: amb_t20
+        hospital: hosp_current
+        eta_to_hospital_sec: 600  # 10 min to current hospital
+        reservation:
+          id: res_t20_a
+          status: confirmed
+          hospital: hosp_current
+
+      # Override: hosp_better ETA = 300 s (5 min) vs current 600 s → gain = 300 s > 180 s.
+      eta_overrides:
+        - hospital: hosp_better
+          eta_sec: 300          # 5 min
+          eta_low_sec: 260
+          eta_high_sec: 360
+
+    actions:
+      - at_sec: 0
+        actor: paramedic
+        ambulance: amb_t20
+        action: critical_tap
+        emergency: em_t20_a
+
+      # Give the system time to re-evaluate (hospital selection is async).
+      - at_sec: 5
+        actor: observer
+        action: await_event
+        channel: emergency:{em_t20_a}
+        event: reroute
+        timeout_sec: 10
+
+    assertions:
+      # reroute WS event fired.
+      - type: ws_event
+        channel: emergency:{em_t20_a}
+        event: reroute
+        expected_fields:
+          from_hospital: hosp_current
+          to_hospital: hosp_better
+
+      # Old reservation released.
+      - type: db_query
+        description: Old reservation released
+        sql: |
+          SELECT status FROM reservations WHERE id = '{res_t20_a}'
+        expected_value: released
+
+      # New reservation held at hosp_better.
+      - type: db_query
+        description: New reservation held at cardiac centre
+        sql: |
+          SELECT res.status, hr.hospital_id
+          FROM reservations res
+          JOIN hospital_requests hr ON hr.id = res.hospital_request_id
+          WHERE res.emergency_id = '{em_t20_a}'
+            AND res.status IN ('held', 'confirmed')
+        expected_row:
+          status: held
+          hospital_id: hosp_better
+
+      # Emergency facility upgraded to cardiac.
+      - type: db_query
+        description: Emergency facility updated to cardiac
+        sql: |
+          SELECT ai_facility FROM emergencies WHERE id = '{em_t20_a}'
+        expected_value: cardiac
+
+      # Audit trail.
+      - type: db_query
+        description: Divert decision audited
+        sql: |
+          SELECT COUNT(*) FROM audit_log
+           WHERE entity = 'emergency'
+             AND entity_id = '{em_t20_a}'
+             AND action = 'divert'
+        expected_count: 1
+
+      # Invariants.
+      - type: invariant
+        check: no_emergency_two_reservations
+      - type: invariant
+        check: no_reserved_room_without_reservation
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # CASE B: Small ETA gain → should NOT divert
+  # ════════════════════════════════════════════════════════════════════════════
+
+  - name: case_b_no_divert
+    description: |
+      hosp_marginal is only 2 min closer (120 s < 180 s threshold).
+      System must NOT divert — current hospital stays confirmed.
+
+    setup_override:
+      emergency:
+        id: em_t20_b
+        status: hospital_confirmed
+        acuity: urgent
+        facility: general
+        ambulance: amb_t20
+        hospital: hosp_current
+        eta_to_hospital_sec: 600  # 10 min to current hospital
+        reservation:
+          id: res_t20_b
+          status: confirmed
+          hospital: hosp_current
+
+      # Override: hosp_marginal ETA = 480 s (8 min) → gain = 120 s < 180 s.
+      eta_overrides:
+        - hospital: hosp_marginal
+          eta_sec: 480
+          eta_low_sec: 420
+          eta_high_sec: 540
+
+    actions:
+      - at_sec: 0
+        actor: paramedic
+        ambulance: amb_t20
+        action: critical_tap
+        emergency: em_t20_b
+
+      # Wait long enough to confirm no reroute event appears.
+      - at_sec: 8
+        actor: observer
+        action: assert_no_event
+        channel: emergency:{em_t20_b}
+        event: reroute
+        within_sec: 7
+
+    assertions:
+      # No reroute event.
+      - type: ws_no_event
+        channel: emergency:{em_t20_b}
+        event: reroute
+        within_sec: 8
+
+      # Existing reservation unchanged.
+      - type: db_query
+        description: Existing reservation still confirmed
+        sql: |
+          SELECT status FROM reservations WHERE id = '{res_t20_b}'
+        expected_value: confirmed
+
+      # Emergency still confirmed at current hospital.
+      - type: db_query
+        description: Emergency still at current hospital
+        sql: |
+          SELECT hospital_id FROM emergencies WHERE id = '{em_t20_b}'
+        expected_value: hosp_current
+
+      # Audit records the evaluation but no divert action.
+      - type: db_query
+        description: Evaluation logged but no divert action
+        sql: |
+          SELECT COUNT(*) FROM audit_log
+           WHERE entity = 'emergency'
+             AND entity_id = '{em_t20_b}'
+             AND action = 'divert'
+        expected_count: 0
+
+demo_notes: |
+  Show both cases back to back on the ops page:
+  Case A — paramedic taps Critical; a 'Rerouting…' banner appears on the
+    ambulance screen and the family tracking page; the hospital card switches
+    from 'General Hospital' to 'Cardiac Centre'; the old hospital's room
+    goes back to free immediately.
+  Case B — paramedic taps Critical; the system re-evaluates quietly (logged in
+    audit); no reroute banner; the current hospital stays confirmed with the
+    updated 'Critical / Cardiac' patient card now showing on their dashboard.

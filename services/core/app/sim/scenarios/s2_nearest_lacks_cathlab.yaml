@@ -1,0 +1,32 @@
+name: s2_nearest_lacks_cathlab
+description: "Nearest hospital has no cath lab, should pick farther hospital with cath lab."
+speed: 5
+setup:
+  hospitals:
+    - id: hosp_no_cath
+      accept_prob: 1.0
+      occupancy: 0.1
+      location: {lat: 18.5150, lng: 73.8450}
+      facilities: ["general_er"]
+    - id: hosp_cath
+      accept_prob: 1.0
+      occupancy: 0.1
+      location: {lat: 18.5300, lng: 73.8700}
+      facilities: ["general_er", "cardiac_cathlab"]
+  ambulances:
+    - id: amb_1
+      accept_prob: 1.0
+      location: {lat: 18.5154, lng: 73.8453}
+steps:
+  - at: 0
+    do: send_sos
+    params:
+      text: "Heart attack, STEMI, severe chest pain"
+      lat: 18.5154
+      lng: 73.8453
+  - at: 60
+    do: assert_hospital_assigned
+    params:
+      hospital_id: hosp_cath
+assert:
+  - invariants_clean

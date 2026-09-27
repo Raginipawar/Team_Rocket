@@ -1,0 +1,174 @@
+version: '3.9'
+
+# GoldenHour — docker-compose.yml
+# Brings up every service needed for the full stack.
+# Run: docker compose -f infra/docker-compose.yml up -d
+# Then: make migrate && make seed
+
+services:
+  # ─── Data stores ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gh
+      POSTGRES_PASSWORD: gh
+      POSTGRES_DB: goldenhour
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gh -d goldenhour"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  # ─── Routing engine ───────────────────────────────────────────────────────────
+  osrm:
+    image: osrm/osrm-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./osrm:/data
+    # Expects Pune MLD graph at /data/pune.osrm (built by infra/osrm/prepare_pune.sh)
+    command: osrm-routed --algorithm mld /data/pune.osrm
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ─── Local LLM (Qwen2.5-7B-Instruct for extraction + handover) ───────────────
+  ollama:
+    image: ollama/ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollamadata:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Core FastAPI service (business logic, state machines, WS, rules) ─────────
+  core:
+    build:
+      context: ../services/core
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../infra/env/.env
+    environment:
+      # Override individual vars for Docker networking (DNS names match service names)
+      - DATABASE_URL=postgresql+asyncpg://gh:gh@postgres:5432/goldenhour
+      - REDIS_URL=redis://redis:6379/0
+      - ML_BASE_URL=http://ml:8001
+      - OSRM_URL=http://osrm:5000
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level info
+    volumes:
+      # Hot-reload during development; remove in production image
+      - ../services/core:/app
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ─── arq background worker (timers, sweeper, outbox relay, pre-positioning) ───
+  worker:
+    build:
+      context: ../services/core
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../infra/env/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://gh:gh@postgres:5432/goldenhour
+      - REDIS_URL=redis://redis:6379/0
+      - ML_BASE_URL=http://ml:8001
+      - OSRM_URL=http://osrm:5000
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: python -m arq app.jobs.worker.WorkerSettings
+    volumes:
+      - ../services/core:/app
+
+  # ─── ML FastAPI service (every AI/ML model + geo computation) ─────────────────
+  ml:
+    build:
+      context: ../services/ml
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    env_file:
+      - ../infra/env/.env
+    environment:
+      - OSRM_URL=http://osrm:5000
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      osrm:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload --log-level info
+    volumes:
+      - ../services/ml:/app
+      # GPU passthrough — uncomment on a host with an NVIDIA GPU and nvidia-docker2
+      # deploy:
+      #   resources:
+      #     reservations:
+      #       devices:
+      #         - driver: nvidia
+      #           count: 1
+      #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8001/ml/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s  # model loading takes time
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+  ollamadata:
+    driver: local

@@ -1,0 +1,34 @@
+name: s1_happy_path
+description: "Complete happy path: text SOS, ambulance acceptance, hospital confirmation, handoff"
+speed: 5
+setup:
+  hospitals:
+    - id: hosp_1
+      accept_prob: 0.95
+      occupancy: 0.3
+  ambulances:
+    - id: amb_1
+      accept_prob: 0.9
+      location: {lat: 18.5204, lng: 73.8567}
+steps:
+  - at: 0
+    do: send_sos
+    params:
+      text: "Heart attack, chest pain, near Deccan Gymkhana"
+      lat: 18.5154
+      lng: 73.8453
+  - at: 30
+    do: assert_status
+    params:
+      status: ambulance_assigned
+  - at: 120
+    do: assert_status
+    params:
+      status: hospital_confirmed
+  - at: 300
+    do: assert_status
+    params:
+      status: handed_off
+assert:
+  - invariants_clean
+  - emergency_status: handed_off
