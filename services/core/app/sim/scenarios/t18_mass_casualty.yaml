@@ -1,0 +1,21 @@
+name: t18_mass_casualty
+description: "8 patients -> MCI escalation -> OR-Tools plan."
+speed: 5
+setup:
+  hospitals:
+    - id: hosp_1
+    - id: hosp_2
+  ambulances:
+    - id: amb_1
+    - id: amb_2
+    - id: amb_3
+steps:
+  - at: 0
+    do: trigger_mci
+    params:
+      patients: 8
+      lat: 18.5154
+      lng: 73.8453
+assert:
+  - invariants_clean
+  - assert_mci_active: true

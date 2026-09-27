@@ -1,0 +1,23 @@
+name: t1_double_booking
+description: "Double booking - 50 concurrent selections for 1 room => exactly 1 hold."
+speed: 1
+setup:
+  hospitals:
+    - id: hosp_1
+      accept_prob: 1.0
+      rooms:
+        resus_bay: 1
+  ambulances: []
+steps:
+  - at: 0
+    do: concurrent_book_room
+    params:
+      hospital_id: hosp_1
+      room_type: resus_bay
+      count: 50
+assert:
+  - invariants_clean
+  - assert_exact_holds:
+      hospital_id: hosp_1
+      room_type: resus_bay
+      count: 1
