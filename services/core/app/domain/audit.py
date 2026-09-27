@@ -34,4 +34,4 @@ async def write(
 
 def _to_json(obj: dict | None) -> str:
     import json
-    return json.dumps(obj if obj is not None else {})
+    return json.dumps(obj if obj is not None else {}, default=str)
