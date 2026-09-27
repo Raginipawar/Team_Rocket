@@ -1,0 +1,15 @@
+{
+  "n_samples": 120,
+  "n_errors": 0,
+  "accuracy_per_scalar_field": {
+    "sex": 0.7833,
+    "mechanism": 0.9,
+    "breathing": 1.0,
+    "bleeding": 0.525,
+    "conscious": 0.8667,
+    "pregnant": 1.0,
+    "for_whom": 0.775
+  },
+  "mean_symptom_f1": 0.5514,
+  "note": "Synthetic eval set (training/extraction/generate_eval_set.py), ground truth is the template's known fields, not human-labelled -- legitimate for this capability per the note in generate_eval_set.py, but distinct from the triage holdout."
+}
