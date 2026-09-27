@@ -12,3 +12,5 @@ data/seed/*.generated.*
 dist/
 build/
 .DS_Store
+infra/env/secrets/
+*firebase-adminsdk*.json
