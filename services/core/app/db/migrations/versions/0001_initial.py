@@ -10,6 +10,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 import geoalchemy2
+from app.db.models import Base
 
 revision: str = '0001'
 down_revision: Union[str, None] = None
@@ -33,10 +34,22 @@ def upgrade() -> None:
         $$ language 'plpgsql';
     """)
 
-    # Audit log rules will be created after the table is created
-    pass
+    bind = op.get_bind()
+    Base.metadata.create_all(bind=bind)
+
+    op.execute("""
+        DO $$
+        BEGIN
+            IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'audit_log') THEN
+                CREATE OR REPLACE RULE audit_no_update AS ON UPDATE TO audit_log DO INSTEAD NOTHING;
+                CREATE OR REPLACE RULE audit_no_delete AS ON DELETE TO audit_log DO INSTEAD NOTHING;
+            END IF;
+        END $$;
+    """)
 
 def downgrade() -> None:
+    bind = op.get_bind()
+    Base.metadata.drop_all(bind=bind)
     op.execute("DROP FUNCTION IF EXISTS update_updated_at_column CASCADE;")
     op.execute("DROP EXTENSION IF EXISTS btree_gist;")
     op.execute("DROP EXTENSION IF EXISTS pg_trgm;")

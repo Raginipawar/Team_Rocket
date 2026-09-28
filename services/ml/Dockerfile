@@ -4,13 +4,16 @@ WORKDIR /app
 
 # gdal for osmnx/geopandas, libgomp for LightGBM
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libgdal-dev libgomp1 curl && \
+    gcc g++ libgdal-dev libgomp1 curl && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download polyline/h3 data at build time if needed
+# Install CPU-only PyTorch first to avoid downloading 5.5+ GB of CUDA / NVIDIA packages
+# which fills the Docker WSL2 disk and triggers [Errno 30] Read-only file system
+RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch torchaudio && \
+    pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+
 COPY . .
 
 ENV PYTHONPATH=/app

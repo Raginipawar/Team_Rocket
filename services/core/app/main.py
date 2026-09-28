@@ -1,11 +1,11 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from services.core.app.errors import install_error_handlers
-from services.core.app.db.engine import engine
+from app.errors import install_error_handlers
+from app.db.engine import engine
 from sqlalchemy import text
 import redis.asyncio as redis
-from services.core.app.config import settings
+from app.config import settings
 import httpx
 
 logger = logging.getLogger(__name__)
@@ -22,12 +22,18 @@ app.add_middleware(
 
 install_error_handlers(app)
 
-# Attempt to include routers
-try:
-    from services.core.app.routers import api_router
-    app.include_router(api_router, prefix="/api/v1")
-except ImportError as e:
-    logger.warning(f"Failed to import routers: {e}")
+# Include API v1 routers
+from app.api.v1.hospital import router as hospital_router
+from app.api.v1.clinical import router as clinical_router
+from app.api.v1.ops import router as ops_router
+from app.api.v1.health import router as health_router
+from app.api.v1.webhooks_telegram import router as telegram_router
+
+app.include_router(hospital_router, prefix="/api/v1")
+app.include_router(clinical_router, prefix="/api/v1")
+app.include_router(ops_router, prefix="/api/v1")
+app.include_router(health_router, prefix="/api/v1")
+app.include_router(telegram_router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup_event():

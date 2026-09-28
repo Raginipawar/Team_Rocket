@@ -28,6 +28,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from testcontainers.postgres import PostgresContainer
 
+from tests.conftest import network_aware_postgres, execute_script
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
@@ -52,93 +54,92 @@ async def _run_migrations(engine) -> None:
         alembic_command.upgrade(cfg, "head")
     except Exception:
         # Minimal schema sufficient for invariant assertions.
+        schema_sql = """
+            CREATE EXTENSION IF NOT EXISTS postgis;
+            CREATE TABLE IF NOT EXISTS rooms (
+                id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+                hospital_id uuid NOT NULL,
+                code text,
+                type text,
+                status text NOT NULL DEFAULT 'free',
+                reservation_id uuid,
+                version int NOT NULL DEFAULT 1,
+                priority_order int DEFAULT 0,
+                status_updated_at timestamptz DEFAULT now(),
+                created_at timestamptz DEFAULT now(),
+                updated_at timestamptz DEFAULT now()
+            );
+            CREATE TABLE IF NOT EXISTS reservations (
+                id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+                emergency_id uuid NOT NULL,
+                hospital_id uuid NOT NULL,
+                hospital_request_id uuid,
+                status text NOT NULL,
+                hold_expires_at timestamptz NOT NULL,
+                version int NOT NULL DEFAULT 1,
+                created_at timestamptz DEFAULT now(),
+                updated_at timestamptz DEFAULT now()
+            );
+            CREATE UNIQUE INDEX IF NOT EXISTS one_active_reservation_per_emergency
+                ON reservations (emergency_id) WHERE status IN ('held','confirmed');
+            CREATE TABLE IF NOT EXISTS ambulances (
+                id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+                registration_no text UNIQUE,
+                type text NOT NULL DEFAULT 'BLS',
+                status text NOT NULL DEFAULT 'offline',
+                active_emergency_id uuid,
+                version int NOT NULL DEFAULT 1,
+                kyc_verified bool DEFAULT false,
+                is_simulated bool DEFAULT true,
+                created_at timestamptz DEFAULT now(),
+                updated_at timestamptz DEFAULT now()
+            );
+            CREATE TABLE IF NOT EXISTS hospital_resources (
+                id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+                hospital_id uuid NOT NULL,
+                type text NOT NULL,
+                total int NOT NULL DEFAULT 0,
+                available int NOT NULL DEFAULT 0 CHECK (available >= 0),
+                reserved int NOT NULL DEFAULT 0 CHECK (reserved >= 0),
+                CHECK (available + reserved <= total),
+                version int NOT NULL DEFAULT 1,
+                reported_at timestamptz DEFAULT now(),
+                created_at timestamptz DEFAULT now(),
+                updated_at timestamptz DEFAULT now(),
+                UNIQUE (hospital_id, type)
+            );
+            CREATE TABLE IF NOT EXISTS hospital_requests (
+                id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+                emergency_id uuid NOT NULL,
+                hospital_id uuid NOT NULL,
+                rank int,
+                score real,
+                status text NOT NULL DEFAULT 'pending',
+                expires_at timestamptz,
+                sent_at timestamptz DEFAULT now(),
+                created_at timestamptz DEFAULT now(),
+                updated_at timestamptz DEFAULT now()
+            );
+        """
         async with engine.begin() as conn:
-            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
-            await conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS rooms (
-                    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-                    hospital_id uuid NOT NULL,
-                    code text,
-                    type text,
-                    status text NOT NULL DEFAULT 'free',
-                    reservation_id uuid,
-                    version int NOT NULL DEFAULT 1,
-                    priority_order int DEFAULT 0,
-                    status_updated_at timestamptz DEFAULT now(),
-                    created_at timestamptz DEFAULT now(),
-                    updated_at timestamptz DEFAULT now()
-                );
-            """))
-            await conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS reservations (
-                    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-                    emergency_id uuid NOT NULL,
-                    hospital_id uuid NOT NULL,
-                    hospital_request_id uuid,
-                    status text NOT NULL,
-                    hold_expires_at timestamptz NOT NULL,
-                    version int NOT NULL DEFAULT 1,
-                    created_at timestamptz DEFAULT now(),
-                    updated_at timestamptz DEFAULT now()
-                );
-                CREATE UNIQUE INDEX IF NOT EXISTS one_active_reservation_per_emergency
-                    ON reservations (emergency_id) WHERE status IN ('held','confirmed');
-            """))
-            await conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS ambulances (
-                    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-                    registration_no text UNIQUE,
-                    type text NOT NULL DEFAULT 'BLS',
-                    status text NOT NULL DEFAULT 'offline',
-                    active_emergency_id uuid,
-                    version int NOT NULL DEFAULT 1,
-                    kyc_verified bool DEFAULT false,
-                    is_simulated bool DEFAULT true,
-                    created_at timestamptz DEFAULT now(),
-                    updated_at timestamptz DEFAULT now()
-                );
-            """))
-            await conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS hospital_resources (
-                    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-                    hospital_id uuid NOT NULL,
-                    type text NOT NULL,
-                    total int NOT NULL DEFAULT 0,
-                    available int NOT NULL DEFAULT 0 CHECK (available >= 0),
-                    reserved int NOT NULL DEFAULT 0 CHECK (reserved >= 0),
-                    CHECK (available + reserved <= total),
-                    version int NOT NULL DEFAULT 1,
-                    reported_at timestamptz DEFAULT now(),
-                    created_at timestamptz DEFAULT now(),
-                    updated_at timestamptz DEFAULT now(),
-                    UNIQUE (hospital_id, type)
-                );
-            """))
-            await conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS hospital_requests (
-                    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-                    emergency_id uuid NOT NULL,
-                    hospital_id uuid NOT NULL,
-                    rank int,
-                    score real,
-                    status text NOT NULL DEFAULT 'pending',
-                    expires_at timestamptz,
-                    sent_at timestamptz DEFAULT now(),
-                    created_at timestamptz DEFAULT now(),
-                    updated_at timestamptz DEFAULT now()
-                );
-            """))
+            await execute_script(conn, schema_sql)
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Fixtures
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest_asyncio.fixture(scope="module")
+@pytest_asyncio.fixture()
 async def pg_engine():
-    """Spin up a fresh PostGIS container for the entire test module."""
-    with PostgresContainer(_POSTGIS_IMAGE, username="gh", password="gh", dbname="goldenhour") as pg:
-        url = pg.get_connection_url().replace("psycopg2", "asyncpg")
+    """Spin up a fresh PostGIS container for the entire test module.
+
+    Uses network_aware_postgres so the container is reachable from inside
+    the core Docker container (avoids the 172.17.0.1 host-bridge dead-end).
+    """
+    with network_aware_postgres(
+        image=_POSTGIS_IMAGE, username="gh", password="gh", dbname="goldenhour"
+    ) as url:
         engine = create_async_engine(url, echo=False)
         await _run_migrations(engine)
         yield engine

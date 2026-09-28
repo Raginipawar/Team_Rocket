@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, text
-from services.core.app.db.models import Room # type: ignore
+from app.db.models import Room # type: ignore
 
 class RoomReserved(Exception):
     pass

@@ -1,6 +1,7 @@
 """Full hospital/room/resource/staff SQLAlchemy models — technical.md §5.2."""
 from __future__ import annotations
 
+import uuid
 from datetime import datetime
 
 from sqlalchemy import (
@@ -14,7 +15,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from geoalchemy2 import Geography
 
@@ -65,15 +66,15 @@ class Room(TimestampMixin, Base):
         ),
     )
 
-    hospital_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("hospitals.id"), nullable=False
+    hospital_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("hospitals.id"), nullable=False
     )
     code: Mapped[str] = mapped_column(String(20), nullable=False)
     type: Mapped[str] = mapped_column(String(30), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="free")
     location_note: Mapped[str | None] = mapped_column(Text)
     priority_order: Mapped[int] = mapped_column(Integer, nullable=False, default=99)
-    reservation_id: Mapped[str | None] = mapped_column(String(36))
+    reservation_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     status_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
@@ -93,8 +94,8 @@ class HospitalResource(TimestampMixin, Base):
         ),
     )
 
-    hospital_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("hospitals.id"), nullable=False
+    hospital_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("hospitals.id"), nullable=False
     )
     type: Mapped[str] = mapped_column(String(50), nullable=False)
     total: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -111,8 +112,8 @@ class Staff(TimestampMixin, Base):
 
     __tablename__ = "staff"
 
-    hospital_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("hospitals.id"), nullable=False
+    hospital_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("hospitals.id"), nullable=False
     )
     name: Mapped[str] = mapped_column(Text, nullable=False)
     specialty: Mapped[str | None] = mapped_column(String(50))
@@ -124,20 +125,12 @@ class Staff(TimestampMixin, Base):
 
 
 class StaffShift(TimestampMixin, Base):
-    """technical.md §5.2 — staff_shifts table.
-
-    The exclusion constraint (no overlapping shifts per staff member) is added
-    via raw SQL in the Alembic migration because SQLAlchemy doesn't natively
-    support EXCLUDE USING gist with tstzrange:
-
-        ALTER TABLE staff_shifts ADD CONSTRAINT no_shift_overlap
-          EXCLUDE USING gist (staff_id WITH =, tstzrange(start_at, end_at) WITH &&);
-    """
+    """technical.md §5.2 — staff_shifts table."""
 
     __tablename__ = "staff_shifts"
 
-    staff_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("staff.id"), nullable=False
+    staff_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("staff.id"), nullable=False
     )
     start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
@@ -149,12 +142,9 @@ class HospitalOccupancyHistory(Base):
     """technical.md §5.2 — hospital_occupancy_history (composite PK, no updated_at trigger)."""
 
     __tablename__ = "hospital_occupancy_history"
-    __table_args__ = (
-        # PK is (hospital_id, room_type, ts) — declared below
-    )
 
-    hospital_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("hospitals.id"), primary_key=True
+    hospital_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("hospitals.id"), primary_key=True
     )
     room_type: Mapped[str] = mapped_column(String(30), primary_key=True)
     ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)

@@ -1,7 +1,7 @@
 from uuid import UUID
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.domain.audit import write as domain_write
+from app.domain.audit import write as domain_write
 
 async def write_audit(
     db: AsyncSession,

@@ -1,7 +1,7 @@
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.db.models import Emergency, Reservation, Room, Ambulance # type: ignore
+from app.db.models import Emergency, Reservation, Room, Ambulance # type: ignore
 from sqlalchemy import update
 
 async def record_patient_received(

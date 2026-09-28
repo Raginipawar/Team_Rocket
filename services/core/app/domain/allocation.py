@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.db.models import Room, Staff # type: ignore
-from services.core.app.db.repos.rooms import lock_free_room_skip_locked
+from app.db.models import Room, Staff # type: ignore
+from app.db.repos.rooms import lock_free_room_skip_locked
 
 async def allocate_room_and_staff(
     db: AsyncSession,

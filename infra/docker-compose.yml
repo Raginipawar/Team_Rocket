@@ -1,5 +1,3 @@
-version: '3.9'
-
 # GoldenHour — docker-compose.yml
 # Brings up every service needed for the full stack.
 # Run: docker compose -f infra/docker-compose.yml up -d
@@ -49,12 +47,6 @@ services:
       - ./osrm:/data
     # Expects Pune MLD graph at /data/pune.osrm (built by infra/osrm/prepare_pune.sh)
     command: osrm-routed --algorithm mld /data/pune.osrm
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   # ─── Local LLM (Qwen2.5-7B-Instruct for extraction + handover) ───────────────
   ollama:
@@ -67,11 +59,11 @@ services:
     environment:
       - OLLAMA_KEEP_ALIVE=24h
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      test: ["CMD", "ollama", "list"]
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 10s
 
   # ─── Core FastAPI service (business logic, state machines, WS, rules) ─────────
   core:
@@ -90,6 +82,14 @@ services:
       - ML_BASE_URL=http://ml:8001
       - OSRM_URL=http://osrm:5000
       - OLLAMA_URL=http://ollama:11434
+      # testcontainers: join temporary containers to this network so tests
+      # running inside the core container can reach them (avoids 172.17.0.1)
+      - DOCKER_NETWORK=infra_default
+      # Disable Ryuk reaper — it also fails with 172.17.0.1 routing.
+      # Cleanup is handled by the with-statement context managers in tests.
+      - TESTCONTAINERS_RYUK_DISABLED=true
+      # Tell testcontainers where the Docker socket is mounted inside the container
+      - DOCKER_HOST=unix:///var/run/docker.sock
     depends_on:
       postgres:
         condition: service_healthy
@@ -97,10 +97,10 @@ services:
         condition: service_healthy
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level info
     volumes:
-      # Hot-reload during development; remove in production image
       - ../services/core:/app
+      - /var/run/docker.sock:/var/run/docker.sock    
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8000/healthz || exit 1"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -143,10 +143,8 @@ services:
       - OSRM_URL=http://osrm:5000
       - OLLAMA_URL=http://ollama:11434
     depends_on:
-      osrm:
-        condition: service_healthy
-      ollama:
-        condition: service_healthy
+      - osrm
+      - ollama
     command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload --log-level info
     volumes:
       - ../services/ml:/app
@@ -159,7 +157,7 @@ services:
       #           count: 1
       #           capabilities: [gpu]
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8001/ml/v1/health || exit 1"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/ml/v1/health')"]
       interval: 15s
       timeout: 5s
       retries: 5

@@ -9,13 +9,13 @@ async def try_acquire_leader(redis, worker_id: str) -> bool:
 
 async def renew_leader(redis, worker_id: str) -> bool:
     """Lua script: if GET leader:core == worker_id then PEXPIRE 10000"""
-    script = \"\"\"
+    script = """
     if redis.call("get", KEYS[1]) == ARGV[1] then
         return redis.call("pexpire", KEYS[1], ARGV[2])
     else
         return 0
     end
-    \"\"\"
+    """
     res = await redis.eval(script, 1, LEADER_KEY, worker_id, LEADER_TTL_MS)
     return bool(res)
 

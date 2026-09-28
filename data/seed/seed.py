@@ -6,7 +6,7 @@ import json
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/goldenhour")
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql+asyncpg://gh:gh@postgres:5432/goldenhour")
 engine = create_async_engine(DATABASE_URL)
 
 NAMESPACE = uuid.NAMESPACE_DNS
@@ -18,42 +18,42 @@ HOSPITALS = [
     {
         "name": "KEM Hospital",
         "lat": 18.5118, "lng": 73.8520,
-        "capabilities": ['cardiac_cathlab','general_er','icu','trauma_center']
+        "capabilities": ['cardiac_cathlab', 'general_er', 'icu', 'trauma_center']
     },
     {
         "name": "Ruby Hall Clinic",
         "lat": 18.5314, "lng": 73.8446,
-        "capabilities": ['cardiac_cathlab','stroke_thrombolysis','icu','neurosurgery']
+        "capabilities": ['cardiac_cathlab', 'stroke_thrombolysis', 'icu', 'neurosurgery']
     },
     {
-        "name": "Deenanath Mangeshkar",
+        "name": "Deenanath Mangeshkar Hospital",
         "lat": 18.5067, "lng": 73.8082,
-        "capabilities": ['obstetrics','pediatrics','general_er','icu']
+        "capabilities": ['obstetrics', 'pediatrics', 'general_er', 'icu']
     },
     {
         "name": "Sahyadri Hospital",
         "lat": 18.5196, "lng": 73.8553,
-        "capabilities": ['trauma_center','burns_unit','general_er','icu']
+        "capabilities": ['trauma_center', 'burns_unit', 'general_er', 'icu']
     },
     {
         "name": "Jehangir Hospital",
         "lat": 18.5286, "lng": 73.8769,
-        "capabilities": ['cardiac_cathlab','general_er','icu','toxicology']
+        "capabilities": ['cardiac_cathlab', 'general_er', 'icu', 'toxicology']
     },
     {
-        "name": "Columbia Asia",
+        "name": "Columbia Asia Hospital",
         "lat": 18.5640, "lng": 73.7747,
-        "capabilities": ['obstetrics','pediatrics','general_er']
+        "capabilities": ['obstetrics', 'pediatrics', 'general_er']
     },
     {
         "name": "Poona Hospital",
         "lat": 18.5176, "lng": 73.8556,
-        "capabilities": ['stroke_thrombolysis','neurosurgery','general_er','icu']
+        "capabilities": ['stroke_thrombolysis', 'neurosurgery', 'general_er', 'icu']
     },
     {
         "name": "Noble Hospital",
         "lat": 18.4649, "lng": 73.8706,
-        "capabilities": ['general_er','icu']
+        "capabilities": ['general_er', 'icu']
     }
 ]
 
@@ -63,20 +63,20 @@ async def main():
         for i, h in enumerate(HOSPITALS):
             h_id = make_uuid(f"hospital_{h['name']}")
             await conn.execute(text("""
-                INSERT INTO hospitals (id, name, location, level, capabilities, status)
-                VALUES (:id, :name, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), 1, :capabilities, 'ACTIVE')
+                INSERT INTO hospitals (id, name, location, capabilities, is_active, stabilization_capable, is_simulated, last_confirmed_at)
+                VALUES (:id, :name, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), :capabilities, true, true, true, now())
                 ON CONFLICT (id) DO NOTHING
             """), {
                 "id": h_id,
                 "name": h['name'],
                 "lat": h['lat'],
                 "lng": h['lng'],
-                "capabilities": json.dumps(h['capabilities'])
+                "capabilities": h['capabilities']
             })
             
             # Rooms for this hospital
             rooms = []
-            rooms.extend([("resus_bay", f"Ground floor, Bay 1"), ("resus_bay", f"Ground floor, Bay 2")])
+            rooms.extend([("resus_bay", "Ground floor, Bay 1"), ("resus_bay", "Ground floor, Bay 2")])
             for idx in range(4): rooms.append(("er_bed", f"ER Area, Bed {idx+1}"))
             for idx in range(2): rooms.append(("icu_bed", f"ICU, Bed {idx+1}"))
             
@@ -90,10 +90,10 @@ async def main():
                 r_type, r_code = r
                 r_id = make_uuid(f"room_{h_id}_{r_type}_{idx}")
                 await conn.execute(text("""
-                    INSERT INTO rooms (id, hospital_id, code, type, status)
-                    VALUES (:id, :hospital_id, :code, :type, 'AVAILABLE')
+                    INSERT INTO rooms (id, hospital_id, code, type, status, priority_order, version)
+                    VALUES (:id, :hospital_id, :code, :type, 'free', :priority_order, 1)
                     ON CONFLICT (id) DO NOTHING
-                """), {"id": r_id, "hospital_id": h_id, "code": r_code, "type": r_type})
+                """), {"id": r_id, "hospital_id": h_id, "code": r_code, "type": r_type, "priority_order": idx + 1})
                 
             # Resources
             res = [("defibrillator", 3), ("ventilator", 4)]
@@ -105,8 +105,8 @@ async def main():
             for rt, count in res:
                 res_id = make_uuid(f"res_{h_id}_{rt}")
                 await conn.execute(text("""
-                    INSERT INTO hospital_resources (id, hospital_id, type, total, available, reserved)
-                    VALUES (:id, :hospital_id, :type, :total, :total, 0)
+                    INSERT INTO hospital_resources (id, hospital_id, type, total, available, reserved, version, reported_at)
+                    VALUES (:id, :hospital_id, :type, :total, :total, 0, 1, now())
                     ON CONFLICT (id) DO NOTHING
                 """), {"id": res_id, "hospital_id": h_id, "type": rt, "total": count})
 
@@ -130,10 +130,10 @@ async def main():
                     s_id = make_uuid(f"staff_{h_id}_{role}_{idx}")
                     s_name = f"{role.replace('_', ' ').title()} {idx+1}"
                     await conn.execute(text("""
-                        INSERT INTO staff (id, hospital_id, name, role, is_active)
-                        VALUES (:id, :hospital_id, :name, :role, true)
+                        INSERT INTO staff (id, hospital_id, name, specialty, is_active)
+                        VALUES (:id, :hospital_id, :name, :specialty, true)
                         ON CONFLICT (id) DO NOTHING
-                    """), {"id": s_id, "hospital_id": h_id, "name": s_name, "role": role})
+                    """), {"id": s_id, "hospital_id": h_id, "name": s_name, "specialty": role})
                     
                     for shift_idx, (start_at, end_at) in enumerate(shifts):
                         shift_id = make_uuid(f"shift_{s_id}_{shift_idx}")
@@ -154,7 +154,7 @@ async def main():
             caps = ["als_kit", "ventilator"] if is_als else ["bls_kit"]
             await conn.execute(text("""
                 INSERT INTO ambulances (id, identifier, type, status, current_location, capabilities, version)
-                VALUES (:id, :identifier, :type, 'AVAILABLE', ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), :capabilities, 1)
+                VALUES (:id, :identifier, :type, 'available', ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), :capabilities, 1)
                 ON CONFLICT (id) DO NOTHING
             """), {"id": a_id, "identifier": ident, "type": a_type, "lat": lat, "lng": lng, "capabilities": json.dumps(caps)})
 

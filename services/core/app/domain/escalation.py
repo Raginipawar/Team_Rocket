@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.db.models import Escalation # type: ignore
-from services.core.app.db.repos.escalations import create_escalation, get_escalation
+from app.db.models import Escalation # type: ignore
+from app.db.repos.escalations import create_escalation, get_escalation
 
 async def raise_escalation(
     db: AsyncSession,
