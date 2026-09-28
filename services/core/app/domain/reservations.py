@@ -1,14 +1,13 @@
 from uuid import UUID
 from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.db.repos.rooms import lock_free_room_skip_locked
-from services.core.app.db.repos.resources import decrement_resource
-from services.core.app.db.repos.reservations import create_reservation, release_reservation
-from services.core.app.domain.fsm.transition import apply_transition
-from services.core.app.domain.fsm.emergency_fsm import validate_transition as validate_emergency_transition
-from services.core.app.db.models import Emergency, HospitalRequest, Reservation, Room # type: ignore
+from app.db.repos.rooms import lock_free_room_skip_locked
+from app.db.repos.resources import decrement_resource
+from app.db.repos.reservations import create_reservation, release_reservation
+from app.domain.fsm.transition import apply_transition
+from app.domain.fsm.emergency_fsm import validate_transition as validate_emergency_transition
+from app.db.models import Emergency, HospitalRequest, Reservation, Room # type: ignore
 from sqlalchemy import update
-from services.core.app.domain.selection import start_selection
 import json
 
 async def create_hospital_request_with_hold(

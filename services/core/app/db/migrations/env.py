@@ -3,8 +3,8 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
-from services.core.app.config import settings
-from services.core.app.db.models import Base
+from app.config import settings
+from app.db.models import Base
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

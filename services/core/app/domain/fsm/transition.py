@@ -51,7 +51,7 @@ async def apply_transition(
     await audit_write(db, **audit_kwargs)
     
     # Write to outbox (assuming outbox model is imported/available, or using raw SQL, or event_bus model)
-    from services.core.app.db.models import OutboxEvent # placeholder, depending on actual models
+    from app.db.models import OutboxEvent # placeholder, depending on actual models
     outbox_record = OutboxEvent(
         aggregate_type=outbox_event.get("aggregate_type", model_class.__name__),
         aggregate_id=str(entity_id),

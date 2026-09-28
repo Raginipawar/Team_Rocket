@@ -1,7 +1,7 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
-from services.core.app.db.models import HospitalResource # type: ignore
+from app.db.models import HospitalResource # type: ignore
 
 class VersionConflict(Exception):
     pass

@@ -1,8 +1,8 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.domain.escalation import raise_escalation
-from services.core.app.domain.reservations import create_hospital_request_with_hold
-from services.core.app.integrations.ml.routing import get_eta, hospital_rank, get_road_comfort, bed_nowcast
+from app.domain.escalation import raise_escalation
+from app.domain.reservations import create_hospital_request_with_hold
+from app.integrations.ml.routing import get_eta, hospital_rank, get_road_comfort, bed_nowcast
 
 async def start_selection(
     db: AsyncSession,
@@ -18,7 +18,7 @@ async def start_selection(
     4. Send request to rank 1 via create_hospital_request_with_hold()
     On list exhausted: raise_escalation(no_hospital)
     """
-    from services.core.app.db.repos.hospitals import list_hospitals_within_km
+    from app.db.repos.hospitals import list_hospitals_within_km
     # Mocking location and candidates retrieval logic for now
     lat, lng = 0.0, 0.0 # From emergency
     candidates = await list_hospitals_within_km(db, lat, lng, radius_km=25.0)

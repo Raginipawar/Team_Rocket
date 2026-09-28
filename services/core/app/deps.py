@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.db.engine import get_db
+from app.db.engine import get_db
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 
@@ -11,7 +11,7 @@ class Pagination:
         self.limit = limit
 
 try:
-    from services.core.app.security.deps import require_role
+    from app.security.deps import require_role
 except ImportError:
     def require_role(*roles):
         def dummy_dep():

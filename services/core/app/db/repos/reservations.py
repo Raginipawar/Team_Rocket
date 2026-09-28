@@ -2,7 +2,7 @@ from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
-from services.core.app.db.models import Reservation, Room # type: ignore
+from app.db.models import Reservation, Room # type: ignore
 from .resources import increment_resource
 
 async def create_reservation(db: AsyncSession, **kwargs) -> Reservation:

@@ -1,10 +1,10 @@
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.core.app.domain.selection import start_selection
-from services.core.app.integrations.ml.routing import get_eta, hospital_rank
-from services.core.app.db.models import Emergency, Ambulance, Reservation, Patient # type: ignore
-from services.core.app.db.repos.reservations import release_reservation
+from app.domain.selection import start_selection
+from app.integrations.ml.routing import get_eta, hospital_rank
+from app.db.models import Emergency, Ambulance, Reservation, Patient # type: ignore
+from app.db.repos.reservations import release_reservation
 from sqlalchemy import update, select
 
 DETERIORATION_DIVERT_GAIN_SEC = 300
@@ -45,7 +45,7 @@ async def get_family_override_options(db: AsyncSession, emergency_id: UUID) -> l
     ]
 
 async def apply_family_override(db: AsyncSession, emergency_id: UUID, hospital_id: UUID) -> None:
-    from services.core.app.domain.reservations import create_hospital_request_with_hold
+    from app.domain.reservations import create_hospital_request_with_hold
     # Create request with is_family_choice=True
     # Assuming mocked dependencies
     await create_hospital_request_with_hold(
@@ -83,7 +83,55 @@ async def handle_unknown_patient_merge(db: AsyncSession, temp_id: str, phone: st
     
     if temp_pat:
         # Merge logic, audit
-        from services.core.app.domain.audit import write as audit_write
+        from app.domain.audit import write as audit_write
         await audit_write(db, "patient", temp_pat.id, merged_by, "merge", {"old_id": temp_id, "new_phone": phone})
         temp_pat.phone = phone
         temp_pat.is_unknown = False
+
+
+# ---------------------------------------------------------------------------
+# Aliases used by api/v1/clinical.py router
+# ---------------------------------------------------------------------------
+
+async def confirm_triage(
+    db: AsyncSession,
+    emergency_id: UUID,
+    acuity: str,
+    facility: str,
+    patient_count: int,
+    version: int,
+    actor_id: UUID,
+) -> dict:
+    """Confirm triage and trigger hospital selection."""
+    await handle_triage_change(db, emergency_id, acuity, facility, ml_client=None, redis_client=None)
+    return {"acuity": acuity, "facility": facility, "patient_count": patient_count}
+
+
+async def trigger_critical_deterioration(
+    db: AsyncSession,
+    emergency_id: UUID,
+    actor_id: UUID,
+) -> None:
+    """One-tap critical deterioration handler."""
+    await handle_deterioration(db, emergency_id, ml_client=None, redis_client=None)
+
+
+async def execute_family_override(
+    db: AsyncSession,
+    emergency_id: UUID,
+    hospital_id: UUID,
+    actor_id: UUID,
+) -> None:
+    """Execute a family-chosen hospital override."""
+    await apply_family_override(db, emergency_id, hospital_id)
+
+
+async def record_refused_transport(
+    db: AsyncSession,
+    emergency_id: UUID,
+    note: str | None,
+    actor_id: UUID,
+) -> None:
+    """Record that patient refused transport."""
+    await handle_refused_transport(db, emergency_id, note or "")
+

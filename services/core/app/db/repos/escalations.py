@@ -2,7 +2,7 @@ from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
-from services.core.app.db.models import Escalation # type: ignore
+from app.db.models import Escalation # type: ignore
 
 class AlreadyTaken(Exception):
     pass

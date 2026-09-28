@@ -25,6 +25,10 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from testcontainers.postgres import PostgresContainer
 
+# Network-aware wrapper: attaches the temporary Postgres to infra_default so
+# the core container can reach it. Falls back to standard behaviour on the host.
+from tests.conftest import network_aware_postgres, execute_script
+
 
 _POSTGIS_IMAGE = "postgis/postgis:16-3.4"
 _PARALLEL_ACCEPTS = 4
@@ -186,16 +190,19 @@ async def accept_offer(
 # Fixture
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest_asyncio.fixture(scope="module")
+@pytest_asyncio.fixture()
 async def t2_engine():
-    """Module-scoped PostGIS container."""
-    with PostgresContainer(
-        _POSTGIS_IMAGE, username="gh", password="gh", dbname="gh_t2_test"
-    ) as pg:
-        url = pg.get_connection_url().replace("psycopg2", "asyncpg")
+    """Module-scoped PostGIS container.
+
+    Uses network_aware_postgres so the container is reachable from inside the
+    core Docker container (avoids the 172.17.0.1 host-bridge dead-end).
+    """
+    with network_aware_postgres(
+        image=_POSTGIS_IMAGE, username="gh", password="gh", dbname="gh_t2_test"
+    ) as url:
         engine = create_async_engine(url, echo=False, pool_size=20, max_overflow=10)
         async with engine.begin() as conn:
-            await conn.execute(text(_SCHEMA_SQL))
+            await execute_script(conn, _SCHEMA_SQL)
         yield engine
         await engine.dispose()
 

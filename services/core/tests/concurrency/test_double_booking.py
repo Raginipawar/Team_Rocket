@@ -25,6 +25,11 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from testcontainers.postgres import PostgresContainer
 
+# Network-aware wrapper: when running inside Docker, attaches the temporary
+# Postgres to infra_default so the core container can reach it (avoids the
+# 172.17.0.1 routing dead-end). Falls back to standard behaviour on the host.
+from tests.conftest import network_aware_postgres, execute_script
+
 
 _POSTGIS_IMAGE = "postgis/postgis:16-3.4"
 _CONCURRENCY = 50
@@ -201,16 +206,21 @@ async def attempt_hold(
 # Fixtures
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest_asyncio.fixture(scope="module")
+@pytest_asyncio.fixture()
 async def t1_engine():
-    """Module-scoped PostGIS container — shared across T1 test cases."""
-    with PostgresContainer(
-        _POSTGIS_IMAGE, username="gh", password="gh", dbname="gh_t1_test"
-    ) as pg:
-        url = pg.get_connection_url().replace("psycopg2", "asyncpg")
+    """Module-scoped PostGIS container — shared across T1 test cases.
+
+    Uses network_aware_postgres so the temporary DB container is placed on
+    infra_default (the same network as the core container).  This prevents
+    the ConnectionRefusedError that occurs when testcontainers maps a port
+    to 172.17.0.1 but the test process is isolated inside core's network.
+    """
+    with network_aware_postgres(
+        image=_POSTGIS_IMAGE, username="gh", password="gh", dbname="gh_t1_test"
+    ) as url:
         engine = create_async_engine(url, echo=False, pool_size=60, max_overflow=20)
         async with engine.begin() as conn:
-            await conn.execute(text(_SCHEMA_SQL))
+            await execute_script(conn, _SCHEMA_SQL)
         yield engine
         await engine.dispose()
 

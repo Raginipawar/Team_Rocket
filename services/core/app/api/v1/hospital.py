@@ -155,7 +155,7 @@ async def update_room(
         # walk in override logic
         await walk_in_override(db, room_id=room_id, hospital_id=user.hospital_id, reason=payload.override_reason, version=payload.version, actor_id=user.id)
     else:
-        await patch_room(db, room_id=room_id, hospital_id=user.hospital_id, status=payload.status, version=payload.version)
+        await patch_room(db, room_id=room_id, status=payload.status, version=payload.version, override_reason=None)
     return {"status": "updated"}
 
 @router.patch("/resources/{resource_id}")
@@ -165,7 +165,7 @@ async def update_resource(
     user = Depends(require_role('hospital_staff')),
     db: AsyncSession = Depends(get_db)
 ):
-    await patch_resource(db, resource_id=resource_id, hospital_id=user.hospital_id, available=payload.available, total=payload.total, version=payload.version)
+    await patch_resource(db, resource_id=resource_id, available=payload.available, total=payload.total, version=payload.version)
     return {"status": "updated"}
 
 @router.post("/availability/confirm")
@@ -173,7 +173,7 @@ async def confirm_availability(
     user = Depends(require_role('hospital_staff')),
     db: AsyncSession = Depends(get_db)
 ):
-    await update_last_confirmed(db, hospital_id=user.hospital_id, timestamp=datetime.now(timezone.utc))
+    await update_last_confirmed(db, hospital_id=user.hospital_id)
     return {"status": "confirmed"}
 
 @router.post("/handoffs/{emergency_id}/received")
