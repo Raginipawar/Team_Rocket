@@ -1,0 +1,91 @@
+{
+  "facility": "respiratory",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "r_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "r_conscious_en.wav",
+        "hi": "r_conscious_hi.wav",
+        "mr": "r_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "r_breathing",
+      "field": "breathing",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient breathing normally, with difficulty, or not at all?",
+        "hi": "क्या मरीज़ सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा है?",
+        "mr": "रुग्ण नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"
+      },
+      "audio": {
+        "en": "r_breathing_en.wav",
+        "hi": "r_breathing_hi.wav",
+        "mr": "r_breathing_mr.wav"
+      },
+      "choices": [
+        "normal",
+        "difficult",
+        "absent"
+      ]
+    },
+    {
+      "id": "r_lips_blue",
+      "field": "lips_or_face_blue",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Are the lips or face turning blue?",
+        "hi": "क्या होंठ या चेहरा नीला पड़ रहा है?",
+        "mr": "ओठ किंवा चेहरा निळसर पडत आहे का?"
+      },
+      "audio": {
+        "en": "r_lips_blue_en.wav",
+        "hi": "r_lips_blue_hi.wav",
+        "mr": "r_lips_blue_mr.wav"
+      }
+    },
+    {
+      "id": "r_history",
+      "field": "asthma_or_copd_history",
+      "answer_type": "yes_no",
+      "priority": 2,
+      "text": {
+        "en": "Does the patient have asthma or a known breathing condition?",
+        "hi": "क्या मरीज़ को अस्थमा या सांस की जानी-पहचानी बीमारी है?",
+        "mr": "रुग्णाला दमा किंवा श्वसनाचा आजार आहे का?"
+      },
+      "audio": {
+        "en": "r_history_en.wav",
+        "hi": "r_history_hi.wav",
+        "mr": "r_history_mr.wav"
+      }
+    },
+    {
+      "id": "r_inhaler",
+      "field": "used_inhaler",
+      "answer_type": "yes_no",
+      "priority": 2,
+      "text": {
+        "en": "Has the patient used an inhaler already?",
+        "hi": "क्या मरीज़ ने पहले ही इन्हेलर इस्तेमाल किया है?",
+        "mr": "रुग्णाने आधीच इनहेलर वापरले आहे का?"
+      },
+      "audio": {
+        "en": "r_inhaler_en.wav",
+        "hi": "r_inhaler_hi.wav",
+        "mr": "r_inhaler_mr.wav"
+      }
+    }
+  ]
+}

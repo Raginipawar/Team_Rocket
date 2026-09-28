@@ -1,78 +1,30 @@
-import logging
+"""DRAFT -- real owner is Person B (work-distribution.md §2.2: app/main.py,
+config.py, deps.py, errors.py, skeleton with routers auto-included). B hasn't
+started, so this is the minimum needed to boot-test A's own routers
+end-to-end against the real DB. Replace freely; the individual routers in
+app/api/v1/** are what matters, not this file."""
+
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.errors import install_error_handlers
-from app.db.engine import engine
-from sqlalchemy import text
-import redis.asyncio as redis
-from app.config import settings
-import httpx
 
-logger = logging.getLogger(__name__)
+from app.api.v1 import ambulance, analytics, auth, emergencies, me, offers, webhooks_sms
+from app.realtime.ws import router as ws_router
+from app.security.middleware import CorrelationIdMiddleware, IdempotencyMiddleware
 
-app = FastAPI(title="GoldenHour Core API")
+app = FastAPI(title="GoldenHour Core (draft)", version="0.1.0")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.add_middleware(IdempotencyMiddleware)
+app.add_middleware(CorrelationIdMiddleware)
 
-install_error_handlers(app)
+app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
+app.include_router(emergencies.router, prefix="/api/v1", tags=["emergencies"])
+app.include_router(offers.router, prefix="/api/v1/ambulance", tags=["dispatch"])
+app.include_router(ambulance.router, prefix="/api/v1/ambulance", tags=["ambulance"])
+app.include_router(analytics.router, prefix="/api/v1", tags=["analytics"])
+app.include_router(me.router, prefix="/api/v1", tags=["me"])
+app.include_router(webhooks_sms.router, prefix="/api/v1", tags=["webhooks"])
+app.include_router(ws_router, tags=["realtime"])
 
-# Include API v1 routers
-from app.api.v1.hospital import router as hospital_router
-from app.api.v1.clinical import router as clinical_router
-from app.api.v1.ops import router as ops_router
-from app.api.v1.health import router as health_router
-from app.api.v1.webhooks_telegram import router as telegram_router
 
-app.include_router(hospital_router, prefix="/api/v1")
-app.include_router(clinical_router, prefix="/api/v1")
-app.include_router(ops_router, prefix="/api/v1")
-app.include_router(health_router, prefix="/api/v1")
-app.include_router(telegram_router, prefix="/api/v1")
-
-@app.on_event("startup")
-async def startup_event():
-    logger.info("GoldenHour Core ready")
-
-@app.get("/healthz")
-async def healthz():
+@app.get("/api/v1/health")
+async def health() -> dict:
     return {"status": "ok"}
-
-@app.get("/readyz")
-async def readyz():
-    status = {"db": "ok", "redis": "ok", "ml": "ok", "osrm": "ok"}
-    try:
-        async with engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
-    except Exception:
-        status["db"] = "error"
-        
-    try:
-        r = redis.from_url(settings.REDIS_URL)
-        await r.ping()
-        await r.close()
-    except Exception:
-        status["redis"] = "error"
-        
-    try:
-        async with httpx.AsyncClient(timeout=1.0) as client:
-            res = await client.get(f"{settings.ML_BASE_URL}/health")
-            if res.status_code != 200:
-                status["ml"] = "error"
-    except Exception:
-        status["ml"] = "error"
-        
-    try:
-        async with httpx.AsyncClient(timeout=1.0) as client:
-            res = await client.get(f"{settings.OSRM_URL}/health")
-            if res.status_code != 200:
-                status["osrm"] = "error"
-    except Exception:
-        status["osrm"] = "error"
-        
-    return {"status": status}

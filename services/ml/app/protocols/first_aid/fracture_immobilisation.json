@@ -1,0 +1,55 @@
+{
+  "protocol_id": "fracture_immobilisation",
+  "title": {
+    "en": "Suspected fracture -- immobilisation",
+    "hi": "फ्रैक्चर की आशंका -- स्थिर रखना",
+    "mr": "फ्रॅक्चरची शंका -- स्थिर ठेवणे"
+  },
+  "steps": {
+    "en": [
+      "Do not move the injured limb unless absolutely necessary.",
+      "Support the joints above and below the injury with your hands or padding.",
+      "If available, splint the limb in the position found using a rigid object and soft padding, tied not too tight.",
+      "Apply a cold pack wrapped in cloth to reduce swelling.",
+      "Keep checking that fingers/toes beyond the injury stay warm and pink (circulation)."
+    ],
+    "hi": [
+      "बिल्कुल ज़रूरी न हो तो घायल अंग को न हिलाएं।",
+      "चोट के ऊपर और नीचे के जोड़ों को अपने हाथों या पैडिंग से सहारा दें।",
+      "अगर उपलब्ध हो, तो अंग को उसी स्थिति में सख्त चीज़ और नरम पैडिंग से बांधें, ज़्यादा कसकर नहीं।",
+      "सूजन कम करने के लिए कपड़े में लपेटा हुआ ठंडा पैक लगाएं।",
+      "जांचते रहें कि चोट से आगे की उंगलियां गर्म और गुलाबी रहें (रक्त संचार)।"
+    ],
+    "mr": [
+      "अत्यंत गरज नसल्यास जखमी अवयव हलवू नका.",
+      "इजेच्या वर आणि खालच्या सांध्यांना हाताने किंवा पॅडिंगने आधार द्या.",
+      "उपलब्ध असल्यास, अवयव त्याच स्थितीत कडक वस्तू आणि मऊ पॅडिंगने बांधा, जास्त घट्ट नको.",
+      "सूज कमी करण्यासाठी कापडात गुंडाळलेला थंड पॅक लावा.",
+      "इजेपलीकडची बोटे उबदार आणि गुलाबी राहतात का हे तपासत राहा (रक्तप्रवाह)."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not try to straighten a bent or deformed limb.",
+      "Do not let the person put weight on it."
+    ],
+    "hi": [
+      "मुड़े या विकृत अंग को सीधा करने की कोशिश न करें।",
+      "व्यक्ति को उस पर वज़न न डालने दें।"
+    ],
+    "mr": [
+      "वाकलेला किंवा विकृत अवयव सरळ करण्याचा प्रयत्न करू नका.",
+      "व्यक्तीला त्यावर वजन टाकू देऊ नका."
+    ]
+  },
+  "audio": {
+    "en": "fracture_immobilisation_en.wav",
+    "hi": "fracture_immobilisation_hi.wav",
+    "mr": "fracture_immobilisation_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "facility": "trauma"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "protocol_id": "chest_pain_wait",
+  "title": {
+    "en": "Chest pain -- what to do while waiting",
+    "hi": "सीने में दर्द -- इंतज़ार करते समय क्या करें",
+    "mr": "छातीत दुखणे -- वाट पाहताना काय करावे"
+  },
+  "steps": {
+    "en": [
+      "Help the person sit down in a comfortable, half-sitting position and stay calm.",
+      "Loosen tight clothing around the neck and chest.",
+      "If they have their own prescribed heart medicine (e.g. sorbitrate), help them take it as prescribed.",
+      "Do not let them exert themselves -- no walking to the ambulance.",
+      "If they become unresponsive and stop breathing normally, start hands-only CPR."
+    ],
+    "hi": [
+      "व्यक्ति को आराम से आधे बैठने की स्थिति में बिठाएं और शांत रहें।",
+      "गले और छाती के आसपास तंग कपड़े ढीले करें।",
+      "अगर उनकी अपनी बताई हुई दिल की दवा (जैसे सॉर्बिट्रेट) है, तो निर्देशानुसार लेने में मदद करें।",
+      "उन्हें मेहनत न करने दें -- एम्बुलेंस तक चलकर न जाएं।",
+      "अगर वे बेहोश हो जाएं और सामान्य रूप से सांस लेना बंद कर दें, तो हैंड्स-ओनली सीपीआर शुरू करें।"
+    ],
+    "mr": [
+      "व्यक्तीला आरामात अर्धवट बसण्याच्या स्थितीत बसवा आणि शांत राहा.",
+      "गळा आणि छातीभोवतीचे घट्ट कपडे सैल करा.",
+      "त्यांचे स्वतःचे सांगितलेले हृदयाचे औषध (उदा. सॉर्बिट्रेट) असल्यास, सांगितल्याप्रमाणे घ्यायला मदत करा.",
+      "त्यांना श्रम करू देऊ नका -- रुग्णवाहिकेपर्यंत चालत जाऊ नका.",
+      "ते बेशुद्ध झाले आणि सामान्यपणे श्वास घेणे थांबले, तर हँड्स-ओन्ली सीपीआर सुरू करा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not give aspirin unless a doctor has told them to take it before.",
+      "Do not leave them alone."
+    ],
+    "hi": [
+      "डॉक्टर ने पहले न बताया हो तो एस्पिरिन न दें।",
+      "उन्हें अकेला न छोड़ें।"
+    ],
+    "mr": [
+      "डॉक्टरांनी आधी सांगितले नसेल तर अ‍ॅस्पिरिन देऊ नका.",
+      "त्यांना एकटे सोडू नका."
+    ]
+  },
+  "audio": {
+    "en": "chest_pain_wait_en.wav",
+    "hi": "chest_pain_wait_hi.wav",
+    "mr": "chest_pain_wait_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "facility": "cardiac"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "protocol_id": "severe_bleeding",
+  "title": {
+    "en": "Severe bleeding",
+    "hi": "गंभीर रक्तस्राव",
+    "mr": "तीव्र रक्तस्त्राव"
+  },
+  "steps": {
+    "en": [
+      "Press down firmly and directly on the wound with a clean cloth or your hand.",
+      "Keep pressing without lifting to check -- maintain constant pressure.",
+      "If blood soaks through, add more cloth on top; do not remove the first layer.",
+      "Raise the injured area above heart level if possible, without stopping pressure.",
+      "If bleeding is from a limb and not controlled, apply a tourniquet above the wound only as a last resort, noting the time applied."
+    ],
+    "hi": [
+      "घाव पर एक साफ कपड़े या अपने हाथ से सीधे और मज़बूती से दबाएं।",
+      "जांचने के लिए हाथ न उठाएं -- लगातार दबाव बनाए रखें।",
+      "अगर खून कपड़े से रिस जाए, तो ऊपर और कपड़ा डालें; पहली परत न हटाएं।",
+      "अगर संभव हो, तो घायल हिस्से को दिल के स्तर से ऊपर उठाएं, दबाव रोके बिना।",
+      "अगर हाथ या पैर से खून बहना न रुके, तो आखिरी उपाय के तौर पर घाव के ऊपर टूर्निकेट लगाएं और समय नोट करें।"
+    ],
+    "mr": [
+      "जखमेवर स्वच्छ कापड किंवा हाताने थेट आणि घट्ट दाब द्या.",
+      "तपासण्यासाठी हात उचलू नका -- सतत दाब ठेवा.",
+      "रक्त कापडातून झिरपल्यास, वर अजून कापड ठेवा; पहिला थर काढू नका.",
+      "शक्य असल्यास, जखमी भाग हृदयाच्या पातळीपेक्षा वर उचला, दाब न थांबवता.",
+      "हात किंवा पायातून रक्तस्त्राव थांबत नसेल, तर शेवटचा उपाय म्हणून जखमेच्या वर टूर्निकेट लावा आणि वेळ नोंदवा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not remove any object embedded in the wound -- pad around it instead.",
+      "Do not keep checking under the cloth -- it restarts bleeding."
+    ],
+    "hi": [
+      "घाव में फंसी किसी चीज़ को न निकालें -- उसके चारों ओर पैड लगाएं।",
+      "कपड़े के नीचे बार-बार न देखें -- इससे खून फिर से बहने लगता है।"
+    ],
+    "mr": [
+      "जखमेत अडकलेली कोणतीही वस्तू काढू नका -- त्याभोवती पॅड लावा.",
+      "कापडाखाली वारंवार तपासू नका -- यामुळे रक्तस्त्राव पुन्हा सुरू होतो."
+    ]
+  },
+  "audio": {
+    "en": "severe_bleeding_en.wav",
+    "hi": "severe_bleeding_hi.wav",
+    "mr": "severe_bleeding_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "bleeding": "severe"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "facility": "burns",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "b_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "b_conscious_en.wav",
+        "hi": "b_conscious_hi.wav",
+        "mr": "b_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "b_breathing",
+      "field": "breathing",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient breathing normally, with difficulty, or not at all?",
+        "hi": "क्या मरीज़ सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा है?",
+        "mr": "रुग्ण नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"
+      },
+      "audio": {
+        "en": "b_breathing_en.wav",
+        "hi": "b_breathing_hi.wav",
+        "mr": "b_breathing_mr.wav"
+      },
+      "choices": [
+        "normal",
+        "difficult",
+        "absent"
+      ]
+    },
+    {
+      "id": "b_cause",
+      "field": "burn_cause",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "What caused the burn: fire, hot liquid, chemical, or electrical?",
+        "hi": "जलन किस कारण से हुई: आग, गरम तरल, रसायन, या बिजली?",
+        "mr": "भाजणे कशामुळे झाले: आग, गरम द्रव, रसायन, की वीज?"
+      },
+      "audio": {
+        "en": "b_cause_en.wav",
+        "hi": "b_cause_hi.wav",
+        "mr": "b_cause_mr.wav"
+      },
+      "choices": [
+        "fire",
+        "hot_liquid",
+        "chemical",
+        "electrical"
+      ]
+    },
+    {
+      "id": "b_area",
+      "field": "burn_area_size",
+      "answer_type": "choice",
+      "priority": 2,
+      "text": {
+        "en": "How large is the burned area: small, medium, or large?",
+        "hi": "जली हुई जगह कितनी बड़ी है: छोटी, मध्यम, या बड़ी?",
+        "mr": "भाजलेली जागा किती मोठी आहे: लहान, मध्यम, की मोठी?"
+      },
+      "audio": {
+        "en": "b_area_en.wav",
+        "hi": "b_area_hi.wav",
+        "mr": "b_area_mr.wav"
+      },
+      "choices": [
+        "small",
+        "medium",
+        "large"
+      ]
+    },
+    {
+      "id": "b_face_airway",
+      "field": "face_or_airway_burn",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the face, mouth, or throat burned?",
+        "hi": "क्या चेहरा, मुंह, या गला जला है?",
+        "mr": "चेहरा, तोंड, किंवा घसा भाजला आहे का?"
+      },
+      "audio": {
+        "en": "b_face_airway_en.wav",
+        "hi": "b_face_airway_hi.wav",
+        "mr": "b_face_airway_mr.wav"
+      }
+    }
+  ]
+}
