@@ -9,6 +9,7 @@ import asyncio
 import logging
 import math
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repos import ambulances as ambulances_repo
@@ -48,17 +49,23 @@ async def start_dispatch(session: AsyncSession, *, emergency_id, priority: bool 
         asyncio.create_task(_continue_rounds(str(emergency_id), next_round=2))
 
 
-async def run_dispatch_round(session: AsyncSession, emergency_id: str, round_num: int) -> str:
+async def run_dispatch_round(
+    session: AsyncSession, emergency_id: str, round_num: int, *,
+    origin_override: tuple[float, float] | None = None,
+    extra_excluded_ambulance_ids: list[str] | None = None,
+) -> str:
     emergency = await emergencies_repo.get_emergency(session, emergency_id)
-    if emergency is None or emergency.get("lat") is None:
+    if emergency is None or (emergency.get("lat") is None and origin_override is None):
         logger.warning("dispatch round %s: emergency %s has no location, skipping", round_num, emergency_id)
         return "no_location"
 
+    origin_lat, origin_lng = origin_override or (emergency["lat"], emergency["lng"])
     radius_km = DISPATCH_RADII_KM[round_num - 1]
     exclude_ids = await dispatch_repo.already_offered_ambulance_ids(session, emergency_id)
+    exclude_ids = list(set(exclude_ids) | set(extra_excluded_ambulance_ids or []))
 
     candidates = await ambulances_repo.find_candidates(
-        session, lat=emergency["lat"], lng=emergency["lng"], radius_km=radius_km,
+        session, lat=origin_lat, lng=origin_lng, radius_km=radius_km,
         required_type=emergency.get("required_ambulance_type") or "BLS",
         exclude_ambulance_ids=exclude_ids,
     )
@@ -76,7 +83,7 @@ async def run_dispatch_round(session: AsyncSession, emergency_id: str, round_num
         for c in candidates
     ]
     ranked = await ml_dispatch.dispatch_rank(
-        {"location": {"lat": emergency["lat"], "lng": emergency["lng"]},
+        {"location": {"lat": origin_lat, "lng": origin_lng},
          "acuity": emergency.get("ai_acuity"), "required_type": emergency.get("required_ambulance_type")},
         ranking_input,
     )
@@ -100,14 +107,19 @@ async def run_dispatch_round(session: AsyncSession, emergency_id: str, round_num
     return "offers_created"
 
 
-async def _continue_rounds(emergency_id: str, next_round: int) -> None:
+async def _continue_rounds(
+    emergency_id: str, next_round: int, *,
+    origin_override: tuple[float, float] | None = None,
+    extra_excluded_ambulance_ids: list[str] | None = None,
+) -> None:
     for round_num in range(next_round, NO_AMBULANCE_ESCALATE_AFTER_ROUND + 1):
         await asyncio.sleep(DISPATCH_ROUND_INTERVAL_SEC)
         async with get_session() as session:
             emergency = await emergencies_repo.get_emergency(session, emergency_id)
             if emergency is None or emergency["status"] != "dispatching":
                 return  # already assigned, cancelled, or otherwise moved on
-            await run_dispatch_round(session, emergency_id, round_num)
+            await run_dispatch_round(session, emergency_id, round_num, origin_override=origin_override,
+                                      extra_excluded_ambulance_ids=extra_excluded_ambulance_ids)
             await session.commit()
 
     async with get_session() as session:
@@ -120,6 +132,75 @@ async def _continue_rounds(emergency_id: str, next_round: int) -> None:
             await session.commit()
 
 
-async def redispatch_to_point(session: AsyncSession, *, emergency_id, lat: float, lng: float, reason: str) -> None:
-    logger.info("redispatch_to_point (stub -- breakdown handling not built yet) emergency_id=%s lat=%s lng=%s reason=%s",
-                emergency_id, lat, lng, reason)
+async def handle_vehicle_issue(session: AsyncSession, *, ambulance_id: str) -> None:
+    """technical.md §11.11: POST /ambulance/vehicle-issue -> ambulance
+    out_of_service. If patient not on board, the emergency goes back to
+    dispatching as priority. If on board, redispatch to the ambulance's own
+    current location (its last known heartbeat), not the original scene."""
+    ambulance = await ambulances_repo.get_ambulance(session, ambulance_id)
+    if ambulance is None:
+        return
+
+    await session.execute(
+        text("UPDATE ambulances SET status='out_of_service', version=version+1 WHERE id=:id"),
+        {"id": ambulance_id},
+    )
+    await audit.write(session, actor_type="user", actor_id=ambulance_id, entity="ambulances",
+                       entity_id=ambulance_id, action="vehicle_issue", before=None, after={"status": "out_of_service"})
+
+    emergency_id = ambulance.get("active_emergency_id")
+    if emergency_id is None:
+        return
+    emergency_id = str(emergency_id)
+    emergency = await emergencies_repo.get_emergency(session, emergency_id)
+    if emergency is None:
+        return
+
+    if emergency["status"] == "patient_on_board":
+        loc = (await session.execute(
+            text("SELECT ST_Y(current_location::geometry) AS lat, ST_X(current_location::geometry) AS lng "
+                 "FROM ambulances WHERE id = :id"),
+            {"id": ambulance_id},
+        )).mappings().first()
+        if loc and loc["lat"] is not None:
+            await redispatch_to_point(session, emergency_id=emergency_id, lat=loc["lat"], lng=loc["lng"],
+                                       reason="vehicle_breakdown", broken_ambulance_id=ambulance_id)
+    elif emergency["status"] in ("ambulance_assigned", "at_scene"):
+        await session.execute(
+            text("UPDATE emergencies SET status='dispatching', ambulance_id=NULL, version=version+1 WHERE id=:id"),
+            {"id": emergency_id},
+        )
+        await outbox.emit(session, channel=f"emergency:{emergency_id}", event="alert", data={
+            "kind": "breakdown", "message": "Assigned ambulance broke down; re-dispatching.",
+        })
+        await start_dispatch(session, emergency_id=emergency_id, priority=True, reason="breakdown")
+
+
+async def redispatch_to_point(
+    session: AsyncSession, *, emergency_id, lat: float, lng: float, reason: str,
+    broken_ambulance_id: str | None = None,
+) -> None:
+    """technical.md §11.11: breakdown with patient already on board -- new
+    dispatch is targeted at the broken-down ambulance's current location
+    (not the original scene), so the replacement ambulance picks the patient
+    up from where the old one actually stopped."""
+    emergency_id = str(emergency_id)
+    await session.execute(
+        text("UPDATE emergencies SET status='dispatching', ambulance_id=NULL, version=version+1 WHERE id=:id"),
+        {"id": emergency_id},
+    )
+    await audit.write(
+        session, actor_type="system", actor_id="breakdown", entity="emergencies", entity_id=emergency_id,
+        action="redispatch_to_point", before=None, after={"lat": lat, "lng": lng, "reason": reason},
+    )
+    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="reroute", data={
+        "from_hospital": None, "to_hospital": None, "reason": reason,
+    })
+
+    exclude = [broken_ambulance_id] if broken_ambulance_id else []
+    round_result = await run_dispatch_round(
+        session, emergency_id, round_num=1, origin_override=(lat, lng), extra_excluded_ambulance_ids=exclude,
+    )
+    if round_result in ("offers_created", "no_candidates"):
+        asyncio.create_task(_continue_rounds(emergency_id, next_round=2, origin_override=(lat, lng),
+                                              extra_excluded_ambulance_ids=exclude))

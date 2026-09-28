@@ -1,0 +1,1402 @@
+[
+  {
+    "text_a": "सड़क दुर्घटना हुई है, दो लोग घायल हैं, एक बेहोश है",
+    "text_b": "रस्ता अपघात झाला आहे, दोन जण जखमी, एक बेशुद्ध",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85945662130338
+    },
+    "time_gap_sec": 849.195195206833,
+    "label": 1
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "Woman fainted after a wasp sting, swelling on the arm",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.88747399770841
+    },
+    "time_gap_sec": 413.891502869833,
+    "label": 0
+  },
+  {
+    "text_a": "मोटरसाइकिल फिसल गई, चालक के सिर से खून बह रहा है",
+    "text_b": "मोटारसायकल घसरली, चालकाच्या डोक्यातून रक्त वाहत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85734912986992
+    },
+    "time_gap_sec": 71.29034481824004,
+    "label": 1
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "मोटरसाइकिल फिसल गई, चालक के सिर से खून बह रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8589399539437
+    },
+    "time_gap_sec": 750.771969045911,
+    "label": 1
+  },
+  {
+    "text_a": "Woman in labour, contractions close together",
+    "text_b": "Woman went into shock after seeing a robbery",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.9104257696421
+    },
+    "time_gap_sec": 853.7444706428605,
+    "label": 0
+  },
+  {
+    "text_a": "Worker fell from scaffolding at construction site",
+    "text_b": "एक मजदूर निर्माण स्थल पर मचान से गिर गया",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85820607346714
+    },
+    "time_gap_sec": 711.1101489245673,
+    "label": 1
+  },
+  {
+    "text_a": "Woman in labour, contractions close together",
+    "text_b": "Child swallowed something and is choking",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8577316723875
+    },
+    "time_gap_sec": 332.5338083289634,
+    "label": 0
+  },
+  {
+    "text_a": "Snake bite victim, leg swelling fast",
+    "text_b": "Child swallowed something and is choking",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85986879978641
+    },
+    "time_gap_sec": 611.4914907891338,
+    "label": 0
+  },
+  {
+    "text_a": "Mother having trouble breathing",
+    "text_b": "आईला श्वास घ्यायला त्रास होत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.88185769499363
+    },
+    "time_gap_sec": 1167.6992072388111,
+    "label": 0
+  },
+  {
+    "text_a": "Road accident, two people injured, one unconscious",
+    "text_b": "सड़क दुर्घटना हुई है, दो लोग घायल हैं, एक बेहोश है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85756120591542
+    },
+    "time_gap_sec": 315.84667744213874,
+    "label": 1
+  },
+  {
+    "text_a": "Cyclist hit by a car, leg possibly broken",
+    "text_b": "A cyclist was hit by a car, leg might be broken",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86094392540451
+    },
+    "time_gap_sec": 732.7734589170949,
+    "label": 1
+  },
+  {
+    "text_a": "Someone got burned by hot water in the kitchen",
+    "text_b": "एक माणूस स्वयंपाकघरात उकळत्या पाण्याने भाजला",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85867149410299
+    },
+    "time_gap_sec": 110.07727152798212,
+    "label": 1
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "Woman in labour, contractions close together",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85811451687964
+    },
+    "time_gap_sec": 396.4695756641908,
+    "label": 0
+  },
+  {
+    "text_a": "Mother having trouble breathing",
+    "text_b": "Person collapsed, not breathing normally",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85688971664479
+    },
+    "time_gap_sec": 761.7687468422677,
+    "label": 0
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "Bike accident, rider is bleeding from the head",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86040373202961
+    },
+    "time_gap_sec": 132.52599315625528,
+    "label": 1
+  },
+  {
+    "text_a": "Child has fever and is vomiting",
+    "text_b": "My kid has a high fever and keeps vomiting",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85948798051594
+    },
+    "time_gap_sec": 781.6656962928728,
+    "label": 1
+  },
+  {
+    "text_a": "दादी भ्रमित हैं और उनकी बोली लड़खड़ा रही है",
+    "text_b": "आजी गोंधळलेली आहे आणि तिचे बोलणे अस्पष्ट आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85969705146547
+    },
+    "time_gap_sec": 608.2940717310662,
+    "label": 1
+  },
+  {
+    "text_a": "Snake bite victim, leg swelling fast",
+    "text_b": "एक व्यक्ति को सांप ने काट लिया है, पैर तेज़ी से सूज रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.90819804649853
+    },
+    "time_gap_sec": 1160.174883034456,
+    "label": 0
+  },
+  {
+    "text_a": "Man burned by boiling water in the kitchen",
+    "text_b": "एक माणूस स्वयंपाकघरात उकळत्या पाण्याने भाजला",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.9266202497169
+    },
+    "time_gap_sec": 636.5427147299813,
+    "label": 0
+  },
+  {
+    "text_a": "A construction worker fell from the scaffolding",
+    "text_b": "एक कामगार बांधकाम साइटवर मचाणावरून पडला",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86088781019524
+    },
+    "time_gap_sec": 90.1057320441206,
+    "label": 1
+  },
+  {
+    "text_a": "Grandmother is confused and her speech is slurred",
+    "text_b": "आजी गोंधळलेली आहे आणि तिचे बोलणे अस्पष्ट आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85796141825206
+    },
+    "time_gap_sec": 360.12624172590756,
+    "label": 1
+  },
+  {
+    "text_a": "Man burned by boiling water in the kitchen",
+    "text_b": "Road accident, two people injured, one unconscious",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85950988488146
+    },
+    "time_gap_sec": 223.66985383890233,
+    "label": 0
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "Woman went into shock after seeing a robbery",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.89329547239086
+    },
+    "time_gap_sec": 482.42905442566786,
+    "label": 0
+  },
+  {
+    "text_a": "Worker fell from scaffolding at construction site",
+    "text_b": "Father having severe chest pain, sweating a lot",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86065202418268
+    },
+    "time_gap_sec": 636.2890265729014,
+    "label": 0
+  },
+  {
+    "text_a": "A person was bitten by a snake, leg is swelling quickly",
+    "text_b": "एका व्यक्तीला सापाने चावा घेतला आहे, पाय वेगाने सुजत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85750780957522
+    },
+    "time_gap_sec": 173.30942378662218,
+    "label": 1
+  },
+  {
+    "text_a": "Father having severe chest pain, sweating a lot",
+    "text_b": "पिताजी को सीने में तेज़ दर्द है और बहुत पसीना आ रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86094772057315
+    },
+    "time_gap_sec": 853.2261474486724,
+    "label": 1
+  },
+  {
+    "text_a": "Old man fell down stairs, cannot move his leg",
+    "text_b": "Woman went into shock after seeing a robbery",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.91123522087257
+    },
+    "time_gap_sec": 262.07082176208365,
+    "label": 0
+  },
+  {
+    "text_a": "Woman in labour, contractions close together",
+    "text_b": "A pregnant woman is in labour, contractions are close",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85954678879556
+    },
+    "time_gap_sec": 414.27040744257454,
+    "label": 1
+  },
+  {
+    "text_a": "Father having severe chest pain, sweating a lot",
+    "text_b": "पिताजी को सीने में तेज़ दर्द है और बहुत पसीना आ रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.93114666851629
+    },
+    "time_gap_sec": 1069.381730458854,
+    "label": 0
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "Cyclist hit by a car, leg possibly broken",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85711332164472
+    },
+    "time_gap_sec": 99.68257499441307,
+    "label": 0
+  },
+  {
+    "text_a": "Worker fell from scaffolding at construction site",
+    "text_b": "एक मजदूर निर्माण स्थल पर मचान से गिर गया",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.87833894232601
+    },
+    "time_gap_sec": 727.667875407487,
+    "label": 0
+  },
+  {
+    "text_a": "Woman in labour, contractions close together",
+    "text_b": "गरोदर स्त्री प्रसूतीत आहे, कळा जवळजवळ येत आहेत",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.90439995649223
+    },
+    "time_gap_sec": 1046.0116264825924,
+    "label": 0
+  },
+  {
+    "text_a": "एक आदमी रसोई में उबलते पानी से जल गया",
+    "text_b": "एक माणूस स्वयंपाकघरात उकळत्या पाण्याने भाजला",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86090146342242
+    },
+    "time_gap_sec": 554.2400193759765,
+    "label": 1
+  },
+  {
+    "text_a": "Elderly woman confused and slurring speech",
+    "text_b": "Grandmother is confused and her speech is slurred",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85949453770733
+    },
+    "time_gap_sec": 476.92095831596276,
+    "label": 1
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "Someone collapsed and is having trouble breathing",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85850557215791
+    },
+    "time_gap_sec": 42.18577139954675,
+    "label": 1
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "इमारत में आग लगी है, दूसरी मंजिल पर कुछ लोग फंसे हैं",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.87831229991869
+    },
+    "time_gap_sec": 954.4873814501707,
+    "label": 0
+  },
+  {
+    "text_a": "Elderly woman confused and slurring speech",
+    "text_b": "आजी गोंधळलेली आहे आणि तिचे बोलणे अस्पष्ट आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.93574436187104
+    },
+    "time_gap_sec": 716.8832651949908,
+    "label": 0
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "एक व्यक्ति गिर गया है और ठीक से सांस नहीं ले पा रहा",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85788796390192
+    },
+    "time_gap_sec": 223.00239280234916,
+    "label": 1
+  },
+  {
+    "text_a": "Child swallowed something and is choking",
+    "text_b": "My child swallowed something and is choking",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8600390427881
+    },
+    "time_gap_sec": 468.4775467715772,
+    "label": 1
+  },
+  {
+    "text_a": "Father having severe chest pain, sweating a lot",
+    "text_b": "Man vomiting blood after a fight",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.90543368852026
+    },
+    "time_gap_sec": 586.843711161211,
+    "label": 0
+  },
+  {
+    "text_a": "A pregnant woman is in labour, contractions are close",
+    "text_b": "गरोदर स्त्री प्रसूतीत आहे, कळा जवळजवळ येत आहेत",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85876516604313
+    },
+    "time_gap_sec": 341.2506084184111,
+    "label": 1
+  },
+  {
+    "text_a": "एक बुजुर्ग सीढ़ियों से गिर गया और अपना पैर नहीं हिला पा रहा",
+    "text_b": "म्हातारा माणूस जिन्यावरून पडला आणि पाय हलवू शकत नाही",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85993453360254
+    },
+    "time_gap_sec": 685.1766536051474,
+    "label": 1
+  },
+  {
+    "text_a": "Old man fell down stairs, cannot move his leg",
+    "text_b": "एक बुजुर्ग सीढ़ियों से गिर गया और अपना पैर नहीं हिला पा रहा",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.92006878661921
+    },
+    "time_gap_sec": 702.0021959831373,
+    "label": 0
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "Old man fell down stairs, cannot move his leg",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85713413400813
+    },
+    "time_gap_sec": 99.70634106357139,
+    "label": 0
+  },
+  {
+    "text_a": "Cyclist hit by a car, leg possibly broken",
+    "text_b": "Snake bite victim, leg swelling fast",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86007136039885
+    },
+    "time_gap_sec": 393.9892724839998,
+    "label": 0
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "Man complaining of severe stomach pain since morning",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.90017603740321
+    },
+    "time_gap_sec": 442.6709417886779,
+    "label": 0
+  },
+  {
+    "text_a": "Father having severe chest pain, sweating a lot",
+    "text_b": "My dad is having bad chest pain and is sweating heavily",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85909362655431
+    },
+    "time_gap_sec": 54.11031363127076,
+    "label": 1
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "मोटारसायकल घसरली, चालकाच्या डोक्यातून रक्त वाहत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.91602456737749
+    },
+    "time_gap_sec": 810.2445072945018,
+    "label": 0
+  },
+  {
+    "text_a": "Road accident, two people injured, one unconscious",
+    "text_b": "सड़क दुर्घटना हुई है, दो लोग घायल हैं, एक बेहोश है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.90529061432072
+    },
+    "time_gap_sec": 707.1130310025442,
+    "label": 0
+  },
+  {
+    "text_a": "Motorcycle skidded, rider bleeding from head",
+    "text_b": "Old man fell down stairs, cannot move his leg",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85755361050171
+    },
+    "time_gap_sec": 492.0084447121751,
+    "label": 0
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "एक व्यक्ति गिर गया है और ठीक से सांस नहीं ले पा रहा",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.87794386199876
+    },
+    "time_gap_sec": 1079.6142070184208,
+    "label": 0
+  },
+  {
+    "text_a": "Child swallowed something and is choking",
+    "text_b": "Woman fainted after a wasp sting, swelling on the arm",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.87528240069736
+    },
+    "time_gap_sec": 478.7943459695651,
+    "label": 0
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "इमारत में आग लगी है, दूसरी मंजिल पर कुछ लोग फंसे हैं",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8600906381005
+    },
+    "time_gap_sec": 583.0021034390718,
+    "label": 1
+  },
+  {
+    "text_a": "Man burned by boiling water in the kitchen",
+    "text_b": "एक आदमी रसोई में उबलते पानी से जल गया",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85815058040383
+    },
+    "time_gap_sec": 872.7521173185464,
+    "label": 1
+  },
+  {
+    "text_a": "Bike accident, rider is bleeding from the head",
+    "text_b": "मोटारसायकल घसरली, चालकाच्या डोक्यातून रक्त वाहत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85735368023896
+    },
+    "time_gap_sec": 383.7668549531477,
+    "label": 1
+  },
+  {
+    "text_a": "एक साइकिल चालक कार से टकरा गया, पैर टूटा हो सकता है",
+    "text_b": "एक सायकलस्वार कारने धडकला, पाय मोडलेला असू शकतो",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86123148196093
+    },
+    "time_gap_sec": 432.4655535550907,
+    "label": 1
+  },
+  {
+    "text_a": "Father having severe chest pain, sweating a lot",
+    "text_b": "Man complaining of severe stomach pain since morning",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.89201929930692
+    },
+    "time_gap_sec": 549.383509325181,
+    "label": 0
+  },
+  {
+    "text_a": "Old man fell down stairs, cannot move his leg",
+    "text_b": "Elderly man fell down the stairs and cannot move his leg",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86035169717826
+    },
+    "time_gap_sec": 152.22654515463915,
+    "label": 1
+  },
+  {
+    "text_a": "My child swallowed something and is choking",
+    "text_b": "माझ्या मुलाने काहीतरी गिळले आहे आणि त्याचा गुदमरत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86090524037729
+    },
+    "time_gap_sec": 654.6174018121193,
+    "label": 1
+  },
+  {
+    "text_a": "Worker fell from scaffolding at construction site",
+    "text_b": "Man complaining of severe stomach pain since morning",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.89445280596989
+    },
+    "time_gap_sec": 360.78572083909125,
+    "label": 0
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "Woman went into shock after seeing a robbery",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.89440121545896
+    },
+    "time_gap_sec": 727.4179802923804,
+    "label": 0
+  },
+  {
+    "text_a": "Worker fell from scaffolding at construction site",
+    "text_b": "A construction worker fell from the scaffolding",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86045879008097
+    },
+    "time_gap_sec": 780.8264701969946,
+    "label": 1
+  },
+  {
+    "text_a": "Snake bite victim, leg swelling fast",
+    "text_b": "A person was bitten by a snake, leg is swelling quickly",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85803240419082
+    },
+    "time_gap_sec": 23.561434945005615,
+    "label": 1
+  },
+  {
+    "text_a": "My kid has a high fever and keeps vomiting",
+    "text_b": "मुलाला ताप आहे आणि उलटी होत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85977537924575
+    },
+    "time_gap_sec": 74.1556048082582,
+    "label": 1
+  },
+  {
+    "text_a": "Snake bite victim, leg swelling fast",
+    "text_b": "एक व्यक्ति को सांप ने काट लिया है, पैर तेज़ी से सूज रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85749668950479
+    },
+    "time_gap_sec": 239.46424820465722,
+    "label": 1
+  },
+  {
+    "text_a": "Elderly woman confused and slurring speech",
+    "text_b": "Building fire, people trapped on second floor",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85991257097149
+    },
+    "time_gap_sec": 86.12721943129648,
+    "label": 0
+  },
+  {
+    "text_a": "Father having severe chest pain, sweating a lot",
+    "text_b": "Child swallowed something and is choking",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8588555743399
+    },
+    "time_gap_sec": 783.2309693207987,
+    "label": 0
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "Mother having trouble breathing",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85818442434454
+    },
+    "time_gap_sec": 193.77834972308622,
+    "label": 0
+  },
+  {
+    "text_a": "Child has fever and is vomiting",
+    "text_b": "मुलाला ताप आहे आणि उलटी होत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.92496178676282
+    },
+    "time_gap_sec": 687.7045852463245,
+    "label": 0
+  },
+  {
+    "text_a": "My mother is having difficulty breathing",
+    "text_b": "आईला श्वास घ्यायला त्रास होत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86007892146618
+    },
+    "time_gap_sec": 232.363964328273,
+    "label": 1
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "Boy stuck his hand in a moving fan, bleeding badly",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.89224125606037
+    },
+    "time_gap_sec": 654.1848020385834,
+    "label": 0
+  },
+  {
+    "text_a": "मेरी मां को सांस लेने में तकलीफ हो रही है",
+    "text_b": "आईला श्वास घ्यायला त्रास होत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85827165859223
+    },
+    "time_gap_sec": 624.9069686580835,
+    "label": 1
+  },
+  {
+    "text_a": "एक गर्भवती महिला प्रसव पीड़ा में है, संकुचन करीब-करीब हो रहे हैं",
+    "text_b": "गरोदर स्त्री प्रसूतीत आहे, कळा जवळजवळ येत आहेत",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86054277924465
+    },
+    "time_gap_sec": 361.36964899540374,
+    "label": 1
+  },
+  {
+    "text_a": "My dad is having bad chest pain and is sweating heavily",
+    "text_b": "वडिलांना छातीत तीव्र वेदना होत आहेत आणि खूप घाम येत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85704645400476
+    },
+    "time_gap_sec": 20.202955254180267,
+    "label": 1
+  },
+  {
+    "text_a": "A cyclist was hit by a car, leg might be broken",
+    "text_b": "एक सायकलस्वार कारने धडकला, पाय मोडलेला असू शकतो",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85890703156512
+    },
+    "time_gap_sec": 498.01272095531255,
+    "label": 1
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "Worker fell from scaffolding at construction site",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85783042667555
+    },
+    "time_gap_sec": 666.5071949348172,
+    "label": 0
+  },
+  {
+    "text_a": "बच्चे को बुखार है और उल्टी हो रही है",
+    "text_b": "मुलाला ताप आहे आणि उलटी होत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85711575218036
+    },
+    "time_gap_sec": 201.62397133816307,
+    "label": 1
+  },
+  {
+    "text_a": "Man burned by boiling water in the kitchen",
+    "text_b": "Motorcycle skidded, rider bleeding from head",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86066564520168
+    },
+    "time_gap_sec": 383.4717781447483,
+    "label": 0
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "Motorcycle skidded, rider bleeding from head",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85994730147016
+    },
+    "time_gap_sec": 584.0398096343106,
+    "label": 0
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "Building fire, people trapped on second floor",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85737048938168
+    },
+    "time_gap_sec": 443.67449218804916,
+    "label": 0
+  },
+  {
+    "text_a": "Child swallowed something and is choking",
+    "text_b": "Man complaining of severe stomach pain since morning",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.88880206779143
+    },
+    "time_gap_sec": 590.0223074755684,
+    "label": 0
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "Woman fainted after a wasp sting, swelling on the arm",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.89322258566075
+    },
+    "time_gap_sec": 518.805268469733,
+    "label": 0
+  },
+  {
+    "text_a": "Elderly man fell down the stairs and cannot move his leg",
+    "text_b": "म्हातारा माणूस जिन्यावरून पडला आणि पाय हलवू शकत नाही",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85896570831399
+    },
+    "time_gap_sec": 166.20208964869377,
+    "label": 1
+  },
+  {
+    "text_a": "Child swallowed something and is choking",
+    "text_b": "Woman in labour, contractions close together",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85757802943989
+    },
+    "time_gap_sec": 404.3698374728768,
+    "label": 0
+  },
+  {
+    "text_a": "Building fire, people trapped on second floor",
+    "text_b": "Snake bite victim, leg swelling fast",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85821738473086
+    },
+    "time_gap_sec": 115.81693999451204,
+    "label": 0
+  },
+  {
+    "text_a": "Mother having trouble breathing",
+    "text_b": "My mother is having difficulty breathing",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8595881087779
+    },
+    "time_gap_sec": 524.5088277257682,
+    "label": 1
+  },
+  {
+    "text_a": "Old man fell down stairs, cannot move his leg",
+    "text_b": "एक बुजुर्ग सीढ़ियों से गिर गया और अपना पैर नहीं हिला पा रहा",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85874804330948
+    },
+    "time_gap_sec": 332.13091383851355,
+    "label": 1
+  },
+  {
+    "text_a": "Person collapsed, not breathing normally",
+    "text_b": "Child swallowed something and is choking",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85875665188505
+    },
+    "time_gap_sec": 516.4247017649748,
+    "label": 0
+  },
+  {
+    "text_a": "एक व्यक्ति को सांप ने काट लिया है, पैर तेज़ी से सूज रहा है",
+    "text_b": "एका व्यक्तीला सापाने चावा घेतला आहे, पाय वेगाने सुजत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86145860473859
+    },
+    "time_gap_sec": 735.074564350452,
+    "label": 1
+  },
+  {
+    "text_a": "Cyclist hit by a car, leg possibly broken",
+    "text_b": "एक साइकिल चालक कार से टकरा गया, पैर टूटा हो सकता है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85907486009563
+    },
+    "time_gap_sec": 532.5374482470625,
+    "label": 1
+  },
+  {
+    "text_a": "There's a fire in a building, some people trapped on the 2nd floor",
+    "text_b": "इमारतीला आग लागली आहे, दुसऱ्या मजल्यावर काही लोक अडकले आहेत",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85813490138624
+    },
+    "time_gap_sec": 355.6385549286384,
+    "label": 1
+  },
+  {
+    "text_a": "Woman in labour, contractions close together",
+    "text_b": "एक गर्भवती महिला प्रसव पीड़ा में है, संकुचन करीब-करीब हो रहे हैं",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8575094234656
+    },
+    "time_gap_sec": 108.27400017965896,
+    "label": 1
+  },
+  {
+    "text_a": "Cyclist hit by a car, leg possibly broken",
+    "text_b": "एक सायकलस्वार कारने धडकला, पाय मोडलेला असू शकतो",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.93042363962977
+    },
+    "time_gap_sec": 997.4848981947397,
+    "label": 0
+  },
+  {
+    "text_a": "Child swallowed something and is choking",
+    "text_b": "मेरे बच्चे ने कुछ निगल लिया है और उसका दम घुट रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.92239727618689
+    },
+    "time_gap_sec": 795.5935847432827,
+    "label": 0
+  },
+  {
+    "text_a": "Road accident, two people injured, one unconscious",
+    "text_b": "Woman went into shock after seeing a robbery",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86951703248042
+    },
+    "time_gap_sec": 253.0449049289052,
+    "label": 0
+  },
+  {
+    "text_a": "एक मजदूर निर्माण स्थल पर मचान से गिर गया",
+    "text_b": "एक कामगार बांधकाम साइटवर मचाणावरून पडला",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85993658298864
+    },
+    "time_gap_sec": 39.62974740836206,
+    "label": 1
+  },
+  {
+    "text_a": "मेरे बच्चे ने कुछ निगल लिया है और उसका दम घुट रहा है",
+    "text_b": "माझ्या मुलाने काहीतरी गिळले आहे आणि त्याचा गुदमरत आहे",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.8599154702816
+    },
+    "time_gap_sec": 72.78240200958115,
+    "label": 1
+  },
+  {
+    "text_a": "एक व्यक्ति गिर गया है और ठीक से सांस नहीं ले पा रहा",
+    "text_b": "एक व्यक्ती कोसळली आहे आणि नीट श्वास घेत नाही",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.85705310276495
+    },
+    "time_gap_sec": 802.5937187504184,
+    "label": 1
+  },
+  {
+    "text_a": "Man burned by boiling water in the kitchen",
+    "text_b": "Woman went into shock after seeing a robbery",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.88767318394963
+    },
+    "time_gap_sec": 834.1768674741314,
+    "label": 0
+  },
+  {
+    "text_a": "Child swallowed something and is choking",
+    "text_b": "मेरे बच्चे ने कुछ निगल लिया है और उसका दम घुट रहा है",
+    "loc_a": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "loc_b": {
+      "lat": 18.5204,
+      "lng": 73.86085291951889
+    },
+    "time_gap_sec": 262.2263261270905,
+    "label": 1
+  }
+]
