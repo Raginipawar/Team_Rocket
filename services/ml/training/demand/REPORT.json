@@ -1,0 +1,19 @@
+{
+  "mae": 0.1631,
+  "baseline_mae": 0.1663,
+  "poisson_deviance": 0.437,
+  "baseline_poisson_deviance": 0.4602,
+  "mae_improvement_pct": 1.9,
+  "n_train": 5171808,
+  "n_test": 1140840,
+  "features": [
+    "hour",
+    "weekday",
+    "is_festival",
+    "lag_1h",
+    "lag_24h",
+    "lag_168h",
+    "neighbour_sum_calls",
+    "cell_kind_enc"
+  ]
+}
