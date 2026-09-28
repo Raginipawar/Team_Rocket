@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.db.session import get_session
-from app.domain import lifecycle
+from app.domain import dispatch, lifecycle
 from app.security.deps import CurrentUser, require_role
 
 router = APIRouter()
@@ -53,3 +53,12 @@ async def set_status(req: StatusRequest, user: CurrentUser = Depends(require_rol
             raise HTTPException(409, detail={"error": {"code": "VERSION_CONFLICT", "message": "Ambulance was modified", "details": {}}})
         await session.commit()
     return result
+
+
+@router.post("/vehicle-issue", status_code=204)
+async def vehicle_issue(user: CurrentUser = Depends(require_role("paramedic"))) -> None:
+    if not user.ambulance_id:
+        raise HTTPException(403, "user has no assigned ambulance")
+    async with get_session() as session:
+        await dispatch.handle_vehicle_issue(session, ambulance_id=user.ambulance_id)
+        await session.commit()
