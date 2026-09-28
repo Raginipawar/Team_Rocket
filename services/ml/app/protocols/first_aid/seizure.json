@@ -1,0 +1,58 @@
+{
+  "protocol_id": "seizure",
+  "title": {
+    "en": "Seizure / fit",
+    "hi": "दौरा / फिट",
+    "mr": "फेफरे / झटका"
+  },
+  "steps": {
+    "en": [
+      "Clear the area of anything hard or sharp the person could hit.",
+      "Cushion their head with something soft.",
+      "Time the seizure from when it starts.",
+      "Once the jerking stops, roll them onto their side (recovery position) and check breathing.",
+      "Stay with them until they are fully alert -- they may be confused afterward."
+    ],
+    "hi": [
+      "आसपास से कोई भी सख्त या नुकीली चीज़ हटा दें जिससे व्यक्ति को चोट लग सकती हो।",
+      "उनके सिर के नीचे कुछ नरम रखें।",
+      "दौरा शुरू होने से समय नोट करें।",
+      "झटके बंद होने पर, उन्हें करवट (रिकवरी पोजीशन) में लिटाएं और सांस जांचें।",
+      "जब तक वे पूरी तरह सचेत न हों, उनके साथ रहें -- बाद में वे भ्रमित हो सकते हैं।"
+    ],
+    "mr": [
+      "आजूबाजूची कोणतीही कठीण किंवा टोकदार वस्तू हटवा ज्यामुळे व्यक्तीला इजा होऊ शकते.",
+      "त्यांच्या डोक्याखाली काहीतरी मऊ ठेवा.",
+      "झटका सुरू झाल्यापासून वेळ मोजा.",
+      "झटके थांबल्यावर, त्यांना कुशीवर (रिकव्हरी पोझिशन) झोपवा आणि श्वास तपासा.",
+      "ते पूर्ण शुद्धीवर येईपर्यंत त्यांच्यासोबत राहा -- नंतर ते गोंधळलेले असू शकतात."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not hold the person down or restrain their movements.",
+      "Do not put anything in their mouth.",
+      "Do not give food or water until fully alert."
+    ],
+    "hi": [
+      "व्यक्ति को पकड़कर न रोकें या उनकी हरकत न रोकें।",
+      "उनके मुंह में कुछ भी न डालें।",
+      "पूरी तरह सचेत होने तक खाना या पानी न दें।"
+    ],
+    "mr": [
+      "व्यक्तीला पकडून ठेवू नका किंवा त्यांची हालचाल थांबवू नका.",
+      "त्यांच्या तोंडात काहीही घालू नका.",
+      "पूर्ण शुद्धीवर येईपर्यंत अन्न किंवा पाणी देऊ नका."
+    ]
+  },
+  "audio": {
+    "en": "seizure_en.wav",
+    "hi": "seizure_hi.wav",
+    "mr": "seizure_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "symptoms_contains": "seizure"
+  }
+}

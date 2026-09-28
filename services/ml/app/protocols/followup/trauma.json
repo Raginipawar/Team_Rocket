@@ -1,0 +1,102 @@
+{
+  "facility": "trauma",
+  "version": "v1",
+  "questions": [
+    {
+      "id": "t_conscious",
+      "field": "conscious",
+      "answer_type": "yes_no",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient awake and responding?",
+        "hi": "क्या मरीज़ होश में है और प्रतिक्रिया दे रहा है?",
+        "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"
+      },
+      "audio": {
+        "en": "t_conscious_en.wav",
+        "hi": "t_conscious_hi.wav",
+        "mr": "t_conscious_mr.wav"
+      }
+    },
+    {
+      "id": "t_breathing",
+      "field": "breathing",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "Is the patient breathing normally, with difficulty, or not at all?",
+        "hi": "क्या मरीज़ सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा है?",
+        "mr": "रुग्ण नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"
+      },
+      "audio": {
+        "en": "t_breathing_en.wav",
+        "hi": "t_breathing_hi.wav",
+        "mr": "t_breathing_mr.wav"
+      },
+      "choices": [
+        "normal",
+        "difficult",
+        "absent"
+      ]
+    },
+    {
+      "id": "t_bleeding",
+      "field": "bleeding_severity",
+      "answer_type": "choice",
+      "priority": 1,
+      "text": {
+        "en": "How severe is the bleeding: none, mild, or severe?",
+        "hi": "खून बहना कितना गंभीर है: कोई नहीं, हल्का, या गंभीर?",
+        "mr": "रक्तस्त्राव किती गंभीर आहे: नाही, सौम्य, की तीव्र?"
+      },
+      "audio": {
+        "en": "t_bleeding_en.wav",
+        "hi": "t_bleeding_hi.wav",
+        "mr": "t_bleeding_mr.wav"
+      },
+      "choices": [
+        "none",
+        "mild",
+        "severe"
+      ]
+    },
+    {
+      "id": "t_mechanism",
+      "field": "mechanism_detail",
+      "answer_type": "choice",
+      "priority": 2,
+      "text": {
+        "en": "What caused the injury: fall, road accident, or assault?",
+        "hi": "चोट कैसे लगी: गिरना, सड़क दुर्घटना, या मारपीट?",
+        "mr": "इजा कशामुळे झाली: पडणे, रस्ता अपघात, की मारहाण?"
+      },
+      "audio": {
+        "en": "t_mechanism_en.wav",
+        "hi": "t_mechanism_hi.wav",
+        "mr": "t_mechanism_mr.wav"
+      },
+      "choices": [
+        "fall",
+        "road_accident",
+        "assault",
+        "other"
+      ]
+    },
+    {
+      "id": "t_movable",
+      "field": "can_move_limbs",
+      "answer_type": "yes_no",
+      "priority": 2,
+      "text": {
+        "en": "Can the patient move both arms and legs?",
+        "hi": "क्या मरीज़ दोनों हाथ और पैर हिला सकता है?",
+        "mr": "रुग्ण दोन्ही हात आणि पाय हलवू शकतो का?"
+      },
+      "audio": {
+        "en": "t_movable_en.wav",
+        "hi": "t_movable_hi.wav",
+        "mr": "t_movable_mr.wav"
+      }
+    }
+  ]
+}

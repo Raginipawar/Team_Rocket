@@ -1,0 +1,22 @@
+{
+  "facility": "cardiac", "version": "v1",
+  "questions": [
+    { "id": "c_conscious", "field": "conscious", "answer_type": "yes_no", "priority": 1,
+      "text": {"en": "Is the patient awake and responding?", "hi": "क्या मरीज होश है और प्रतिक्रिया दे रहा है?", "mr": "रुग्ण शुद्धीवर आहे आणि प्रतिसाद देत आहे का?"},
+      "audio": {"en": "c_conscious_en.wav", "hi": "c_conscious_hi.wav", "mr": "c_conscious_mr.wav"} },
+    { "id": "c_breathing", "field": "breathing", "answer_type": "choice", "priority": 1,
+      "choices": ["normal", "difficult", "absent"],
+      "text": {"en": "Is the patient breathing normally, with difficulty, or not at all?", "hi": "क्या मरीज सामान्य रूप से, कठिनाई से, या बिलकुल सांस नहीं ले रहा है?", "mr": "रुग्ण नीट श्वास घेत आहे, त्रासाने घेत आहे, की घेतच नाही?"},
+      "audio": {"en": "c_breathing_en.wav", "hi": "c_breathing_hi.wav", "mr": "c_breathing_mr.wav"} },
+    { "id": "c_pain_side", "field": "pain_location", "answer_type": "choice", "priority": 2,
+      "choices": ["left_chest", "center_chest", "right_chest", "radiating_arm", "unknown"],
+      "text": {"en": "Where exactly is the chest pain?", "hi": "सीने में दर्द ठीक कहां हो रहा है?", "mr": "छातीत वेदना नेमकी कुठे होत आहे?"},
+      "audio": {"en": "c_pain_side_en.wav", "hi": "c_pain_side_hi.wav", "mr": "c_pain_side_mr.wav"} },
+    { "id": "c_sweating", "field": "sweating", "answer_type": "yes_no", "priority": 2,
+      "text": {"en": "Is the patient sweating heavily?", "hi": "क्या मरीज को बहुत पसीना आ रहा है?", "mr": "रुग्णाला खूप घाम येत आहे का?"},
+      "audio": {"en": "c_sweating_en.wav", "hi": "c_sweating_hi.wav", "mr": "c_sweating_mr.wav"} },
+    { "id": "c_known_history", "field": "cardiac_history", "answer_type": "yes_no", "priority": 3,
+      "text": {"en": "Does the patient have a known history of heart disease?", "hi": "क्या मरीज को पहले से दिल की बीमारी है?", "mr": "रुग्णाला आधी हृदयरोगाचा इतिहास आहे का?"},
+      "audio": {"en": "c_known_history_en.wav", "hi": "c_known_history_hi.wav", "mr": "c_known_history_mr.wav"} }
+  ]
+}

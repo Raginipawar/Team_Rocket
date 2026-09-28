@@ -1,0 +1,55 @@
+{
+  "protocol_id": "stroke_signs_wait",
+  "title": {
+    "en": "Suspected stroke -- what to do while waiting",
+    "hi": "स्ट्रोक की आशंका -- इंतज़ार करते समय क्या करें",
+    "mr": "स्ट्रोकची शंका -- वाट पाहताना काय करावे"
+  },
+  "steps": {
+    "en": [
+      "Note the exact time symptoms started -- this is critical for treatment.",
+      "Keep the person still, calm, and lying down with head slightly raised.",
+      "Do not give food, water, or medicine by mouth -- swallowing may be affected.",
+      "Loosen tight clothing around the neck.",
+      "If they become unresponsive and stop breathing normally, start hands-only CPR."
+    ],
+    "hi": [
+      "लक्षण शुरू होने का सटीक समय नोट करें -- यह इलाज के लिए महत्वपूर्ण है।",
+      "व्यक्ति को स्थिर, शांत रखें और सिर थोड़ा ऊपर करके लिटाएं।",
+      "मुंह से खाना, पानी, या दवा न दें -- निगलने में दिक्कत हो सकती है।",
+      "गले के आसपास तंग कपड़े ढीले करें।",
+      "अगर वे बेहोश हो जाएं और सामान्य रूप से सांस लेना बंद कर दें, तो हैंड्स-ओनली सीपीआर शुरू करें।"
+    ],
+    "mr": [
+      "लक्षणे सुरू झाल्याची अचूक वेळ नोंदवा -- हे उपचारासाठी महत्त्वाचे आहे.",
+      "व्यक्तीला स्थिर, शांत ठेवा आणि डोके थोडे उंच करून झोपवा.",
+      "तोंडावाटे अन्न, पाणी किंवा औषध देऊ नका -- गिळण्यात अडचण येऊ शकते.",
+      "गळ्याभोवतीचे घट्ट कपडे सैल करा.",
+      "ते बेशुद्ध झाले आणि सामान्यपणे श्वास घेणे थांबले, तर हँड्स-ओन्ली सीपीआर सुरू करा."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not give aspirin or any medicine.",
+      "Do not let the person walk or drive."
+    ],
+    "hi": [
+      "एस्पिरिन या कोई दवा न दें।",
+      "व्यक्ति को चलने या गाड़ी चलाने न दें।"
+    ],
+    "mr": [
+      "अ‍ॅस्पिरिन किंवा कोणतेही औषध देऊ नका.",
+      "व्यक्तीला चालू किंवा गाडी चालवू देऊ नका."
+    ]
+  },
+  "audio": {
+    "en": "stroke_signs_wait_en.wav",
+    "hi": "stroke_signs_wait_hi.wav",
+    "mr": "stroke_signs_wait_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "facility": "stroke"
+  }
+}

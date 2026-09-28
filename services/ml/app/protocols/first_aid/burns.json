@@ -1,0 +1,55 @@
+{
+  "protocol_id": "burns",
+  "title": {
+    "en": "Burns",
+    "hi": "जलना",
+    "mr": "भाजणे"
+  },
+  "steps": {
+    "en": [
+      "Cool the burn under cool (not ice-cold) running water for at least 10-20 minutes.",
+      "Remove tight clothing and jewellery near the burn before swelling starts.",
+      "Cover loosely with a clean, non-fluffy cloth or cling film.",
+      "Keep the person warm elsewhere and watch for shock (pale, cold, fast breathing).",
+      "Get medical care urgently for burns on the face, hands, joints, genitals, or larger than the palm."
+    ],
+    "hi": [
+      "जले हुए हिस्से को कम से कम 10-20 मिनट तक ठंडे (बर्फ जैसे नहीं) बहते पानी में रखें।",
+      "सूजन शुरू होने से पहले जले हुए हिस्से के पास की तंग कपड़े और गहने हटा दें।",
+      "एक साफ, बिना रोएं वाला कपड़ा या क्लिंग फिल्म से ढीला ढकें।",
+      "व्यक्ति को कहीं और गर्म रखें और शॉक के लक्षण देखें (पीला, ठंडा, तेज़ सांस)।",
+      "चेहरे, हाथ, जोड़ों, गुप्तांगों पर या हथेली से बड़े जलने पर तुरंत चिकित्सा सहायता लें।"
+    ],
+    "mr": [
+      "भाजलेला भाग किमान 10-20 मिनिटे थंड (बर्फासारखे नाही) वाहत्या पाण्याखाली ठेवा.",
+      "सूज येण्यापूर्वी भाजलेल्या भागाजवळचे घट्ट कपडे आणि दागिने काढा.",
+      "स्वच्छ, न विरणाऱ्या कापडाने किंवा क्लिंग फिल्मने सैलसर झाका.",
+      "व्यक्तीला इतरत्र उबदार ठेवा आणि शॉकची लक्षणे पाहा (फिकट, थंड, जलद श्वास).",
+      "चेहरा, हात, सांधे, जननेंद्रिये किंवा तळहातापेक्षा मोठ्या भाजण्यासाठी तातडीने वैद्यकीय मदत घ्या."
+    ]
+  },
+  "donts": {
+    "en": [
+      "Do not apply ice, butter, oil, or toothpaste to a burn.",
+      "Do not burst any blisters."
+    ],
+    "hi": [
+      "जले हुए हिस्से पर बर्फ, मक्खन, तेल, या टूथपेस्ट न लगाएं।",
+      "किसी भी छाले को न फोड़ें।"
+    ],
+    "mr": [
+      "भाजलेल्या भागावर बर्फ, लोणी, तेल किंवा टूथपेस्ट लावू नका.",
+      "कोणताही फोड फोडू नका."
+    ]
+  },
+  "audio": {
+    "en": "burns_en.wav",
+    "hi": "burns_hi.wav",
+    "mr": "burns_mr.wav"
+  },
+  "source": "Indian Red Cross Society first-aid guidance / standard BLS lay-rescuer guidance (adapted)",
+  "review_status": "NEEDS_REVIEW",
+  "rule": {
+    "facility": "burns"
+  }
+}
