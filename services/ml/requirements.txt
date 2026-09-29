@@ -1,4 +1,62 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-pydantic==2.9.2
-python-multipart==0.0.9
+# ─────────────────────────────────────────────────────────────────────────────
+# services/ml — Python dependencies
+# All AI/ML models, geo-computation, and training utilities.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Web framework ─────────────────────────────────────────────────────────────
+fastapi>=0.111
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9       # needed for UploadFile/Form endpoints
+
+# ── HTTP client ───────────────────────────────────────────────────────────────
+httpx>=0.27                      # calls OSRM, Mapbox, Ollama
+
+# ── Validation / settings ─────────────────────────────────────────────────────
+pydantic>=2.7
+pydantic-settings>=2.3
+
+# ── Classical ML ─────────────────────────────────────────────────────────────
+lightgbm>=4.3                    # dispatch rank, hospital rank, bed nowcast,
+                                 # demand forecast, resource prediction, ETA model
+shap>=0.45                       # SHAP TreeExplainer for hospital ranking (§9.13)
+scikit-learn>=1.5                # IsolationForest (prank), calibration, metrics,
+                                 # DBSCAN (duplicate clustering)
+mapie>=0.8                       # conformal prediction for ETA 90% intervals (§9.11)
+numpy>=1.26
+pandas>=2.2
+
+# ── Deep learning ─────────────────────────────────────────────────────────────
+torch>=2.3                       # STT (faster-whisper backend), triage (MuRIL/IndicBERT)
+pytorch-forecasting>=1.0         # Temporal Fusion Transformer for bed nowcast (§9.14)
+transformers>=4.41               # MuRIL / IndicBERT fine-tuning + embedding models
+sentencepiece>=0.2               # tokenizer for MuRIL, multilingual-e5
+faster-whisper>=1.0              # CTranslate2 Whisper large-v3 (STT §9.1)
+
+# ── Audio pre-processing ──────────────────────────────────────────────────────
+torchaudio>=2.3                  # resample, VAD
+silero-vad>=5.1                  # Silero VAD for trimming (§9.1)
+soundfile>=0.12                  # WAV I/O
+
+# ── Optimisation solvers ──────────────────────────────────────────────────────
+ortools>=9.10                    # CP-SAT for MCI allocation (§9.17) + pre-positioning MIP (§9.16)
+
+# ── Geo / routing ─────────────────────────────────────────────────────────────
+osmnx>=1.9                       # OSM data pull, graph analysis (road comfort §9.12)
+geopandas>=0.14                  # spatial data frames
+shapely>=2.0                     # geometry ops (turn penalty, clipping)
+polyline>=2.0                    # encode/decode OSRM/Mapbox polyline6
+pyarrow>=16                      # Parquet I/O for large datasets / training data
+h3>=3.7                          # H3 hex indexing for demand forecast (§9.15)
+
+# ── MLflow (experiment tracking for training) ─────────────────────────────────
+mlflow>=2.13                     # model versioning, metric logging (§9.19)
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=8.2
+pytest-asyncio>=0.23
+httpx                            # async test client
+anyio>=4.4
+
+# ── Code quality (dev) ────────────────────────────────────────────────────────
+ruff>=0.4
+mypy>=1.10

@@ -1,0 +1,23 @@
+name: t11_hospital_not_responding
+description: "Hospital timeout -> next rank + duty-manager SMS."
+speed: 10
+setup:
+  hospitals:
+    - id: hosp_1
+      accept_prob: 0.0 # Never responds
+      latency: 9999
+    - id: hosp_2
+      accept_prob: 1.0
+steps:
+  - at: 0
+    do: send_sos
+    params:
+      text: "Emergency"
+      lat: 18.5154
+      lng: 73.8453
+  - at: 300
+    do: assert_hospital_assigned
+    params:
+      hospital_id: hosp_2
+assert:
+  - invariants_clean

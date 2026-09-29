@@ -1,0 +1,24 @@
+name: t4_walk_in_override
+description: "Walk-in patient takes reserved room, auto re-allocation."
+speed: 5
+setup:
+  hospitals:
+    - id: hosp_1
+      accept_prob: 1.0
+      rooms:
+        er_bed: 2
+steps:
+  - at: 0
+    do: reserve_room
+    params:
+      hospital_id: hosp_1
+      room_type: er_bed
+      patient_id: pat_1
+  - at: 10
+    do: walk_in_override
+    params:
+      hospital_id: hosp_1
+      room_type: er_bed
+      patient_id: walkin_1
+assert:
+  - invariants_clean
