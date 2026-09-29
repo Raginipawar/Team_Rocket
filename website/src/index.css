@@ -1,0 +1,196 @@
+/* GoldenHour site. Light theme, plain type (rerun.io scale and weights),
+   citizen.com's oval phone frames and pill shapes. */
+
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Nirmala UI", "Noto Sans", "Noto Sans Devanagari", "Noto Sans Gujarati", "Noto Sans Tamil", "Noto Sans Telugu", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --bg: #fff;
+  --soft: #f5f5f4;
+  --fg: #0a0a0a;
+  --muted: #5c5c5c;
+  --faint: #8a8a8a;
+  --line: #e5e5e5;
+  --red: #ef4444;
+  --green: #16a34a;
+  --ring: #1a1a1a;
+  --page: 1160px;
+  --h1: clamp(2.5rem, 7vw + 1rem, 4.25rem);
+  --h2: clamp(2rem, 4vw + 1rem, 3rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 16px; font-weight: 450; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--muted); font-family: var(--font); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+h1, h2, h3, h4, p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+ul { margin: 0; padding: 0; list-style: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+::selection { background: #fde2e2; color: var(--fg); }
+
+.page { max-width: var(--page); margin: 0 auto; padding: 0 20px; }
+@media (min-width: 768px) { .page { padding: 0 32px; } }
+
+h1 { font-size: var(--h1); font-weight: 450; letter-spacing: -.02em; line-height: 1.02; color: var(--fg); }
+h2 { font-size: var(--h2); font-weight: 500; letter-spacing: -.02em; line-height: 1.1; color: var(--fg); }
+h3 { font-size: 1.25rem; font-weight: 500; letter-spacing: -.01em; line-height: 1.3; color: var(--fg); }
+.lead { font-size: 1.2rem; font-weight: 400; }
+.fg { color: var(--fg); }
+.center { text-align: center; }
+.section { padding: 110px 0 0; }
+.section-head { max-width: 40rem; margin: 0 auto; text-align: center; }
+.section-head p { margin-top: 1rem; }
+
+/* Pill buttons (citizen style) */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; height: 48px; padding: 0 1.5rem; border-radius: 40px; font-weight: 600; font-size: 1rem; white-space: nowrap; transition: transform .2s, background-color .2s, opacity .2s; }
+.btn:active { transform: scale(.97); }
+.btn-dark { background: var(--fg); color: #fff; }
+.btn-dark:hover { opacity: .85; }
+.btn-light { background: var(--soft); color: var(--fg); }
+.btn-light:hover { background: #ebebea; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-sm { height: 38px; padding: 0 1.1rem; font-size: .92rem; }
+
+/* Header */
+.header { position: sticky; top: 0; z-index: 30; background: rgba(255,255,255,.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.header-inner { height: 64px; display: flex; align-items: center; gap: 2rem; }
+.logo { display: flex; align-items: center; gap: .5rem; font-weight: 600; font-size: 1.1rem; color: var(--fg); }
+.logo-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--red); display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 700; line-height: 1; }
+.nav { display: none; gap: 1.75rem; }
+.nav a { color: var(--muted); transition: color .15s; }
+.nav a:hover { color: var(--fg); }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+@media (min-width: 1024px) { .nav { display: flex; } }
+
+/* Language picker */
+.lang { position: relative; }
+.lang-btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 40px; background: var(--soft); color: var(--fg); font-size: .92rem; font-weight: 500; transition: background-color .2s; }
+.lang-btn:hover { background: #ebebea; }
+.lang-menu { position: absolute; right: 0; top: calc(100% + 8px); min-width: 180px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 6px; box-shadow: 0 20px 40px -16px rgba(0,0,0,.25); transform-origin: top right; z-index: 40; }
+.lang-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 14px; font-size: .98rem; color: var(--fg); text-align: left; }
+.lang-item:hover { background: var(--soft); }
+.lang-item.active { font-weight: 600; }
+@media (max-width: 479px) { .header-right .btn { display: none; } }
+
+/* Indian scripts: tall vowel signs need more line height and no negative tracking */
+html:not([lang="en"]) h1 { line-height: 1.3; letter-spacing: 0; font-size: clamp(2.1rem, 5.5vw + 1rem, 3.6rem); }
+html:not([lang="en"]) h2 { line-height: 1.35; letter-spacing: 0; font-size: clamp(1.7rem, 3vw + 1rem, 2.5rem); }
+html:not([lang="en"]) h3, html:not([lang="en"]) .scr-title, html:not([lang="en"]) .step-title { line-height: 1.45; letter-spacing: 0; }
+html:not([lang="en"]) body { line-height: 1.7; }
+html:not([lang="en"]) .scr-title { font-size: 1.1rem; }
+html:not([lang="en"]) .scr { gap: 10px; }
+html:not([lang="en"]) .scr-list div, html:not([lang="en"]) .pill-btn, html:not([lang="en"]) .scr-card { font-size: .78rem; }
+
+/* Hero */
+.hero { padding-top: 72px; text-align: center; }
+.hero .lead { max-width: 36rem; margin: 1.25rem auto 0; }
+.hero-ctas { margin-top: 2rem; display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+.hero-note { margin-top: 1rem; font-size: .9rem; color: var(--faint); }
+.hero-phones { margin-top: 64px; display: flex; justify-content: center; align-items: flex-end; gap: 48px; padding-bottom: 8px; }
+.hero-phones .side { display: none; }
+@media (min-width: 900px) { .hero-phones .side { display: block; transform: scale(.9); } .hero-phones .side .phone { margin-bottom: 40px; } }
+
+/* citizen.com phone: elliptical corners 13% / 6%, 8px dark ring */
+.phone { position: relative; width: 250px; aspect-ratio: 9 / 19; border-radius: 13% / 6%; box-shadow: 0 0 0 8px var(--ring), 0 40px 60px -30px rgba(0,0,0,.45); background: var(--ring); flex-shrink: 0; }
+.phone-screen { position: absolute; inset: 0; border-radius: inherit; background: #fff; overflow: hidden; }
+.phone-notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 76px; height: 22px; border-radius: 20px; background: var(--ring); z-index: 2; }
+
+/* Screens inside phones */
+.scr { position: absolute; inset: 0; padding: 48px 18px 22px; display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.scr-small { font-size: .78rem; color: var(--faint); }
+.scr-title { font-size: 1.3rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; color: var(--fg); margin-top: -6px; }
+.scr-center { text-align: center; font-size: .85rem; }
+.scr-muted { color: var(--faint); font-size: .8rem; }
+.scr-foot { margin-top: auto; text-align: center; font-size: .85rem; color: var(--red); font-weight: 600; }
+.sos { margin: 6px auto 0; width: 136px; height: 136px; border-radius: 50%; background: #fdecec; display: grid; place-items: center; }
+.sos-btn { width: 100px; height: 100px; border-radius: 50%; background: var(--red); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 1.3rem; letter-spacing: .05em; box-shadow: 0 10px 24px -8px rgba(239,68,68,.6); }
+.scr-pills, .scr-actions { display: flex; gap: 8px; justify-content: center; }
+.scr-actions { margin-top: auto; }
+.pill-btn { display: inline-flex; align-items: center; justify-content: center; flex: 1; height: 38px; border-radius: 40px; background: var(--soft); color: var(--fg); font-size: .85rem; font-weight: 600; }
+.pill-btn.dark { background: var(--fg); color: #fff; }
+.scr-card { background: var(--soft); border-radius: 16px; padding: 12px 14px; font-size: .85rem; color: var(--fg); }
+.scr-card p + p { margin-top: 2px; }
+.scr-card.row { display: flex; justify-content: space-between; align-items: center; }
+.scr-list { display: flex; flex-direction: column; }
+.scr-list div { display: flex; justify-content: space-between; padding: 9px 2px; border-bottom: 1px solid var(--line); font-size: .85rem; }
+.scr-list b { font-weight: 600; color: var(--fg); }
+.scr-status { margin-top: auto; border-radius: 40px; background: var(--soft); padding: 11px 14px; font-size: .82rem; text-align: center; color: var(--fg); }
+.scr-status.ok { background: #e8f6ee; color: var(--green); }
+.scr-map { position: relative; flex: 1; border-radius: 18px; overflow: hidden; background: #fafafa; }
+.scr-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scr-timer { height: 6px; border-radius: 6px; background: var(--soft); overflow: hidden; }
+.scr-timer span { display: block; height: 100%; background: var(--red); }
+
+/* How it works */
+.how { margin-top: 64px; display: grid; gap: 56px; align-items: center; }
+@media (min-width: 900px) { .how { grid-template-columns: 1fr 1fr; gap: 80px; } }
+.steps { display: flex; flex-direction: column; gap: 12px; }
+.step { text-align: left; border-radius: 24px; padding: 20px 22px; background: transparent; transition: background-color .25s; display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; }
+.step:hover { background: var(--soft); }
+.step.active { background: var(--soft); }
+.step-num { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; color: var(--faint); background: #fff; border: 1px solid var(--line); transition: all .25s; }
+.step.active .step-num { background: var(--fg); color: #fff; border-color: var(--fg); }
+.step-title { display: block; font-size: 1.2rem; font-weight: 500; color: var(--fg); letter-spacing: -.01em; }
+.step-desc { display: block; margin-top: 4px; }
+.step-bar { margin-top: 12px; height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.step-bar span { display: block; height: 100%; background: var(--fg); }
+.how-phone { display: flex; justify-content: center; }
+.how-phone .phone { width: 270px; }
+.how-phone .scr-wrap { position: absolute; inset: 0; }
+
+/* Two apps side by side */
+.duo { margin-top: 64px; display: grid; gap: 28px; }
+@media (min-width: 900px) { .duo { grid-template-columns: 1fr 1fr; } }
+.duo-card { background: var(--soft); border-radius: 40px; padding: 48px 32px 0; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; }
+.duo-card p { max-width: 26rem; margin: .75rem auto 0; }
+.duo-card .phone { margin-top: 32px; }
+.duo-card .phone-holder { height: 440px; display: flex; justify-content: center; overflow: hidden; width: 100%; padding-top: 8px; }
+
+/* Highlights */
+.cards { margin-top: 56px; display: grid; gap: 16px; }
+@media (min-width: 640px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+.card { background: var(--soft); border-radius: 28px; padding: 28px; }
+.card-num { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: .85rem; font-weight: 600; color: var(--fg); margin-bottom: 20px; }
+.card p { margin-top: .5rem; }
+.all-toggle { margin-top: 28px; display: flex; justify-content: center; }
+.all-list { overflow: hidden; }
+.all-grid { display: grid; gap: 0 40px; margin-top: 28px; }
+@media (min-width: 768px) { .all-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .all-grid { grid-template-columns: repeat(3, 1fr); } }
+.all-item { padding: 14px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 32px 1fr; }
+.all-item span { color: var(--faint); font-size: .85rem; padding-top: 2px; }
+.all-item b { font-weight: 500; color: var(--fg); display: block; }
+
+/* Safety */
+.safe-grid { margin-top: 56px; display: grid; gap: 16px; }
+@media (min-width: 640px) { .safe-grid { grid-template-columns: repeat(2, 1fr); } }
+.safe { border: 1px solid var(--line); border-radius: 28px; padding: 26px 28px; display: flex; gap: 16px; align-items: flex-start; }
+.safe b { display: block; color: var(--fg); font-weight: 500; font-size: 1.08rem; }
+.safe p { margin-top: 4px; }
+
+/* Coverage pills */
+.pills { margin: 40px auto 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 48rem; }
+.pill { height: 42px; padding: 0 20px; border-radius: 40px; background: var(--soft); color: var(--fg); display: inline-flex; align-items: center; font-size: .95rem; }
+
+/* FAQ */
+.faq { max-width: 46rem; margin: 48px auto 0; }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 22px 0; text-align: left; font-size: 1.1rem; color: var(--fg); }
+.faq-icon { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--soft); display: grid; place-items: center; transition: transform .3s; }
+.faq-q[aria-expanded="true"] .faq-icon { transform: rotate(45deg); }
+.faq-a { overflow: hidden; }
+.faq-a p { padding-bottom: 22px; max-width: 40rem; }
+
+/* Closing */
+.closing { margin-top: 110px; background: var(--fg); color: #bdbdbd; border-radius: 48px; padding: 80px 28px; text-align: center; }
+.closing h2 { color: #fff; max-width: 34rem; margin: 0 auto; }
+.closing p { margin: 1rem auto 0; max-width: 30rem; }
+.closing .hero-ctas { margin-top: 2rem; }
+.closing .btn-light { background: #262626; color: #fff; }
+
+/* Footer */
+.footer { margin-top: 80px; border-top: 1px solid var(--line); padding: 40px 0 48px; font-size: .92rem; }
+.footer-inner { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: center; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 24px; }
+.footer-links a:hover { color: var(--fg); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
