@@ -1,0 +1,19 @@
+name: t19_all_hospitals_full
+description: "All hospitals reject -> no_hospital escalation -> default executed."
+speed: 5
+setup:
+  hospitals:
+    - id: hosp_1
+      accept_prob: 0.0
+    - id: hosp_2
+      accept_prob: 0.0
+steps:
+  - at: 0
+    do: send_sos
+    params:
+      text: "Emergency"
+      lat: 18.5154
+      lng: 73.8453
+assert:
+  - invariants_clean
+  - assert_escalation: no_hospital

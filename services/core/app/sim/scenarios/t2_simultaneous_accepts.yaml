@@ -1,0 +1,140 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Scenario T2: Simultaneous Accepts
+# Technical.md §14 T2 🎬
+#
+# Four paramedics accept the same dispatch offer at the same instant.
+# Expected: exactly 1 × HTTP 200, 3 × HTTP 409 ALREADY_TAKEN.
+#
+# Mechanism: Accept transaction CAS (§11.1)
+#   UPDATE emergencies SET status='ambulance_assigned', ambulance_id=:amb
+#    WHERE id=:em AND status='dispatching' AND ambulance_id IS NULL;
+#   -- 0 rows ⇒ ALREADY_TAKEN
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: t2_simultaneous_accepts
+description: |
+  4 ambulance paramedics simultaneously accept the same dispatch offer.
+  The accept transaction must be serialisable: exactly one succeeds with 200;
+  the other three receive 409 ALREADY_TAKEN.
+demo: true  # 🎬 marked scenario
+tags: [concurrency, dispatch, accept]
+
+# ── Setup state ───────────────────────────────────────────────────────────────
+setup:
+  # Reset the sim world to a clean seed.
+  reset_sim: true
+
+  # Seed a single emergency in 'dispatching' state.
+  emergency:
+    channel: app_button
+    location: {lat: 18.520, lng: 73.856}  # Pune city centre
+    acuity: urgent
+    facility: general
+    status: dispatching
+
+  # Seed 4 ALS ambulances close to the patient, all available.
+  ambulances:
+    - id: amb_t2_1
+      registration_no: MH12T201
+      type: ALS
+      status: available
+      location: {lat: 18.521, lng: 73.857}
+    - id: amb_t2_2
+      registration_no: MH12T202
+      type: ALS
+      status: available
+      location: {lat: 18.522, lng: 73.855}
+    - id: amb_t2_3
+      registration_no: MH12T203
+      type: ALS
+      status: available
+      location: {lat: 18.519, lng: 73.858}
+    - id: amb_t2_4
+      registration_no: MH12T204
+      type: ALS
+      status: available
+      location: {lat: 18.520, lng: 73.854}
+
+  # Create one dispatch offer (shared by all 4 for the test).
+  dispatch_offer:
+    ambulances: [amb_t2_1, amb_t2_2, amb_t2_3, amb_t2_4]
+    expires_in_sec: 20
+
+# ── Actions ───────────────────────────────────────────────────────────────────
+actions:
+  # Fire 4 parallel POST /offers/{id}/accept calls at t=0.
+  - at_sec: 0.0
+    parallel: true
+    steps:
+      - actor: paramedic
+        ambulance: amb_t2_1
+        action: accept_offer
+        offer_ref: dispatch_offer
+
+      - actor: paramedic
+        ambulance: amb_t2_2
+        action: accept_offer
+        offer_ref: dispatch_offer
+
+      - actor: paramedic
+        ambulance: amb_t2_3
+        action: accept_offer
+        offer_ref: dispatch_offer
+
+      - actor: paramedic
+        ambulance: amb_t2_4
+        action: accept_offer
+        offer_ref: dispatch_offer
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+assertions:
+  # Exactly one 200 among the four parallel responses.
+  - type: response_count
+    status_code: 200
+    expected: 1
+
+  # Exactly three 409 ALREADY_TAKEN.
+  - type: response_count
+    status_code: 409
+    error_code: ALREADY_TAKEN
+    expected: 3
+
+  # Emergency is now ambulance_assigned with exactly one ambulance_id set.
+  - type: db_query
+    description: Emergency assigned to exactly one ambulance
+    sql: |
+      SELECT COUNT(*) FROM emergencies
+       WHERE status = 'ambulance_assigned'
+         AND ambulance_id IS NOT NULL
+    expected_count: 1
+
+  # Only the winning ambulance is dispatched; the rest remain available.
+  - type: db_query
+    description: Exactly one ambulance is dispatched
+    sql: |
+      SELECT COUNT(*) FROM ambulances
+       WHERE registration_no LIKE 'MH12T20%'
+         AND status = 'dispatched'
+    expected_count: 1
+
+  - type: db_query
+    description: Three ambulances still available
+    sql: |
+      SELECT COUNT(*) FROM ambulances
+       WHERE registration_no LIKE 'MH12T20%'
+         AND status = 'available'
+    expected_count: 3
+
+  # Invariant checks.
+  - type: invariant
+    check: no_ambulance_two_emergencies
+
+  - type: invariant
+    check: no_emergency_two_reservations
+
+# ── Demo notes ────────────────────────────────────────────────────────────────
+demo_notes: |
+  Show the four concurrent HTTP calls firing at the same millisecond in the
+  ops page network tab. One returns green (200); three return red (409).
+  The emergency card shows a single assigned ambulance, and the other three
+  remain on the available board.

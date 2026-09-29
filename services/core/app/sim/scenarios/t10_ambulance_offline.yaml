@@ -1,0 +1,192 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Scenario T10: Ambulance Goes Offline Mid-Route
+# Technical.md §14 T10 🎬
+#
+# Drop all heartbeats for 3 minutes while the ambulance is en route.
+# Expected:
+#   - After SIGNAL_WEAK_SEC (30 s) : hospital sees signal = "weak"
+#   - After SIGNAL_LOST_SEC (120 s): hospital sees signal = "lost"
+#   - Reservation is KEPT (hold_expires_at extended by grace = remaining_ETA + 900 s)
+#   - Ambulance shows last known location + dead-reckoned ETA in UI
+#   - When heartbeats resume (t=180 s), buffered offline-queue mutations apply
+#     exactly once (idempotency keys prevent duplicates)
+#   - SMS fallback commands (e.g. "GH <id> ARRIVED") are accepted via webhook
+#
+# Mechanism: §11.4 Hold extension, §11.12 Connectivity, §4 SIGNAL_WEAK/LOST constants.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: t10_ambulance_offline
+description: |
+  An ambulance goes silent mid-route (heartbeats drop for 3 minutes).
+  Hospital dashboard must show signal='lost' but reservation must remain intact.
+  On reconnect, buffered paramedic actions from the offline queue apply exactly once.
+demo: true  # 🎬 marked scenario
+tags: [connectivity, reservation, offline_queue, signal]
+
+# ── Setup state ───────────────────────────────────────────────────────────────
+setup:
+  reset_sim: true
+
+  # Seed a live emergency with an ambulance in transit to a confirmed hospital.
+  emergency:
+    id: em_t10
+    status: hospital_confirmed
+    acuity: urgent
+    facility: general
+    location: {lat: 18.520, lng: 73.856}
+    ambulance: amb_t10
+    hospital: hosp_t10
+    eta_to_hospital_sec: 480  # 8 minutes
+
+  ambulance:
+    id: amb_t10
+    registration_no: MH12T101
+    type: BLS
+    status: transporting
+    location: {lat: 18.540, lng: 73.840}  # mid-route
+
+  hospital:
+    id: hosp_t10
+    name: Test Hospital T10
+    location: {lat: 18.560, lng: 73.860}
+
+  reservation:
+    id: res_t10
+    emergency: em_t10
+    hospital: hosp_t10
+    status: confirmed
+    # hold_expires_at will be at least now + 480*1.5 + 120 = 840 s
+
+# ── Actions ───────────────────────────────────────────────────────────────────
+actions:
+  # t=0–30 s: Normal heartbeats (signal ok).
+  - at_sec: 0
+    actor: ambulance
+    ambulance: amb_t10
+    action: heartbeat
+    location: {lat: 18.540, lng: 73.840}
+
+  - at_sec: 10
+    actor: ambulance
+    ambulance: amb_t10
+    action: heartbeat
+    location: {lat: 18.542, lng: 73.842}
+
+  - at_sec: 20
+    actor: ambulance
+    ambulance: amb_t10
+    action: heartbeat
+    location: {lat: 18.544, lng: 73.844}
+
+  # t=30 s: Heartbeats STOP here — ambulance goes offline.
+  # No more heartbeat actions until t=180 s.
+  # The sweeper detects silence at t>=30 (SIGNAL_WEAK_SEC).
+  - at_sec: 30
+    actor: system
+    action: comment
+    note: "--- Heartbeats DROP here (simulating connectivity loss) ---"
+
+  # t=35 s: Verify signal state transitions to 'weak' via WS.
+  - at_sec: 35
+    actor: observer
+    action: assert_ws_event
+    channel: hospital:{hosp_t10}
+    event: ambulance.signal
+    expected:
+      signal: weak
+    timeout_sec: 15
+
+  # t=125 s: Verify signal state transitions to 'lost'.
+  - at_sec: 125
+    actor: observer
+    action: assert_ws_event
+    channel: hospital:{hosp_t10}
+    event: ambulance.signal
+    expected:
+      signal: lost
+    timeout_sec: 20
+
+  # t=150 s: Verify reservation is still held (grace period applies).
+  - at_sec: 150
+    actor: system
+    action: assert_db
+    sql: |
+      SELECT status FROM reservations WHERE id = '{res_t10}'
+    expected_value: confirmed
+
+  # t=160 s: Paramedic taps 'arrived scene' while offline — queued in IndexedDB.
+  # (Simulated by sending the SMS fallback command via the webhook.)
+  - at_sec: 160
+    actor: sms_gateway
+    action: inbound_sms
+    from: "+919800000001"  # amb_t10 driver's number
+    body: "GH {em_t10_short_id} ARRIVED"
+
+  # t=175 s: Verify SMS fallback was parsed and applied (idempotent).
+  - at_sec: 175
+    actor: observer
+    action: assert_db
+    sql: |
+      SELECT status FROM emergencies WHERE id = '{em_t10}'
+    expected_value: arrived_hospital
+    # Note: the SMS webhook applies the same transition as the API call.
+
+  # t=180 s: Heartbeats resume — offline queue replays.
+  - at_sec: 180
+    actor: ambulance
+    ambulance: amb_t10
+    action: heartbeat
+    location: {lat: 18.560, lng: 73.860}  # at hospital (geofenced)
+    offline_queue:
+      # These actions were queued during the outage; each has the same
+      # Idempotency-Key as the SMS command above → only applied once.
+      - action: arrived_hospital
+        idempotency_key: idem_t10_arrived
+        queued_at_sec: 160
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+assertions:
+  # Signal states.
+  - type: ws_event_sequence
+    channel: hospital:{hosp_t10}
+    event: ambulance.signal
+    expected_sequence:
+      - {signal: ok}
+      - {signal: weak}   # after 30 s of silence
+      - {signal: lost}   # after 120 s of silence
+
+  # Reservation intact throughout the outage.
+  - type: db_query
+    description: Reservation remained confirmed throughout
+    sql: |
+      SELECT status FROM reservations WHERE id = '{res_t10}'
+    expected_value: confirmed
+
+  # Emergency transitioned to arrived_hospital exactly once.
+  - type: db_query
+    description: Emergency arrived_hospital
+    sql: |
+      SELECT status FROM emergencies WHERE id = '{em_t10}'
+    expected_value: arrived_hospital
+
+  # Idempotency: the arrival was not applied twice despite SMS + offline queue.
+  - type: db_query
+    description: Only one arrival event in audit log
+    sql: |
+      SELECT COUNT(*) FROM audit_log
+       WHERE entity = 'emergency'
+         AND entity_id = '{em_t10}'
+         AND action = 'arrived_hospital'
+    expected_count: 1
+
+  # No orphaned reservations.
+  - type: invariant
+    check: no_reserved_room_without_reservation
+
+demo_notes: |
+  Show the hospital dashboard:
+  - Ambulance location freezes; signal badge changes to 🟡 Weak then 🔴 Lost.
+  - Reservation card remains on the board with "Signal lost — reservation held".
+  - When heartbeats resume, the card refreshes and the ambulance appears at
+    the hospital entrance (geofenced arrival).
+  - Audit trail shows one 'arrived_hospital' event despite two concurrent triggers.

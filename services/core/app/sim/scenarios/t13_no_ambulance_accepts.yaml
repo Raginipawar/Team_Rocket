@@ -1,0 +1,204 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Scenario T13: No Ambulance Accepts (All Decline / Expire)
+# Technical.md §14 T13 🎬
+#
+# Three dispatch rounds all fail (every offer either declined or expires).
+# Expected:
+#   - Round 1 (radius 5 km)  : 4 offers sent, all declined or expired → next round at t=30 s
+#   - Round 2 (radius 10 km) : 4 offers sent, all declined or expired → next round at t=60 s
+#   - Round 3 (radius 20 km) : 4 offers sent, all declined or expired → escalation at t=90 s
+#   - escalation(no_ambulance) created → Telegram alert sent to team group
+#   - Telegram message has inline keyboard with options (§13)
+#   - After escalation, round 3 offers are still open (see spec §11.1)
+#
+# Mechanism: §11.1 Dispatch, §13 Escalation engine, §12.2 Telegram.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: t13_no_ambulance_accepts
+description: |
+  Three full dispatch rounds exhaust without any ambulance accepting.
+  After round 3, an escalation(no_ambulance) is created and a Telegram
+  alert is sent to the ops team group with inline-keyboard options.
+demo: true  # 🎬 marked scenario
+tags: [dispatch, escalation, telegram, no_ambulance]
+
+# ── Setup state ───────────────────────────────────────────────────────────────
+setup:
+  reset_sim: true
+
+  # Seed a new emergency ready to dispatch.
+  emergency:
+    id: em_t13
+    channel: app_text
+    text: "Chest pain, very bad"
+    location: {lat: 18.520, lng: 73.856}
+    status: triaged
+    acuity: critical
+    facility: cardiac
+
+  # Seed 12 ALS ambulances spread across the three radius rings.
+  # All are configured with decline_probability=1.0 (always decline / let expire).
+  ambulances:
+    # Ring 1 (≤ 5 km)
+    - {id: amb_r1_1, registration_no: MH12R101, type: ALS, status: available, location: {lat: 18.520, lng: 73.860}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r1_2, registration_no: MH12R102, type: ALS, status: available, location: {lat: 18.524, lng: 73.856}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r1_3, registration_no: MH12R103, type: ALS, status: available, location: {lat: 18.516, lng: 73.853}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r1_4, registration_no: MH12R104, type: ALS, status: available, location: {lat: 18.522, lng: 73.848}, behavior: {decline_probability: 1.0}}
+    # Ring 2 (5–10 km)
+    - {id: amb_r2_1, registration_no: MH12R201, type: ALS, status: available, location: {lat: 18.480, lng: 73.856}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r2_2, registration_no: MH12R202, type: ALS, status: available, location: {lat: 18.560, lng: 73.856}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r2_3, registration_no: MH12R203, type: ALS, status: available, location: {lat: 18.520, lng: 73.790}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r2_4, registration_no: MH12R204, type: ALS, status: available, location: {lat: 18.520, lng: 73.920}, behavior: {decline_probability: 1.0}}
+    # Ring 3 (10–20 km)
+    - {id: amb_r3_1, registration_no: MH12R301, type: ALS, status: available, location: {lat: 18.420, lng: 73.856}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r3_2, registration_no: MH12R302, type: ALS, status: available, location: {lat: 18.620, lng: 73.856}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r3_3, registration_no: MH12R303, type: ALS, status: available, location: {lat: 18.520, lng: 73.700}, behavior: {decline_probability: 1.0}}
+    - {id: amb_r3_4, registration_no: MH12R304, type: ALS, status: available, location: {lat: 18.520, lng: 74.010}, behavior: {decline_probability: 1.0}}
+
+# ── Sim speed override ────────────────────────────────────────────────────────
+# Use 3× speed so 90 seconds of sim time passes in ~30 s of real time.
+sim_speed: 3
+
+# ── Actions ───────────────────────────────────────────────────────────────────
+actions:
+  # t=0: Trigger dispatch (status: triaged → dispatching).
+  - at_sec: 0
+    actor: system
+    action: trigger_dispatch
+    emergency: em_t13
+
+  # t=2: Verify round 1 offers sent (4 offers, radius 5 km).
+  - at_sec: 2
+    actor: observer
+    action: assert_db
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}'
+         AND round = 1
+         AND status = 'pending'
+    expected_count: 4
+
+  # t=20: All round-1 ambulances decline (sim bots drive this automatically).
+  # t=30: Round 1 fully expired. Round 2 starts.
+  - at_sec: 32
+    actor: observer
+    action: assert_db
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}'
+         AND round = 2
+         AND status = 'pending'
+    expected_count: 4
+
+  # t=60: Round 2 expires. Round 3 starts.
+  - at_sec: 62
+    actor: observer
+    action: assert_db
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}'
+         AND round = 3
+         AND status = 'pending'
+    expected_count: 4
+
+  # t=90: Round 3 offers expire (or all decline). Escalation fires.
+  - at_sec: 92
+    actor: observer
+    action: assert_db
+    sql: |
+      SELECT status FROM escalations
+       WHERE emergency_id = '{em_t13}'
+         AND type = 'no_ambulance'
+    expected_value: open
+
+  # t=93: Verify Telegram alert was sent (in fake mode: notification row exists).
+  - at_sec: 93
+    actor: observer
+    action: assert_db
+    sql: |
+      SELECT COUNT(*) FROM notifications
+       WHERE channel = 'telegram'
+         AND template = 'escalation_alert'
+         AND payload::jsonb ->> 'escalation_type' = 'no_ambulance'
+    expected_count:
+      gte: 1
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+assertions:
+  # Three rounds of dispatch, 4 offers each.
+  - type: db_query
+    description: Round 1 — 4 offers sent
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}' AND round = 1
+    expected_count: 4
+
+  - type: db_query
+    description: Round 2 — 4 offers sent
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}' AND round = 2
+    expected_count: 4
+
+  - type: db_query
+    description: Round 3 — 4 offers sent
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}' AND round = 3
+    expected_count: 4
+
+  # All offers declined or expired (none accepted).
+  - type: db_query
+    description: No offer accepted
+    sql: |
+      SELECT COUNT(*) FROM dispatch_offers
+       WHERE emergency_id = '{em_t13}' AND status = 'accepted'
+    expected_count: 0
+
+  # Escalation created.
+  - type: db_query
+    description: Escalation type no_ambulance exists
+    sql: |
+      SELECT type, status FROM escalations WHERE emergency_id = '{em_t13}'
+    expected_row: {type: no_ambulance, status: open}
+
+  # Telegram notification sent.
+  - type: db_query
+    description: Telegram alert recorded in notifications
+    sql: |
+      SELECT COUNT(*) FROM notifications
+       WHERE channel = 'telegram' AND template = 'escalation_alert'
+    expected_count:
+      gte: 1
+
+  # Escalation options include the default (widen radius) and force-assign.
+  - type: db_query
+    description: Escalation options include widen_radius as default
+    sql: |
+      SELECT default_option_id FROM escalations WHERE emergency_id = '{em_t13}'
+    expected_value: widen_radius
+
+  # Emergency is still in dispatching status (not closed/failed).
+  - type: db_query
+    description: Emergency remains in dispatching (awaiting ops resolution)
+    sql: |
+      SELECT status FROM emergencies WHERE id = '{em_t13}'
+    expected_value: dispatching
+
+  # Audit trail.
+  - type: db_query
+    description: Escalation creation audited
+    sql: |
+      SELECT COUNT(*) FROM audit_log
+       WHERE entity = 'escalation'
+         AND action = 'created'
+    expected_count:
+      gte: 1
+
+demo_notes: |
+  Show the ops Telegram group receiving an alert message with the patient card
+  (critical cardiac, Pune city centre), what was tried (3 rounds, 12 declines),
+  and three inline buttons:
+    [★ Widen to 40 km + BLS follow-up] [Force-assign nearest] [Notify 108]
+  One team member clicks 'I'm handling this' to claim, then picks an option.
+  The ops page live map shows the escalation card with countdown timer.
