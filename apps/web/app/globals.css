@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/*
+  GoldenHour design system: the website's white + soft grey look, pill buttons and
+  large rounded cards, tuned so every age can use it: 18px body text on phone apps,
+  56px+ touch targets, AA contrast for all text, and never colour alone for meaning.
+*/
+
+:root {
+  --bg: #ffffff;
+  --page: #f5f5f4;
+  --soft: #f5f5f4;
+  --soft-2: #eeeeec;
+  --line: #e2e2df;
+  --ink: #111111;
+  --muted: #57534e;
+  --card: #ffffff;
+  --red: #dc2626;
+  --red-ink: #b91c1c;
+  --red-soft: #fef2f2;
+  --blue: #1d4ed8;
+  --blue-soft: #eff6ff;
+  --green: #15803d;
+  --green-soft: #f0fdf4;
+  --amber: #b45309;
+  --amber-soft: #fffbeb;
+  --focus: #2563eb;
+}
+
+.dark {
+  --bg: #0c0c0d;
+  --page: #0c0c0d;
+  --soft: #1c1c1f;
+  --soft-2: #26262a;
+  --line: #2e2e33;
+  --ink: #f5f5f5;
+  --muted: #b4b4bb;
+  --card: #161618;
+  --red: #ef4444;
+  --red-ink: #fca5a5;
+  --red-soft: #2a1414;
+  --blue: #60a5fa;
+  --blue-soft: #14213a;
+  --green: #4ade80;
+  --green-soft: #10261a;
+  --amber: #fbbf24;
+  --amber-soft: #2a2110;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-page: var(--page);
+  --color-soft: var(--soft);
+  --color-soft-2: var(--soft-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-red: var(--red);
+  --color-red-ink: var(--red-ink);
+  --color-red-soft: var(--red-soft);
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --font-sans: var(--font-noto), var(--font-deva), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius-card: 24px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* desktop tools (hospital, ops) use a slightly smaller base */
+.desk {
+  font-size: 16px;
+}
+
+:lang(hi),
+:lang(mr) {
+  line-height: 1.65;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* map (maplibre) */
+.maplibregl-map {
+  font-family: inherit;
+}
+.maplibregl-ctrl-attrib {
+  font-size: 11px;
+}
+
+@keyframes gh-pulse {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.gh-pulse {
+  animation: gh-pulse 1.8s ease-out infinite;
+}
+
+@keyframes gh-ring {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-4deg); }
+}
+.gh-ring {
+  animation: gh-ring 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
