@@ -19,19 +19,52 @@ from app.db.repos.analytics import get_ops_analytics as repo_get_ops_analytics
 
 
 async def create_ops_session(db: AsyncSession, token: str) -> dict:
-    """Exchange a one-time token for an ops session."""
-    result = await db.execute(
-        select(OneTimeToken).where(OneTimeToken.token == token, OneTimeToken.used == False)
-    )
-    ott = result.scalar_one_or_none()
-    if not ott:
+    """Exchange a one-time token for an ops session.
+
+    Was querying OneTimeToken.token/.used -- neither column exists on the
+    real one_time_tokens table (db/migrations/0001_init.sql: token_hash as
+    the PK, used_at as a nullable timestamp, issued_to not user_id). Every
+    real call would have raised UndefinedColumnError. Rewritten against the
+    real schema with raw SQL, same pattern already used elsewhere in this
+    router for tables with no matching ORM model."""
+    from app.security.tokens import hash_token
+    token_hash = hash_token(token)
+    row = (await db.execute(
+        text("SELECT token_hash, escalation_id, issued_to, expires_at, used_at FROM one_time_tokens "
+             "WHERE token_hash = :h AND purpose = 'ops'"),
+        {"h": token_hash},
+    )).mappings().first()
+    if not row or row["used_at"] is not None or row["expires_at"] < datetime.utcnow().replace(tzinfo=row["expires_at"].tzinfo):
         raise ValueError("Invalid or expired token")
-    ott.used = True
+    await db.execute(
+        text("UPDATE one_time_tokens SET used_at = now() WHERE token_hash = :h"), {"h": token_hash},
+    )
     await db.commit()
     return {
         "cookie": f"ott:{token}",
-        "user": {"id": str(ott.user_id), "role": "ops"},
+        "escalation_id": str(row["escalation_id"]) if row["escalation_id"] else None,
+        "user": {"id": str(row["issued_to"]) if row["issued_to"] else None, "role": "ops"},
     }
+
+
+async def issue_ops_token(db: AsyncSession, *, escalation_id: UUID | str | None = None,
+                           emergency_id: UUID | str | None = None) -> str:
+    """Generates the one-time link sent in a Telegram escalation alert.
+    Returns the full URL (PUBLIC_BASE_URL + /ops/<raw token>) -- the raw
+    token is handed out exactly once, only its SHA-256 hash is stored."""
+    from app.config import settings
+    from app.security.tokens import new_token
+    from datetime import timedelta
+
+    raw, token_hash = new_token()
+    expires_at = datetime.utcnow() + timedelta(minutes=settings.OPS_LINK_TTL_MIN)
+    await db.execute(
+        text("INSERT INTO one_time_tokens (token_hash, purpose, escalation_id, emergency_id, expires_at) "
+             "VALUES (:h, 'ops', :esc, :em, :exp)"),
+        {"h": token_hash, "esc": str(escalation_id) if escalation_id else None,
+         "em": str(emergency_id) if emergency_id else None, "exp": expires_at},
+    )
+    return f"{settings.PUBLIC_BASE_URL.rstrip('/')}/ops/{raw}"
 
 
 async def get_overview(db: AsyncSession) -> dict:
