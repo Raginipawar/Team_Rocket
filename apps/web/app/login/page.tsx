@@ -13,7 +13,7 @@ import { Brand, Call108, LanguageSwitcher, MockRibbon } from "@/components/shell
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/bits";
 import Icon from "@/components/ui/icon";
-import { useNow } from "@/lib/hooks";
+import { useGeolocation, useNow } from "@/lib/hooks";
 
 const HOME: Record<Role, string> = { patient: "/patient", paramedic: "/ambulance", hospital_staff: "/hospital", developer: "/" };
 
@@ -298,6 +298,18 @@ function HospitalSignup({ onDone, onBackToSignIn }: { onDone: (r: LoginResponse)
   const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((s) => ({ ...s, [k]: v }));
   const toggleCap = (id: string) => set("capabilities", f.capabilities.includes(id) ? f.capabilities.filter((c) => c !== id) : [...f.capabilities, id]);
 
+  const geo = useGeolocation(false);
+  const [latLngTouched, setLatLngTouched] = useState(false);
+  useEffect(() => {
+    // Auto-fill from the browser's real location, same hook the patient
+    // SOS flow already uses -- only while the operator hasn't typed their
+    // own value in (a hospital's actual address may differ from wherever
+    // the person filling this form happens to be standing).
+    if (geo.pos && !latLngTouched) {
+      setF((s) => ({ ...s, lat: geo.pos!.lat.toFixed(6), lng: geo.pos!.lng.toFixed(6) }));
+    }
+  }, [geo.pos, latLngTouched]);
+
   const submit = async () => {
     setErr(null);
     // Field-specific message instead of one blanket "fill in all fields" --
@@ -341,9 +353,17 @@ function HospitalSignup({ onDone, onBackToSignIn }: { onDone: (r: LoginResponse)
 
       <Field label="Hospital name" htmlFor="hname"><Input id="hname" value={f.hospital_name} onChange={(e) => set("hospital_name", e.target.value)} /></Field>
       <Field label="Address" htmlFor="addr"><Input id="addr" value={f.address} onChange={(e) => set("address", e.target.value)} /></Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Latitude" htmlFor="lat"><Input id="lat" inputMode="decimal" value={f.lat} onChange={(e) => set("lat", e.target.value)} placeholder="18.63" /></Field>
-        <Field label="Longitude" htmlFor="lng"><Input id="lng" inputMode="decimal" value={f.lng} onChange={(e) => set("lng", e.target.value)} placeholder="73.80" /></Field>
+      <div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Latitude" htmlFor="lat"><Input id="lat" inputMode="decimal" value={f.lat} onChange={(e) => { setLatLngTouched(true); set("lat", e.target.value); }} placeholder="18.63" /></Field>
+          <Field label="Longitude" htmlFor="lng"><Input id="lng" inputMode="decimal" value={f.lng} onChange={(e) => { setLatLngTouched(true); set("lng", e.target.value); }} placeholder="73.80" /></Field>
+        </div>
+        <button type="button" onClick={() => { setLatLngTouched(false); geo.request(); }}
+          className="mt-2 flex items-center gap-1.5 text-[14px] font-semibold text-ink underline">
+          <Icon name="pin" size={16} />
+          {geo.status === "asking" ? "Finding your location…" : "Use my current location"}
+        </button>
+        {geo.status === "denied" && <p className="mt-1 text-[13px] text-muted">Location access denied -- enter coordinates manually.</p>}
       </div>
       <Field label="Duty manager phone" htmlFor="dmp"><Input id="dmp" value={f.duty_manager_phone} onChange={(e) => set("duty_manager_phone", e.target.value)} placeholder="+91..." /></Field>
       <Field label="ER entrance note (optional)" htmlFor="ern"><Input id="ern" value={f.er_entrance_note} onChange={(e) => set("er_entrance_note", e.target.value)} /></Field>
