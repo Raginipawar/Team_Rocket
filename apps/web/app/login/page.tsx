@@ -300,8 +300,22 @@ function HospitalSignup({ onDone, onBackToSignIn }: { onDone: (r: LoginResponse)
 
   const submit = async () => {
     setErr(null);
-    if (!f.hospital_name || !f.address || !f.lat || !f.lng || !f.duty_manager_phone || !f.staff_name || !f.staff_phone || f.staff_password.length < 8) {
-      setErr("Please fill in all required fields (password needs at least 8 characters).");
+    // Field-specific message instead of one blanket "fill in all fields" --
+    // a generic message with no way to tell WHICH field the form thinks is
+    // still empty is exactly what made a real mobile-autofill bug (dots
+    // visibly filled in the password box, but the submit still saw "")
+    // impossible to diagnose from a screenshot alone.
+    const missing: string[] = [];
+    if (!f.hospital_name.trim()) missing.push("Hospital name");
+    if (!f.address.trim()) missing.push("Address");
+    if (!f.lat.trim() || isNaN(Number(f.lat))) missing.push("Latitude");
+    if (!f.lng.trim() || isNaN(Number(f.lng))) missing.push("Longitude");
+    if (!f.duty_manager_phone.trim()) missing.push("Duty manager phone");
+    if (!f.staff_name.trim()) missing.push("Administrator full name");
+    if (!f.staff_phone.trim()) missing.push("Administrator phone");
+    if (f.staff_password.length < 8) missing.push(`Password (needs 8+ characters, got ${f.staff_password.length})`);
+    if (missing.length) {
+      setErr(`Missing or invalid: ${missing.join(", ")}`);
       return;
     }
     setBusy(true);
@@ -369,7 +383,11 @@ function HospitalSignup({ onDone, onBackToSignIn }: { onDone: (r: LoginResponse)
         <p className="mb-2 text-[14px] font-bold uppercase tracking-wider text-muted">Administrator account</p>
         <Field label="Full name" htmlFor="sname"><Input id="sname" value={f.staff_name} onChange={(e) => set("staff_name", e.target.value)} /></Field>
         <Field label="Phone (used to sign in)" htmlFor="sphone"><Input id="sphone" value={f.staff_phone} onChange={(e) => set("staff_phone", e.target.value)} placeholder="+91..." /></Field>
-        <Field label="Password" htmlFor="spw"><Input id="spw" type="password" value={f.staff_password} onChange={(e) => set("staff_password", e.target.value)} /></Field>
+        <Field label="Password" htmlFor="spw">
+          <Input id="spw" type="password" autoComplete="new-password" value={f.staff_password}
+            onChange={(e) => set("staff_password", e.currentTarget.value)}
+            onInput={(e) => set("staff_password", e.currentTarget.value)} />
+        </Field>
       </div>
 
       {err && <p className="text-[15px] font-semibold text-red-ink">{err}</p>}
