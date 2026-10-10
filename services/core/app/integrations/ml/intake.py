@@ -95,7 +95,16 @@ def _apply_keyword_escalation(result: dict, text: str) -> dict:
     low = text.lower()
     for keyword, acuity, facility in _ESCALATION_KEYWORDS:
         if keyword in low and _ACUITY_RANK.get(acuity, 0) > _ACUITY_RANK.get(result.get("acuity"), 0):
+            # The displayed confidence was still the undertrained model's own
+            # raw softmax (e.g. 11%) even once a keyword match had already
+            # overridden its acuity/facility guess -- confusing on its face:
+            # a caller says "heart attack" and the UI shows critical/cardiac
+            # at "11% sure". A keyword match is a certain, deterministic
+            # determination, not a statistical guess, so its confidence
+            # should say so. Only raises confidence, never lowers a model
+            # that was already more confident on its own.
             result = {**result, "acuity": acuity, "facility": facility, "needs_review": True,
+                      "confidence": max(result.get("confidence") or 0, 0.9),
                       "model_version": f"{result.get('model_version', 'model')}+keyword_escalation:{keyword}"}
     return result
 

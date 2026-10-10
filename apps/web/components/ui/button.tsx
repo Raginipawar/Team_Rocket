@@ -18,11 +18,18 @@ export const buttonVariants = cva(
         ghost: "text-ink hover:bg-soft",
         link: "text-ink underline underline-offset-4 decoration-2 rounded-md px-1",
       },
+      // min-h, not h: a fixed height with no overflow handling meant a
+      // longer label (e.g. "Patient got worse" + an icon, inside a narrow
+      // 2-column grid on a phone) that wraps to 2 lines just overflowed
+      // silently past the button's bottom edge, visually overlapping
+      // whatever sat below it -- confirmed from a real screenshot. A
+      // min-height lets a button that genuinely needs 2 lines grow instead,
+      // while staying the same single-line height everywhere else.
       size: {
-        sm: "h-10 px-4 text-[15px]",
-        md: "h-[52px] px-6 text-[17px]",
-        lg: "h-[60px] px-7 text-[19px]",
-        xl: "h-[72px] px-8 text-[21px]",
+        sm: "min-h-10 px-4 py-2 text-[15px]",
+        md: "min-h-[52px] px-6 py-2 text-[17px]",
+        lg: "min-h-[60px] px-7 py-2.5 text-[19px]",
+        xl: "min-h-[72px] px-8 py-3 text-[21px]",
         icon: "h-12 w-12 p-0",
       },
       block: { true: "w-full" },
