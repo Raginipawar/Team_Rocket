@@ -62,13 +62,51 @@ async def extract(text: str, language: str) -> dict | None:
         return None
 
 
+_ACUITY_RANK = {"stable": 0, "urgent": 1, "critical": 2}
+
+# The real triage model (training/triage/model.py) is honest about being
+# undertrained -- 258 synthetic samples, 0.15 critical_recall on its own
+# eval. A caller literally saying "heart attack" and getting back
+# urgent/general is that documented weakness, not a bug in this code. Real
+# fix is retraining with real data; this is the pragmatic stopgap: a
+# keyword safety net that can only ESCALATE the model's guess (never
+# downgrade it), same "safe-side default" philosophy as the
+# MLUnavailable fallback below.
+_ESCALATION_KEYWORDS: list[tuple[str, str, str]] = [
+    ("heart attack", "critical", "cardiac"),
+    ("cardiac arrest", "critical", "cardiac"),
+    ("chest pain", "critical", "cardiac"),
+    ("not breathing", "critical", "respiratory"),
+    ("can't breathe", "critical", "respiratory"),
+    ("cannot breathe", "critical", "respiratory"),
+    ("choking", "critical", "respiratory"),
+    ("unconscious", "critical", "general"),
+    ("unresponsive", "critical", "general"),
+    ("stroke", "critical", "stroke"),
+    ("face drooping", "critical", "stroke"),
+    ("slurred speech", "critical", "stroke"),
+    ("severe bleeding", "critical", "trauma"),
+    ("bleeding heavily", "critical", "trauma"),
+    ("seizure", "urgent", "general"),
+]
+
+
+def _apply_keyword_escalation(result: dict, text: str) -> dict:
+    low = text.lower()
+    for keyword, acuity, facility in _ESCALATION_KEYWORDS:
+        if keyword in low and _ACUITY_RANK.get(acuity, 0) > _ACUITY_RANK.get(result.get("acuity"), 0):
+            result = {**result, "acuity": acuity, "facility": facility, "needs_review": True,
+                      "model_version": f"{result.get('model_version', 'model')}+keyword_escalation:{keyword}"}
+    return result
+
+
 async def triage(text: str, extracted: dict, profile_summary: str | None = None,
                   followup_answers: list[str] | None = None) -> dict:
     """technical.md §9.3: on failure, safe-side default -- acuity critical,
     facility general, needs_review=true (forces ALS dispatch). Never returns
     None: callers rely on this dict always having acuity/facility/needs_review."""
     try:
-        return await call_ml(
+        result = await call_ml(
             "POST", "/ml/v1/triage", capability="triage", timeout_s=TRIAGE_TIMEOUT_S,
             json={
                 "text": text, "extracted": extracted,
@@ -76,6 +114,7 @@ async def triage(text: str, extracted: dict, profile_summary: str | None = None,
                 "followup_answers": followup_answers or [],
             },
         )
+        return _apply_keyword_escalation(result, text)
     except MLUnavailable:
         return {
             "acuity": "critical", "acuity_probs": {"critical": 1.0},
