@@ -16,10 +16,12 @@ class SimWorld:
     
     async def reset(self, db: AsyncSession) -> None:
         """Reset all simulated entities to initial state via DB."""
-        # Reset emergencies, reservations, etc. for simulated entities
-        await db.execute(text("DELETE FROM emergencies WHERE is_simulated = TRUE"))
-        await db.execute(text("DELETE FROM hospital_reservations WHERE emergency_id IN (SELECT id FROM emergencies WHERE is_simulated = TRUE)"))
-        await db.execute(text("DELETE FROM outbox_events"))
+        await db.execute(text("DELETE FROM reservations"))
+        await db.execute(text("DELETE FROM hospital_requests"))
+        await db.execute(text("DELETE FROM dispatch_offers"))
+        await db.execute(text("DELETE FROM emergencies"))
+        await db.execute(text("DELETE FROM incidents"))
+        await db.execute(text("DELETE FROM escalations"))
         await db.commit()
     
     async def set_speed(self, multiplier: float) -> None:

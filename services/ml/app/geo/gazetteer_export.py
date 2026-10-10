@@ -41,7 +41,8 @@ def export_landmarks(output_path: str = 'data/processed/landmarks.csv') -> None:
     west = PUNE_BBOX[1]
     
     try:
-        pois = ox.features_from_bbox(north, south, east, west, tags=TAGS)
+        bbox = (north, south, east, west)
+        pois = ox.features_from_bbox(bbox=bbox, tags=TAGS)
     except Exception as e:
         print(f"Failed to fetch POIs: {e}")
         return

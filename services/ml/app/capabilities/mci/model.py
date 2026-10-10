@@ -34,12 +34,12 @@ async def allocate_mci(req: MCIAllocateRequest) -> MCIAllocateResponse:
             
         for fac, p_list in facility_patients.items():
             cap = hosp.capacities_by_type.get(fac, 0)
-            model.AddSum([assign[(p, h, a)] for p in p_list for a in range(num_a)]) <= cap
+            model.Add(sum([assign[(p, h, a)] for p in p_list for a in range(num_a)]) <= cap)
             
     # Max share per hospital: <= 33% of total patients (rounded up)
     max_share = max(1, (num_p + 2) // 3)
     for h in range(num_h):
-        model.AddSum([assign[(p, h, a)] for p in range(num_p) for a in range(num_a)]) <= max_share
+        model.Add(sum([assign[(p, h, a)] for p in range(num_p) for a in range(num_a)]) <= max_share)
         
     # Objective: Minimize weighted time, maximize assignments (especially for critical)
     # We negate the objective for maximization OR use minimization
