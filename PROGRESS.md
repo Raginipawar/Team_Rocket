@@ -30,6 +30,14 @@ Demo logins: patient = OTP (any phone, code appears in the backend's own termina
 - **[HIGH] Hospital app sometimes shows/redirects to the ambulance app**, reported on separate laptops/profiles so it isn't a shared-cookie issue. Role-guard code (`RequireRole` in `components/shell.tsx`) and both layouts checked and are correct in isolation — needs the exact on-screen text/screenshot and whether it happens before or after login to pin down.
 - Telegram bot not yet real (`TELEGRAM_MODE=mock`) — needs a bot token + group chat id from the user.
 - `/ambulance/history`, `/me/contacts`, `/me/emergencies`, `/me/profile` real backend routes: profile/contacts/emergencies now built and verified (see below); ambulance history still returns empty (frontend degrades gracefully).
+- Push notifications still deferred (code is real/wired, not yet live-fired end to end).
+
+## Completed
+
+### 2026-10-10 — Real SMS OTP delivery (textbee)
+- `SMS_MODE=real`, `SMS_PROVIDER=textbee`, `SMS_API_KEY`, `SMS_GATEWAY_DEVICE_ID` set in `services/core/.env` (teammate's Android phone running the textbee app is the real SMS gateway).
+- Fixed a real bug found while verifying this live: `sender.py` was reading credentials with `os.getenv`/`os.environ`, but pydantic-settings' `.env` loading only populates the `Settings` object's fields — it never touches the actual process environment. Every env var read this way silently fell back to its default (`SMS_MODE` stuck on `"mock"`/fake-path even with `SMS_MODE=real` sitting in `.env`). Fixed by switching `sender.py` to read from `app.config.settings` instead, and added the missing `SMS_GATEWAY_DEVICE_ID` field to the `Settings` model.
+- **Verified live**: real `POST /api/v1/auth/otp/request` → textbee API returned `201 Created` → backend logged `send_sms OK provider=textbee` → real OTP SMS received on a real phone (+91 75585 28945).
 
 ## Completed
 

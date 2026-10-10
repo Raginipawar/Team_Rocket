@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     SMS_API_KEY: str = ""
     SMS_WEBHOOK_SECRET: str = ""
     SMS_GATEWAY_NUMBER: str = ""
+    SMS_GATEWAY_DEVICE_ID: str = ""
     
     TELEGRAM_MODE: str = "mock"
     TELEGRAM_BOT_TOKEN: str = ""

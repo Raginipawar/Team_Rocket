@@ -15,11 +15,12 @@ so that step is a .env paste, not more code."""
 
 import asyncio
 import logging
-import os
 import uuid
 from uuid import UUID
 
 import httpx
+
+from app.config import settings
 
 logger = logging.getLogger("sms")
 
@@ -32,7 +33,13 @@ _throttle_lock = asyncio.Lock()
 
 
 def _sms_mode() -> str:
-    return os.getenv("SMS_MODE", "fake")
+    # settings.SMS_MODE (pydantic-settings' own .env parsing), NOT
+    # os.getenv -- pydantic-settings loads .env into the Settings object's
+    # fields only, it never touches the real process environment, so
+    # os.getenv("SMS_MODE") always saw the "fake" default regardless of
+    # what .env said. Confirmed live: a real otp/request logged
+    # "SMS_MODE=fake, not sent" even with SMS_MODE=real sitting in .env.
+    return settings.SMS_MODE
 
 
 def _split_parts(body: str) -> list[str]:
@@ -52,10 +59,10 @@ async def _throttle() -> None:
 
 
 async def _send_via_textbee(client: httpx.AsyncClient, phone: str, body: str) -> str:
-    device_id = os.environ["SMS_GATEWAY_DEVICE_ID"]
+    device_id = settings.SMS_GATEWAY_DEVICE_ID
     resp = await client.post(
         f"https://api.textbee.dev/api/v1/gateway/devices/{device_id}/send-sms",
-        headers={"x-api-key": os.environ["SMS_API_KEY"]},
+        headers={"x-api-key": settings.SMS_API_KEY},
         json={"recipients": [phone], "message": body},
         timeout=15.0,
     )
@@ -67,8 +74,8 @@ async def _send_via_textbee(client: httpx.AsyncClient, phone: str, body: str) ->
 async def _send_via_httpsms(client: httpx.AsyncClient, phone: str, body: str) -> str:
     resp = await client.post(
         "https://api.httpsms.com/v1/messages/send",
-        headers={"x-api-key": os.environ["SMS_API_KEY"]},
-        json={"content": body, "from": os.environ["SMS_GATEWAY_NUMBER"], "to": phone},
+        headers={"x-api-key": settings.SMS_API_KEY},
+        json={"content": body, "from": settings.SMS_GATEWAY_NUMBER, "to": phone},
         timeout=15.0,
     )
     resp.raise_for_status()
@@ -80,14 +87,14 @@ async def send_sms(phone: str, body: str, *, emergency_id: UUID | None = None,
                     template: str | None = None) -> str:
     if _sms_mode() != "real":
         message_id = str(uuid.uuid4())
-        logger.info("send_sms (SMS_MODE=fake, not sent) to=%s template=%s emergency_id=%s body=%r message_id=%s",
-                    phone, template, emergency_id, body, message_id)
+        logger.info("send_sms (SMS_MODE=%s, not sent) to=%s template=%s emergency_id=%s body=%r message_id=%s",
+                    settings.SMS_MODE, phone, template, emergency_id, body, message_id)
         return message_id
 
-    provider = os.getenv("SMS_PROVIDER", "textbee")
+    provider = settings.SMS_PROVIDER or "textbee"
     sender = _send_via_httpsms if provider == "httpsms" else _send_via_textbee
-    required_env = ("SMS_API_KEY", "SMS_GATEWAY_NUMBER") if provider == "httpsms" else ("SMS_API_KEY", "SMS_GATEWAY_DEVICE_ID")
-    missing = [v for v in required_env if not os.getenv(v)]
+    required = ("SMS_API_KEY", "SMS_GATEWAY_NUMBER") if provider == "httpsms" else ("SMS_API_KEY", "SMS_GATEWAY_DEVICE_ID")
+    missing = [v for v in required if not getattr(settings, v)]
     if missing:
         # A missing credential is a config error, not a transient network
         # failure -- retrying it with backoff would just waste the full
