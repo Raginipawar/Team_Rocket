@@ -13,8 +13,8 @@ ALLOWED: dict[str, set[str]] = {
     "dispatching":       {"ambulance_assigned", "cancelled"},
     "ambulance_assigned":{"at_scene", "dispatching", "cancelled"},  # dispatching = re-dispatch
     "at_scene":          {"patient_on_board", "refused_transport", "cancelled"},
-    "patient_on_board":  {"hospital_selecting"},
-    "hospital_selecting":{"hospital_confirmed", "cancelled"},
+    "patient_on_board":  {"hospital_selecting", "refused_transport"},
+    "hospital_selecting":{"hospital_confirmed", "refused_transport", "cancelled"},
     # hospital_selecting also allows divert: hospital_confirmed -> hospital_selecting (handled separately)
     "hospital_confirmed":{"arrived_hospital", "hospital_selecting"},  # hospital_selecting = divert
     "arrived_hospital":  {"handed_off"},

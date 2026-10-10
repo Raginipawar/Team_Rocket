@@ -160,6 +160,9 @@ async def refused_transport_endpoint(
     user = Depends(require_role('paramedic')),
     db: AsyncSession = Depends(get_db)
 ):
-    await record_refused_transport(db, emergency_id=id, note=payload.note, actor_id=user.id)
-    await db.commit()
-    return {"status": "recorded"}
+    try:
+        await record_refused_transport(db, emergency_id=id, note=payload.note, actor_id=user.id)
+        await db.commit()
+        return {"status": "recorded"}
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail={"error": {"code": "CONFLICT", "message": str(e)}})
