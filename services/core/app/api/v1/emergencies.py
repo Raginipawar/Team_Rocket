@@ -7,6 +7,7 @@ framework lands; the job body (domain/intake.process_emergency) doesn't change."
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
 
 from pydantic import BaseModel
+from sqlalchemy import text
 
 from app.db.repos import emergencies as emergencies_repo
 from app.db.repos import identity as identity_repo
@@ -136,6 +137,14 @@ async def _run_process_emergency(
             raise
 
 
+_ESCALATION_MESSAGES = {
+    "no_ambulance": "No nearby ambulance has accepted yet. We're widening the search area -- this doesn't mean the system is down.",
+    "no_hospital": "No hospital has confirmed a bed yet. We're widening the search and will stabilise at the nearest capable hospital if needed.",
+    "mass_casualty": "Multiple people reported at this location. Coordinating resources across hospitals.",
+    "system_anomaly": "A connected service is having trouble. Your request is still being handled.",
+}
+
+
 @router.get("/emergencies/{emergency_id}")
 async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_current_user)) -> dict:
     # Previously had no auth dependency at all -- anyone who guessed or saw
@@ -143,9 +152,26 @@ async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_curre
     # fetch the full clinical record, unfiltered, no role check whatsoever.
     async with get_session() as session:
         emergency = await emergencies_repo.get_emergency(session, emergency_id)
-    if emergency is None:
-        raise HTTPException(404, "emergency not found")
+        if emergency is None:
+            raise HTTPException(404, "emergency not found")
+        # raise_escalation() never touches emergencies.status (it's a
+        # separate ops/Telegram-facing table) -- a real "no ambulance
+        # accepted yet" / "no hospital confirmed yet" case left the caller
+        # staring at an unchanged "finding..." state forever, with nothing
+        # to distinguish "still genuinely trying" from "something's broken",
+        # which is exactly what spec's availability-status requirement
+        # means. Surface the open escalation (if any) as an honest status
+        # message, not a connection error.
+        esc = (await session.execute(
+            text("SELECT type FROM escalations WHERE emergency_id = :id AND status = 'open' "
+                 "ORDER BY created_at DESC LIMIT 1"),
+            {"id": emergency_id},
+        )).mappings().first()
     _authorize_emergency_access(user, emergency)
+    if esc:
+        emergency = {**emergency, "escalation": {
+            "type": esc["type"], "message": _ESCALATION_MESSAGES.get(esc["type"], "Still working on this -- taking longer than usual."),
+        }}
     return project(user.role, emergency)
 
 

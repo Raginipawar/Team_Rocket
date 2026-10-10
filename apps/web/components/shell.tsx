@@ -67,9 +67,11 @@ export function Call108({ variant = "bar" }: { variant?: "bar" | "button" | "ban
   );
 }
 
-/** Connection banners: offline, or core down (then Call 108 becomes a full-width banner). */
+/** Connection banners: offline, reconnecting (a single blip -- quiet, not
+ * alarming, covers a Render free-tier cold start), or genuinely down after
+ * sustained failure (then Call 108 becomes a full-width banner). */
 export function ConnectionBanners({ patient }: { patient?: boolean }) {
-  const { down, online } = useHealth();
+  const { down, reconnecting, online } = useHealth();
   const t = useTranslations("common");
   if (patient && (down || !online)) return <Call108 variant="banner" />;
   if (!online) {
@@ -85,6 +87,14 @@ export function ConnectionBanners({ patient }: { patient?: boolean }) {
       <div className="flex items-center gap-2 rounded-2xl bg-red-soft px-4 py-3 text-[16px] font-semibold text-red-ink" role="alert">
         <Icon name="alert" size={20} />
         Server not reachable. Data may be out of date.
+      </div>
+    );
+  }
+  if (reconnecting) {
+    return (
+      <div className="flex items-center gap-2 rounded-2xl bg-soft px-4 py-3 text-[15px] font-semibold text-muted" role="status">
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden />
+        Reconnecting…
       </div>
     );
   }

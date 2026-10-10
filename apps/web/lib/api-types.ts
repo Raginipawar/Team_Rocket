@@ -134,6 +134,7 @@ export type EmergencyView = {
   route?: string | null; // polyline6 of the current leg
   leg?: "to_patient" | "to_hospital" | null;
   call_108_prompt?: boolean;
+  escalation?: { type: string; message: string } | null;
 };
 
 export type FollowupQuestion = {

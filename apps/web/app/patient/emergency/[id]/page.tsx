@@ -194,6 +194,13 @@ export default function LiveEmergency() {
       )}
       {loc?.signal === "weak" && !final && <Banner tone="amber" icon="wifiOff">{t("signalWeak")}</Banner>}
       {loc?.signal === "lost" && !final && <Banner tone="amber" icon="wifiOff">{t("signalLost")}</Banner>}
+      {e.escalation && !final && (
+        // The real status when a dispatch/hospital-match is genuinely
+        // taking longer than usual (widened search, still trying) --
+        // distinct from a connection/server problem, so this never looks
+        // like the app itself is broken.
+        <Banner tone="amber" icon="clock">{e.escalation.message}</Banner>
+      )}
 
       {tracking ? (
         <div className="-mx-4 flex flex-col">
