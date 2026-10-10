@@ -19,11 +19,17 @@ async def create_hospital_request_with_hold(
     explanation: list,
     acuity: str,
     facility: str,
+    required_resources: list[str],
     is_family_choice: bool = False,
 ) -> HospitalRequest:
     room = await lock_free_room_skip_locked(db, hospital_id, [facility])
-    resource_ok = await decrement_resource(db, hospital_id, "ventilator", 1)
     
+    # Book actual predicted resources instead of hardcoded 'ventilator'
+    resource_ok = True
+    for resource in required_resources:
+        ok = await decrement_resource(db, hospital_id, resource, 1)
+        if not ok: resource_ok = False
+        
     expires = datetime.utcnow() + timedelta(minutes=5)
     res = await create_reservation(
         db, 
@@ -46,7 +52,7 @@ async def create_hospital_request_with_hold(
     
     em = await db.get(Emergency, emergency_id)
     if em and em.status != "hospital_selecting":
-        em.status = "hospital_selecting"
+        from app.domain.fsm.emergency_fsm import validate_transition; validate_transition(em.status, "hospital_selecting"); em.status = "hospital_selecting"
         em.version += 1
         
     await db.flush()
@@ -65,13 +71,13 @@ async def accept_hospital_request(
     if req.reservation_id:
         res = await db.get(Reservation, req.reservation_id)
         if res:
-            res.status = "confirmed"
+            from app.domain.fsm.reservation_fsm import validate_transition as rv_valid; rv_valid(res.status, "confirmed"); res.status = "confirmed"
             if room_id:
                 res.room_id = room_id
                 
     em = await db.get(Emergency, req.emergency_id)
     if em:
-        em.status = "hospital_confirmed"
+        from app.domain.fsm.emergency_fsm import validate_transition; validate_transition(em.status, "hospital_confirmed"); em.status = "hospital_confirmed"
         em.version += 1
 
 async def reject_hospital_request(
@@ -145,3 +151,5 @@ async def walk_in_override(
         # we'll emit the event to trigger it
         outbox_emit(db, "emergency.reroute_required", str(emergency_id_for_reservation), {"reason": "walk_in_override"})
         return {"re_allocated": False, "new_room_id": None, "rerouted": True}
+
+

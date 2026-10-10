@@ -64,10 +64,18 @@ async def handle_refused_transport(db: AsyncSession, emergency_id: UUID, note: s
     em = await db.get(Emergency, emergency_id)
     if not em: return
     
+    from app.domain.fsm.emergency_fsm import validate_transition
+    validate_transition(em.status, "refused_transport")
     em.status = "refused_transport"
     
-    if em.ambulance_id:
-        await db.execute(update(Ambulance).where(Ambulance.id == em.ambulance_id).values(status='idle'))
+    # Find ambulance from accepted dispatch offer
+    from app.db.models.dispatch import DispatchOffer
+    stmt_amb = select(DispatchOffer).where(DispatchOffer.emergency_id == emergency_id, DispatchOffer.status == 'ACCEPTED')
+    res_amb = await db.execute(stmt_amb)
+    offer = res_amb.scalar_one_or_none()
+    
+    if offer:
+        await db.execute(update(Ambulance).where(Ambulance.id == offer.ambulance_id).values(status='idle'))
         
     stmt = select(Reservation).where(Reservation.emergency_id == emergency_id, Reservation.status.in_(['held', 'confirmed']))
     result = await db.execute(stmt)

@@ -1,0 +1,1202 @@
+openapi: 3.1.0
+info:
+  title: GoldenHour Core API
+  version: 1.0.0
+paths:
+  /api/v1/hospital/dashboard:
+    get:
+      tags:
+      - hospital
+      summary: Get Dashboard
+      operationId: get_dashboard_api_v1_hospital_dashboard_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+  /api/v1/hospital/requests:
+    get:
+      tags:
+      - hospital
+      summary: Get Requests
+      operationId: get_requests_api_v1_hospital_requests_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/requests/{request_id}/accept:
+    post:
+      tags:
+      - hospital
+      summary: Accept Request
+      operationId: accept_request_api_v1_hospital_requests__request_id__accept_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Request Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/requests/{request_id}/reject:
+    post:
+      tags:
+      - hospital
+      summary: Reject Request
+      operationId: reject_request_api_v1_hospital_requests__request_id__reject_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Request Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/rooms/{room_id}:
+    patch:
+      tags:
+      - hospital
+      summary: Update Room
+      operationId: update_room_api_v1_hospital_rooms__room_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: room_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Room Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/resources/{resource_id}:
+    patch:
+      tags:
+      - hospital
+      summary: Update Resource
+      operationId: update_resource_api_v1_hospital_resources__resource_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: resource_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Resource Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/availability/confirm:
+    post:
+      tags:
+      - hospital
+      summary: Confirm Availability
+      operationId: confirm_availability_api_v1_hospital_availability_confirm_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+  /api/v1/hospital/handoffs/{emergency_id}/received:
+    post:
+      tags:
+      - hospital
+      summary: Handoff Received
+      operationId: handoff_received_api_v1_hospital_handoffs__emergency_id__received_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: emergency_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Emergency Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HandoffReceived'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/staff:
+    get:
+      tags:
+      - hospital
+      summary: Get Staff
+      operationId: get_staff_api_v1_hospital_staff_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - hospital
+      summary: Create Staff
+      operationId: create_staff_api_v1_hospital_staff_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /api/v1/hospital/staff/{staff_id}/shifts:
+    get:
+      tags:
+      - hospital
+      summary: Get Staff Shifts
+      operationId: get_staff_shifts_api_v1_hospital_staff__staff_id__shifts_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: staff_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Staff Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - hospital
+      summary: Update Staff Shifts
+      operationId: update_staff_shifts_api_v1_hospital_staff__staff_id__shifts_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: staff_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Staff Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShiftsUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/patients/{temp_id}/merge:
+    post:
+      tags:
+      - hospital
+      summary: Merge Patient
+      operationId: merge_patient_api_v1_hospital_patients__temp_id__merge_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: temp_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Temp Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientMergeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/hospital/analytics:
+    get:
+      tags:
+      - hospital
+      summary: Hospital Analytics
+      operationId: hospital_analytics_api_v1_hospital_analytics_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          title: From
+      - name: to
+        in: query
+        required: true
+        schema:
+          type: string
+          title: To
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/emergencies/{id}/triage-confirm:
+    post:
+      tags:
+      - clinical
+      summary: Triage Confirm Endpoint
+      operationId: triage_confirm_endpoint_api_v1_emergencies__id__triage_confirm_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriageConfirmRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/emergencies/{id}/critical:
+    post:
+      tags:
+      - clinical
+      summary: Critical Deterioration Endpoint
+      operationId: critical_deterioration_endpoint_api_v1_emergencies__id__critical_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/emergencies/{id}/family-override/options:
+    get:
+      tags:
+      - clinical
+      summary: Family Override Options Endpoint
+      operationId: family_override_options_endpoint_api_v1_emergencies__id__family_override_options_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/emergencies/{id}/family-override:
+    post:
+      tags:
+      - clinical
+      summary: Family Override Endpoint
+      operationId: family_override_endpoint_api_v1_emergencies__id__family_override_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyOverrideRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/emergencies/{id}/refused-transport:
+    post:
+      tags:
+      - clinical
+      summary: Refused Transport Endpoint
+      operationId: refused_transport_endpoint_api_v1_emergencies__id__refused_transport_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefusedTransportRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/session:
+    post:
+      tags:
+      - ops
+      summary: Ops Session Endpoint
+      operationId: ops_session_endpoint_api_v1_ops_session_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/overview:
+    get:
+      tags:
+      - ops
+      summary: Ops Overview Endpoint
+      operationId: ops_overview_endpoint_api_v1_ops_overview_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+  /api/v1/ops/escalations/{id}:
+    get:
+      tags:
+      - ops
+      summary: Get Escalation Endpoint
+      operationId: get_escalation_endpoint_api_v1_ops_escalations__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/escalations/{id}/claim:
+    post:
+      tags:
+      - ops
+      summary: Claim Escalation Endpoint
+      operationId: claim_escalation_endpoint_api_v1_ops_escalations__id__claim_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/escalations/{id}/resolve:
+    post:
+      tags:
+      - ops
+      summary: Resolve Escalation Endpoint
+      operationId: resolve_escalation_endpoint_api_v1_ops_escalations__id__resolve_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveEscalationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/emergencies/{id}/override:
+    post:
+      tags:
+      - ops
+      summary: Override Emergency Endpoint
+      operationId: override_emergency_endpoint_api_v1_ops_emergencies__id__override_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OverrideEmergencyRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/analytics:
+    get:
+      tags:
+      - ops
+      summary: Ops Analytics Endpoint
+      operationId: ops_analytics_endpoint_api_v1_ops_analytics_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          title: From
+      - name: to
+        in: query
+        required: true
+        schema:
+          type: string
+          title: To
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/audit:
+    get:
+      tags:
+      - ops
+      summary: Ops Audit Endpoint
+      operationId: ops_audit_endpoint_api_v1_ops_audit_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: entity_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Entity Id
+      - name: actor_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Actor Id
+      - name: from_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From Time
+      - name: to_time
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To Time
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/scenarios:
+    get:
+      tags:
+      - ops
+      summary: List Scenarios Endpoint
+      operationId: list_scenarios_endpoint_api_v1_ops_scenarios_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+  /api/v1/ops/scenarios/{name}/run:
+    post:
+      tags:
+      - ops
+      summary: Run Scenario Endpoint
+      operationId: run_scenario_endpoint_api_v1_ops_scenarios__name__run_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ops/sim/reset:
+    post:
+      tags:
+      - ops
+      summary: Sim Reset Endpoint
+      operationId: sim_reset_endpoint_api_v1_ops_sim_reset_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - HTTPBearer: []
+  /api/v1/ops/sim/speed:
+    post:
+      tags:
+      - ops
+      summary: Sim Speed Endpoint
+      operationId: sim_speed_endpoint_api_v1_ops_sim_speed_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpeedSimulationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /api/v1/healthz:
+    get:
+      tags:
+      - health
+      summary: Healthz
+      operationId: healthz_api_v1_healthz_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/readyz:
+    get:
+      tags:
+      - health
+      summary: Readyz
+      operationId: readyz_api_v1_readyz_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/webhooks/telegram:
+    post:
+      tags:
+      - webhooks
+      summary: Telegram Webhook
+      operationId: telegram_webhook_api_v1_webhooks_telegram_post
+      parameters:
+      - name: x-telegram-bot-api-secret-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Telegram-Bot-Api-Secret-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /healthz:
+    get:
+      summary: Healthz
+      operationId: healthz_healthz_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /readyz:
+    get:
+      summary: Readyz
+      operationId: readyz_readyz_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    AcceptRequest:
+      properties:
+        room_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Room Id
+        staff_ids:
+          anyOf:
+          - items:
+              type: string
+              format: uuid
+            type: array
+          - type: 'null'
+          title: Staff Ids
+      type: object
+      title: AcceptRequest
+    FamilyOverrideRequest:
+      properties:
+        hospital_id:
+          type: string
+          format: uuid
+          title: Hospital Id
+        consent:
+          type: boolean
+          title: Consent
+      type: object
+      required:
+      - hospital_id
+      - consent
+      title: FamilyOverrideRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HandoffReceived:
+      properties:
+        receiving_staff_ids:
+          anyOf:
+          - items:
+              type: string
+              format: uuid
+            type: array
+          - type: 'null'
+          title: Receiving Staff Ids
+      type: object
+      title: HandoffReceived
+    OverrideEmergencyRequest:
+      properties:
+        hospital_id:
+          type: string
+          format: uuid
+          title: Hospital Id
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - hospital_id
+      - reason
+      title: OverrideEmergencyRequest
+    PatientMergeRequest:
+      properties:
+        phone:
+          type: string
+          title: Phone
+      type: object
+      required:
+      - phone
+      title: PatientMergeRequest
+    RefusedTransportRequest:
+      properties:
+        note:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Note
+      type: object
+      title: RefusedTransportRequest
+    RejectRequest:
+      properties:
+        reason_code:
+          type: string
+          title: Reason Code
+        note:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Note
+      type: object
+      required:
+      - reason_code
+      title: RejectRequest
+    ResolveEscalationRequest:
+      properties:
+        option_id:
+          type: string
+          format: uuid
+          title: Option Id
+      type: object
+      required:
+      - option_id
+      title: ResolveEscalationRequest
+    ResourceUpdate:
+      properties:
+        available:
+          type: integer
+          title: Available
+        total:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total
+        version:
+          type: integer
+          title: Version
+      type: object
+      required:
+      - available
+      - version
+      title: ResourceUpdate
+    RoomUpdate:
+      properties:
+        status:
+          type: string
+          title: Status
+        version:
+          type: integer
+          title: Version
+        override_reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Override Reason
+      type: object
+      required:
+      - status
+      - version
+      title: RoomUpdate
+    SessionRequest:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: SessionRequest
+    ShiftsUpdate:
+      properties:
+        shifts:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Shifts
+      type: object
+      required:
+      - shifts
+      title: ShiftsUpdate
+    SpeedSimulationRequest:
+      properties:
+        multiplier:
+          type: integer
+          title: Multiplier
+      type: object
+      required:
+      - multiplier
+      title: SpeedSimulationRequest
+    StaffCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        role:
+          type: string
+          title: Role
+      type: object
+      required:
+      - name
+      - role
+      title: StaffCreate
+    TriageConfirmRequest:
+      properties:
+        acuity:
+          type: string
+          title: Acuity
+        facility:
+          type: string
+          title: Facility
+        patient_count:
+          type: integer
+          title: Patient Count
+        version:
+          type: integer
+          title: Version
+      type: object
+      required:
+      - acuity
+      - facility
+      - patient_count
+      - version
+      title: TriageConfirmRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer

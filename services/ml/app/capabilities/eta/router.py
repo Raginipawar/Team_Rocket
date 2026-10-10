@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from .schemas import ETARequest, ETAResponse, ETAMatrixRequest, ETAMatrixResponse
 from .model import get_eta, get_eta_matrix
 
-router = APIRouter(prefix="/ml/v1")
+router = APIRouter()
 
 @router.post("/eta", response_model=ETAResponse)
 async def predict_eta(req: ETARequest):

@@ -8,7 +8,7 @@ import yaml
 from pathlib import Path
 import asyncio
 
-SCENARIOS_DIR = Path("sim/scenarios")
+SCENARIOS_DIR = Path(__file__).parent / "scenarios"
 
 class ScenarioRunner:
     async def list_scenarios(self) -> list[str]:

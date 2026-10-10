@@ -51,6 +51,16 @@ async def start_selection(
         
     top_candidate = ranked[0]
     
+    # Fetch required resources
+    req_payload = {"incident_id": str(emergency_id), "text": "", "facility": "ICU"}
+    import httpx
+    try:
+        async with httpx.AsyncClient() as c:
+            r = await c.post(f"{ml_client}/ml/v1/resources", json=req_payload)
+            predicted_resources = [res["item"] for res in r.json().get("resources", []) if res.get("prob", 0) >= 0.7]
+    except Exception:
+        predicted_resources = ["ventilator"] # fallback
+        
     await create_hospital_request_with_hold(
         db,
         emergency_id=emergency_id,
@@ -59,5 +69,6 @@ async def start_selection(
         features=top_candidate.get("features", {}),
         explanation=top_candidate.get("explanation", []),
         acuity="red",
-        facility="ICU"
+        facility="ICU",
+        required_resources=predicted_resources
     )

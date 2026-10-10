@@ -1,6 +1,7 @@
 """Ops domain logic — ops dashboard, escalation management, manual overrides, sim control."""
 from uuid import UUID
 from typing import Optional
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, text
 
@@ -117,13 +118,27 @@ async def get_ops_analytics(db: AsyncSession, from_date: str, to_date: str) -> d
     return await repo_get_ops_analytics(db, from_date, to_date)
 
 
-async def get_ops_audit(db: AsyncSession, entity_id: UUID) -> list[dict]:
-    """Return audit log entries for an entity."""
+async def get_ops_audit(
+    db: AsyncSession, 
+    entity_id: UUID | None = None,
+    actor_id: UUID | None = None,
+    from_time: datetime | None = None,
+    to_time: datetime | None = None
+) -> list[dict]:
+    """Return audit log entries filtered by entity, actor, or time range."""
+    query = select(AuditLog)
+    
+    if entity_id:
+        query = query.where(AuditLog.record_id == entity_id)
+    if actor_id:
+        query = query.where(AuditLog.actor_id == actor_id)
+    if from_time:
+        query = query.where(AuditLog.created_at >= from_time)
+    if to_time:
+        query = query.where(AuditLog.created_at <= to_time)
+        
     result = await db.execute(
-        select(AuditLog)
-        .where(AuditLog.record_id == entity_id)
-        .order_by(AuditLog.created_at.desc())
-        .limit(100)
+        query.order_by(AuditLog.created_at.desc()).limit(100)
     )
     rows = result.scalars().all()
     return [

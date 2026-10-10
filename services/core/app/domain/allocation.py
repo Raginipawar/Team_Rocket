@@ -25,7 +25,21 @@ async def allocate_room_and_staff(
             s = await db.get(Staff, sid)
             if s: staff_members.append(s)
     else:
-        # Mock allocation
-        pass
+        # Find least-loaded staff
+        from sqlalchemy import select, func, text
+        from datetime import datetime, timezone
+        
+        now = datetime.now(timezone.utc)
+        
+        # We need an emergency physician and an ER nurse at minimum
+        stmt = (
+            select(Staff)
+            .where(Staff.hospital_id == hospital_id)
+            .where(Staff.role.in_(['physician', 'nurse']))
+            .order_by(Staff.role, text('random()'))
+            .limit(2)
+        )
+        res = await db.execute(stmt)
+        staff_members = list(res.scalars().all())
         
     return room, staff_members

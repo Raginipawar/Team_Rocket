@@ -1,7 +1,7 @@
 import pytest
 import asyncio
-from services.ml.app.capabilities.mci.schemas import MCIAllocateRequest, Patient, Hospital, Ambulance
-from services.ml.app.capabilities.mci.model import allocate_mci
+from app.capabilities.mci.schemas import MCIAllocateRequest, Patient, Hospital, Ambulance
+from app.capabilities.mci.model import allocate_mci
 
 @pytest.mark.asyncio
 async def test_empty_input():
@@ -50,3 +50,6 @@ async def test_max_share_per_hospital():
     res = await allocate_mci(req)
     h1_count = sum(1 for a in res.assignments if a.hospital_id == "h1")
     assert h1_count <= 2
+
+if __name__ == '__main__':
+    pytest.main(['-v', __file__])

@@ -1,5 +1,6 @@
 from uuid import UUID
 from typing import Optional
+from datetime import datetime
 from fastapi import APIRouter, Depends, Query, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -117,11 +118,14 @@ async def ops_analytics_endpoint(
 
 @router.get("/audit")
 async def ops_audit_endpoint(
-    entity_id: UUID,
+    entity_id: UUID | None = None,
+    actor_id: UUID | None = None,
+    from_time: datetime | None = None,
+    to_time: datetime | None = None,
     user = Depends(require_role('ops')),
     db: AsyncSession = Depends(get_db)
 ):
-    data = await get_ops_audit(db, entity_id=entity_id)
+    data = await get_ops_audit(db, entity_id=entity_id, actor_id=actor_id, from_time=from_time, to_time=to_time)
     return {"data": data}
 
 @router.get("/scenarios")

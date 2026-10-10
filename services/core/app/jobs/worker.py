@@ -1,5 +1,6 @@
 from arq import create_pool
 from arq.connections import RedisSettings
+from arq.cron import cron
 import os
 from urllib.parse import urlparse
 from app.jobs.handlers.hospital_control import (
@@ -9,6 +10,7 @@ from app.jobs.handlers.hospital_control import (
     job_escalation_default,
     job_extend_hold_on_heartbeat
 )
+from app.jobs.sweeper import sweep
 
 async def startup(ctx):
     pass
@@ -32,6 +34,9 @@ class WorkerSettings:
         job_escalation_repeat,
         job_escalation_default,
         job_extend_hold_on_heartbeat
+    ]
+    cron_jobs = [
+        cron(sweep, second=set(range(0, 60, 5)))
     ]
     on_startup = startup
     on_shutdown = shutdown
