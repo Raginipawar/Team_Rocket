@@ -111,6 +111,19 @@ export default function FamilyPage() {
 
   const callAmbulanceFor = async () => {
     if (!selected) return;
+    // Unlike the main SOS page (which shows a visible LocationIndicator
+    // before the user ever taps send), this flow had no location UI at
+    // all -- geo.pos silently missing meant lat/lng were just left off the
+    // form entirely. The real backend dispatch round bails out immediately
+    // with no location ("no_location", domain/dispatch.py), so the request
+    // would succeed (202) and navigate to a tracking page where nothing
+    // ever happened -- indistinguishable from "doesn't work" to the family
+    // member who just tapped the button. Now blocks on it explicitly.
+    if (!geo.pos) {
+      toast(geo.status === "denied" ? "Location access is off -- turn it on to call an ambulance." : "Still finding your location, try again in a moment.", "error");
+      if (geo.status !== "asking") geo.request();
+      return;
+    }
     setCalling(true);
     try {
       const form = new FormData();
@@ -118,11 +131,9 @@ export default function FamilyPage() {
       const note = `Called by a family member on GoldenHour for ${selected.name ?? "a family member"}.${health?.home_address ? ` Registered address: ${health.home_address}.` : ""}`;
       form.set("text", note);
       form.set("caller_phone", selected.phone);
-      if (geo.pos) {
-        form.set("lat", String(geo.pos.lat));
-        form.set("lng", String(geo.pos.lng));
-        form.set("accuracy_m", String(geo.pos.accuracy));
-      }
+      form.set("lat", String(geo.pos.lat));
+      form.set("lng", String(geo.pos.lng));
+      form.set("accuracy_m", String(geo.pos.accuracy));
       const r = await api<CreateEmergencyResponse>("/emergencies", { method: "POST", form });
       toast("Ambulance called", "success");
       setSelected(null);
@@ -227,7 +238,13 @@ export default function FamilyPage() {
           <Button asChild variant="soft" size="lg" block>
             <a href={`tel:${selected?.phone}`}><Icon name="phone" size={20} />Call {selected?.name ?? "them"}</a>
           </Button>
-          <Button variant="danger" size="xl" block loading={calling} onClick={() => void callAmbulanceFor()}>
+          {!geo.pos && (
+            <p className="flex items-center gap-2 text-[14px] text-muted">
+              <Icon name={geo.status === "denied" ? "alert" : "pin"} size={16} />
+              {geo.status === "denied" ? "Location access is off -- turn it on to call an ambulance." : "Finding your location…"}
+            </p>
+          )}
+          <Button variant="danger" size="xl" block loading={calling} disabled={!geo.pos} onClick={() => void callAmbulanceFor()}>
             <Icon name="ambulance" size={24} />
             Call an ambulance for them
           </Button>
