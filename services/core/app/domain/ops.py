@@ -1,6 +1,7 @@
 """Ops domain logic — ops dashboard, escalation management, manual overrides, sim control."""
 from uuid import UUID
 from typing import Optional
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, text
 
@@ -139,14 +140,28 @@ async def get_ops_analytics(db: AsyncSession, from_date: str, to_date: str) -> d
     return await repo_get_ops_analytics(db, from_date, to_date)
 
 
-async def get_ops_audit(db: AsyncSession, entity_id: UUID) -> list[dict]:
-    """Return audit log entries for an entity."""
-    result = await db.execute(
-        select(AuditLog)
-        .where(AuditLog.entity_id == entity_id)
-        .order_by(AuditLog.at.desc())
-        .limit(100)
-    )
+async def get_ops_audit(
+    db: AsyncSession,
+    entity_id: UUID | None = None,
+    actor_id: str | None = None,
+    from_time: datetime | None = None,
+    to_time: datetime | None = None,
+) -> list[dict]:
+    """Return audit log entries, optionally filtered by entity/actor/time range."""
+    query = select(AuditLog)
+    if entity_id:
+        query = query.where(AuditLog.entity_id == entity_id)
+    if actor_id:
+        # AuditLog.actor_id is Text (real schema), not UUID -- comparing it
+        # against a UUID object instead of str is the same silently-always-
+        # False bug class already found and fixed elsewhere this session
+        # (domain/ops.py's old claimer check, hospital.py's _check_scope).
+        query = query.where(AuditLog.actor_id == str(actor_id))
+    if from_time:
+        query = query.where(AuditLog.at >= from_time)
+    if to_time:
+        query = query.where(AuditLog.at <= to_time)
+    result = await db.execute(query.order_by(AuditLog.at.desc()).limit(100))
     rows = result.scalars().all()
     return [
         {

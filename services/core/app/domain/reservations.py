@@ -36,10 +36,20 @@ async def create_hospital_request_with_hold(
     facility: str,
     is_family_choice: bool = False,
     score: float | None = None,
+    required_resources: list[str] | None = None,
 ) -> HospitalRequest:
     acceptable_types = ACCEPTABLE_ROOM_TYPES.get(facility, ["er_bed"])
     room = await lock_free_room_skip_locked(db, hospital_id, acceptable_types)
-    resource_ok = await decrement_resource(db, hospital_id, "ventilator", 1)
+    # Books whatever the real predicted-resources list says is actually
+    # needed (selection.py's start_selection now calls ml.resources() for
+    # this) instead of always decrementing a hardcoded "ventilator" --
+    # falls back to ["ventilator"] for any caller that doesn't pass one
+    # (e.g. ops.py's manual_override) so this stays backward compatible.
+    resources_to_book = required_resources or ["ventilator"]
+    booked_resources = []
+    for resource_type in resources_to_book:
+        if await decrement_resource(db, hospital_id, resource_type, 1):
+            booked_resources.append(resource_type)
 
     expires = datetime.utcnow() + timedelta(minutes=5)
     res = await create_reservation(
@@ -54,9 +64,10 @@ async def create_hospital_request_with_hold(
     # Without a reservation_items row, release_reservation has nothing to
     # find on reject/timeout/refused-transport -- the decremented resource
     # would leak permanently (available/reserved never credited back).
-    if resource_ok:
+    if booked_resources:
         from app.db.models import ReservationItem
-        db.add(ReservationItem(reservation_id=res.id, kind="resource", resource_type="ventilator", quantity=1))
+        for resource_type in booked_resources:
+            db.add(ReservationItem(reservation_id=res.id, kind="resource", resource_type=resource_type, quantity=1))
 
     if room:
         # technical.md §11.3 step 1's second half -- the actual double-booking
@@ -91,6 +102,20 @@ async def create_hospital_request_with_hold(
 
     em = await db.get(Emergency, emergency_id)
     if em and em.status != "hospital_selecting":
+        # Real FSM graph (fsm/emergency_fsm.py) has no direct at_scene ->
+        # hospital_selecting edge -- it must pass through patient_on_board
+        # first. The real UI has no separate "patient on board" action
+        # (TriageConfirmSheet goes straight to "Choosing the best
+        # hospital"), so that intermediate hop happens here, implicitly,
+        # as part of the same call. Validating straight to hospital_selecting
+        # without this raised on the very first live test, and because the
+        # candidate loop above swallows it in a broad except, the failure
+        # was silent: a hospital_request got created and committed anyway
+        # while the emergency's status never actually advanced.
+        if em.status == "at_scene":
+            validate_emergency_transition(em.status, "patient_on_board")
+            em.status = "patient_on_board"
+        validate_emergency_transition(em.status, "hospital_selecting")
         em.status = "hospital_selecting"
         em.version += 1
 
@@ -135,12 +160,15 @@ async def accept_hospital_request(
     if req.reservation_id:
         res = await db.get(Reservation, req.reservation_id)
         if res:
+            from app.domain.fsm.reservation_fsm import validate_transition as validate_reservation_transition
+            validate_reservation_transition(res.status, "confirmed")
             res.status = "confirmed"
             if room_id:
                 res.room_id = room_id
-                
+
     em = await db.get(Emergency, req.emergency_id)
     if em:
+        validate_emergency_transition(em.status, "hospital_confirmed")
         em.status = "hospital_confirmed"
         # em.hospital_id/hospital_confirmed_at were never set here -- the
         # hospital dashboard's "Incoming"/"at_door" lists filter on

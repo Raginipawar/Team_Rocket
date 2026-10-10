@@ -14,14 +14,21 @@ from contextlib import asynccontextmanager
 # log line, discovered when a real OTP request produced no visible code.
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
 
+import httpx
+import redis.asyncio as redis
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from app.api.v1 import (
     ambulance, analytics, auth, clinical, emergencies, hospital, me, offers, ops,
     webhooks_sms, webhooks_telegram,
 )
+from app.config import settings
+from app.db.engine import engine
 from app.db.session import get_session
 from app.domain.lifecycle_monitor import run_lifecycle_monitor_forever
+from app.errors import install_error_handlers
 from app.jobs.ml_feeder import run_feeder_forever
 from app.realtime.relay import run_relay_forever
 from app.realtime.ws import router as ws_router
@@ -62,6 +69,19 @@ app = FastAPI(title="GoldenHour Core (draft)", version="0.1.0", lifespan=lifespa
 
 app.add_middleware(IdempotencyMiddleware)
 app.add_middleware(CorrelationIdMiddleware)
+app.add_middleware(
+    # allow_origins=["*"] with allow_credentials=True is invalid per the CORS
+    # spec (browsers require an explicit origin, not a wildcard, when
+    # credentials are included) -- not currently exercised since the
+    # frontend talks to this same-origin via Next.js rewrites, but wrong
+    # either way, so not copied from the source this was adapted from.
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+install_error_handlers(app)
 
 app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
 app.include_router(emergencies.router, prefix="/api/v1", tags=["emergencies"])
@@ -87,13 +107,53 @@ async def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/healthz")
+async def healthz() -> dict:
+    return {"status": "ok"}
+
+
 # Frontend's HealthProvider (apps/web/app/providers.tsx) polls bare /readyz
 # every 5s via the /core/readyz rewrite and shows a full-width "We cannot
-# reach GoldenHour, call 108" banner after 2 consecutive failures. Neither
-# /readyz nor /healthz existed anywhere on this app, so that banner was
-# showing permanently regardless of whether the rest of the backend worked --
-# confirmed via the 404s on every single poll in the server log.
+# reach GoldenHour, call 108" banner after 2 consecutive failures based on
+# HTTP status alone (fetch .ok), not the body -- neither /readyz nor
+# /healthz existed anywhere on this app at first (confirmed via the 404s on
+# every single poll in the server log), so that banner was showing
+# permanently. Now reports which real dependency is actually down (DB,
+# Redis, ML service, OSRM) in the body while always returning 200, so the
+# frontend banner only fires on this server being genuinely unreachable,
+# not on one dependency having a bad moment.
 @app.get("/readyz")
-@app.get("/healthz")
 async def readyz() -> dict:
-    return {"status": "ok"}
+    status = {"db": "ok", "redis": "ok", "ml": "ok", "osrm": "ok"}
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+    except Exception:
+        status["db"] = "error"
+
+    try:
+        r = redis.from_url(settings.REDIS_URL)
+        await r.ping()
+        await r.aclose()
+    except Exception:
+        status["redis"] = "error"
+
+    try:
+        async with httpx.AsyncClient(timeout=1.0) as client:
+            res = await client.get(f"{settings.ML_BASE_URL}/ml/v1/health")
+            if res.status_code != 200:
+                status["ml"] = "error"
+    except Exception:
+        status["ml"] = "error"
+
+    try:
+        async with httpx.AsyncClient(timeout=1.0) as client:
+            res = await client.get(settings.OSRM_URL)
+            # OSRM returns 400 on a bare root request -- a reachable server,
+            # just not a route query -- so 400 counts as "ok" here too.
+            if res.status_code not in (200, 400):
+                status["osrm"] = "error"
+    except Exception:
+        status["osrm"] = "error"
+
+    return {"status": "ok", "dependencies": status}

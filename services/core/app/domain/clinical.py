@@ -118,6 +118,8 @@ async def handle_refused_transport(db: AsyncSession, emergency_id: UUID, note: s
     em = await db.get(Emergency, emergency_id)
     if not em: return
 
+    from app.domain.fsm.emergency_fsm import validate_transition
+    validate_transition(em.status, "refused_transport")
     em.status = "refused_transport"
 
     if em.ambulance_id:

@@ -30,8 +30,8 @@ async def start_selection(
 
     em = await db.get(Emergency, emergency_id)
     if em is None or em.location is None:
-        await raise_escalation(db, "no_hospital", emergency_id,
-                                {"trigger": trigger, "reason": "Emergency has no location"})
+        await raise_escalation(db, type="no_hospital", emergency_id=emergency_id,
+                                context={"trigger": trigger, "reason": "Emergency has no location"})
         return
 
     point = to_shape(em.location)
@@ -41,8 +41,8 @@ async def start_selection(
 
     candidates = await list_hospitals_within_km(db, lat, lng, radius_km=25.0)
     if not candidates:
-        await raise_escalation(db, "no_hospital", emergency_id,
-                                {"trigger": trigger, "reason": "No candidates within 25km"})
+        await raise_escalation(db, type="no_hospital", emergency_id=emergency_id,
+                                context={"trigger": trigger, "reason": "No candidates within 25km"})
         return
 
     required_capability = FACILITY_TO_CAPABILITY.get(facility, "general_er")
@@ -85,9 +85,23 @@ async def start_selection(
 
     eligible_ranked = [r for r in ranked if r.get("eligible", True)]
     if not eligible_ranked:
-        await raise_escalation(db, "no_hospital", emergency_id,
-                                {"trigger": trigger, "reason": "No eligible hospital after ranking"})
+        await raise_escalation(db, type="no_hospital", emergency_id=emergency_id,
+                                context={"trigger": trigger, "reason": "No eligible hospital after ranking"})
         return
+
+    # Real predicted-resources list (e.g. ["ventilator", "cath_lab"]) instead
+    # of create_hospital_request_with_hold's old hardcoded "ventilator" --
+    # uses the already-wired ml.resources() wrapper (real call_ml, real base
+    # URL/timeout/MLUnavailable handling), not a raw ad-hoc httpx call against
+    # `ml_client` treated as a URL string (ml_client is None at every real
+    # call site in this codebase, so that pattern always silently fell
+    # through to a fallback anyway).
+    from app.integrations.ml.intake import resources as ml_resources
+    resources_result = await ml_resources(acuity, facility, em.extracted or {})
+    required_resources = (
+        [r["item"] for r in resources_result.get("resources", []) if r.get("prob", 0) >= 0.7]
+        if resources_result else ["ventilator"]
+    )
 
     for candidate in eligible_ranked:
         hospital_id = candidate["hospital_id"]
@@ -96,11 +110,11 @@ async def start_selection(
                 db, emergency_id=emergency_id, hospital_id=UUID(hospital_id),
                 rank=candidate.get("rank", 1), features=candidate.get("features", {}),
                 explanation=candidate.get("explanation", []), acuity=acuity, facility=facility,
-                score=candidate.get("score"),
+                score=candidate.get("score"), required_resources=required_resources,
             )
             return
         except Exception:
             continue  # this hospital had no free room/resource -- try the next ranked one
 
-    await raise_escalation(db, "no_hospital", emergency_id,
-                            {"trigger": trigger, "reason": "All eligible hospitals had no free room/resource"})
+    await raise_escalation(db, type="no_hospital", emergency_id=emergency_id,
+                            context={"trigger": trigger, "reason": "All eligible hospitals had no free room/resource"})
