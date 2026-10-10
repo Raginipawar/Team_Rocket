@@ -6,36 +6,85 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, errorText, get, post, ApiError } from "@/lib/api";
 import type { CreateEmergencyResponse } from "@/lib/api-types";
 import { useGeolocation } from "@/lib/hooks";
+import { useAuth } from "@/lib/auth";
+import { useChannel, useWsClient } from "@/components/realtime/WsProvider";
 import { Button } from "@/components/ui/button";
-import { Card, EmptyState, ErrorState, Field, Input, LoadingState } from "@/components/ui/bits";
+import { Card, ErrorState, Field, Input, LoadingState } from "@/components/ui/bits";
 import { Sheet } from "@/components/ui/sheet";
 import Icon from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
 import { phone as fmtPhone } from "@/lib/format";
 
-type Watched = { user_id: string; name: string | null; phone: string; blood_group: string | null; active_emergency_status: string | null };
-type WatchedHealth = { name: string | null; blood_group: string | null; allergies: string[]; conditions: string[]; medications: string[]; home_address: string | null };
+type Member = { id: string; name: string | null; phone: string; blood_group: string | null; active_emergency_status: string | null };
+type Family = { family_id: string; code: string; name: string | null; is_owner: boolean; members: Member[] };
+type MemberHealth = { name: string | null; blood_group: string | null; allergies: string[]; conditions: string[]; medications: string[]; home_address: string | null };
 
 export default function FamilyPage() {
   const toast = useToast();
   const router = useRouter();
   const qc = useQueryClient();
   const geo = useGeolocation(true);
+  const { session } = useAuth();
 
-  const code = useQuery({ queryKey: ["family-code"], queryFn: () => get<{ code: string }>("/me/family-code") });
-  const family = useQuery({ queryKey: ["family"], queryFn: () => get<Watched[]>("/me/family") });
+  // Single source of truth: one family per account, or none. Real-time sync
+  // (spec requirement) comes from both a WS event on join AND a 5s poll as a
+  // safety net -- a dropped WS connection must not mean a stuck member list.
+  const fam = useQuery({
+    queryKey: ["my-family"],
+    queryFn: () => get<{ family: Family | null }>("/me/family"),
+    refetchInterval: 5000,
+  });
+  const family = fam.data?.family ?? null;
 
-  const [connectCode, setConnectCode] = useState("");
-  const [connecting, setConnecting] = useState(false);
-  const [selected, setSelected] = useState<Watched | null>(null);
-  const [health, setHealth] = useState<WatchedHealth | null>(null);
+  const ws = useWsClient("ME", session?.token);
+  useChannel(ws, family ? `family:${family.family_id}` : null, () => {
+    void qc.invalidateQueries({ queryKey: ["my-family"] });
+  });
+
+  const [createBusy, setCreateBusy] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const [joinBusy, setJoinBusy] = useState(false);
+  const [joinErr, setJoinErr] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Member | null>(null);
+  const [health, setHealth] = useState<MemberHealth | null>(null);
   const [healthLoading, setHealthLoading] = useState(false);
   const [calling, setCalling] = useState(false);
 
+  const createFamily = async () => {
+    setCreateBusy(true);
+    try {
+      await post("/me/family/create", {});
+      void qc.invalidateQueries({ queryKey: ["my-family"] });
+      toast("Family created", "success");
+    } catch (e) {
+      toast(errorText(e), "error");
+    } finally {
+      setCreateBusy(false);
+    }
+  };
+
+  const joinFamily = async () => {
+    if (joinCode.trim().length < 4) return;
+    setJoinBusy(true);
+    setJoinErr(null);
+    try {
+      await post("/me/family/join", { code: joinCode.trim() });
+      setJoinCode("");
+      void qc.invalidateQueries({ queryKey: ["my-family"] });
+      toast("Joined family", "success");
+    } catch (e) {
+      // Shown inline, not just a toast -- a wrong/typo'd code is the most
+      // likely failure here and deserves to stay visible next to the field.
+      setJoinErr(e instanceof ApiError && e.status === 404 ? "No family has that code" : errorText(e));
+    } finally {
+      setJoinBusy(false);
+    }
+  };
+
   const share = async () => {
-    const c = code.data?.code;
+    const c = family?.code;
     if (!c) return;
-    const text = `My GoldenHour family code: ${c}\nAdd me in the Family tab so you can check on me and call an ambulance for me if needed.`;
+    const text = `Join my GoldenHour family: code ${c}\nOpen the Family tab and enter it so we can check on each other.`;
     try {
       if (navigator.share) await navigator.share({ text });
       else {
@@ -45,27 +94,13 @@ export default function FamilyPage() {
     } catch { /* user cancelled share -- fine */ }
   };
 
-  const connect = async () => {
-    if (connectCode.trim().length < 4) return;
-    setConnecting(true);
-    try {
-      await post("/me/family/connect", { code: connectCode.trim() });
-      setConnectCode("");
-      void qc.invalidateQueries({ queryKey: ["family"] });
-      toast("Added to your family space", "success");
-    } catch (e) {
-      toast(errorText(e), "error");
-    } finally {
-      setConnecting(false);
-    }
-  };
-
-  const openMember = async (m: Watched) => {
+  const openMember = async (m: Member) => {
+    if (m.id === session?.user.id) return; // self -- nothing to view
     setSelected(m);
     setHealth(null);
     setHealthLoading(true);
     try {
-      const h = await get<WatchedHealth>(`/me/family/${m.user_id}/health`);
+      const h = await get<MemberHealth>(`/me/family/${m.id}/health`);
       setHealth(h);
     } catch {
       /* show the sheet anyway without health details */
@@ -106,61 +141,70 @@ export default function FamilyPage() {
         <p className="mt-1 text-[17px] text-muted">Connect with family so you can check on each other and call for help.</p>
       </div>
 
-      <Card className="flex flex-col gap-3">
-        <p className="text-[16px] font-bold">Your code</p>
-        {code.isLoading ? (
-          <LoadingState />
-        ) : code.isError ? (
-          <ErrorState text={errorText(code.error)} onRetry={() => code.refetch()} />
-        ) : (
-          <>
-            <p className="text-center text-[36px] font-extrabold tracking-[0.2em]">{code.data?.code}</p>
-            <p className="text-center text-[15px] text-muted">Share this with family so they can add you</p>
+      {fam.isLoading ? (
+        <LoadingState />
+      ) : fam.isError ? (
+        <ErrorState text={errorText(fam.error)} onRetry={() => fam.refetch()} />
+      ) : !family ? (
+        // No family yet: offer BOTH create and join. Once in one, this
+        // whole block disappears -- an account can only ever see one or
+        // the other, never both forms, and never after already belonging
+        // to a family (enforced server-side, not just by hiding this UI).
+        <div className="flex flex-col gap-4">
+          <Card className="flex flex-col gap-3">
+            <p className="text-[16px] font-bold">Start a family space</p>
+            <p className="text-[15px] text-muted">Create one and share the code with your family.</p>
+            <Button size="lg" block loading={createBusy} onClick={() => void createFamily()}>Create family</Button>
+          </Card>
+          <Card className="flex flex-col gap-3">
+            <p className="text-[16px] font-bold">Join a family</p>
+            <Field label="Their code" htmlFor="jcode" error={joinErr ?? undefined}>
+              <Input id="jcode" value={joinCode} onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinErr(null); }} placeholder="e.g. H7K4M2" className="text-center text-[20px] tracking-[0.15em]" maxLength={8} />
+            </Field>
+            <Button size="lg" block loading={joinBusy} disabled={joinCode.trim().length < 4} onClick={() => void joinFamily()}>Join</Button>
+          </Card>
+        </div>
+      ) : (
+        <>
+          <Card className="flex flex-col gap-3">
+            <p className="text-[16px] font-bold">Your family code</p>
+            <p className="text-center text-[36px] font-extrabold tracking-[0.2em]">{family.code}</p>
+            <p className="text-center text-[15px] text-muted">Share this so more family can join</p>
             <Button size="lg" block variant="soft" onClick={() => void share()}>
               <Icon name="share" size={20} />
-              Share my code
+              Share code
             </Button>
-          </>
-        )}
-      </Card>
+          </Card>
 
-      <Card className="flex flex-col gap-3">
-        <p className="text-[16px] font-bold">Add a family member</p>
-        <Field label="Their code" htmlFor="fcode">
-          <Input id="fcode" value={connectCode} onChange={(e) => setConnectCode(e.target.value.toUpperCase())} placeholder="e.g. H7K4M2" className="text-center text-[20px] tracking-[0.15em]" maxLength={8} />
-        </Field>
-        <Button size="lg" block loading={connecting} disabled={connectCode.trim().length < 4} onClick={() => void connect()}>Add</Button>
-      </Card>
-
-      <div>
-        <p className="mb-2 text-[16px] font-bold">Your family</p>
-        {family.isLoading ? <LoadingState /> : family.isError ? (
-          <ErrorState text={errorText(family.error)} onRetry={() => family.refetch()} />
-        ) : !family.data?.length ? (
-          <EmptyState icon="users" title="No one added yet" text="Enter a family member's code above to connect" />
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {family.data.map((m) => (
-              <li key={m.user_id}>
-                <button onClick={() => void openMember(m)} className="flex w-full items-center gap-3 rounded-[22px] border border-line bg-card p-4 text-left">
-                  <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-soft text-[20px] font-bold">
-                    {(m.name ?? "?").slice(0, 1).toUpperCase()}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[19px] font-bold">{m.name ?? fmtPhone(m.phone)}</p>
-                    {m.active_emergency_status ? (
-                      <p className="text-[15px] font-semibold text-red-ink">Active emergency right now</p>
-                    ) : (
-                      <p className="text-[15px] text-muted">{m.blood_group ? `Blood ${m.blood_group}` : "Tap for options"}</p>
-                    )}
-                  </div>
-                  <Icon name="chevron" size={20} />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+          <div>
+            <p className="mb-2 text-[16px] font-bold">Members ({family.members.length})</p>
+            <ul className="flex flex-col gap-3">
+              {family.members.map((m) => {
+                const isSelf = m.id === session?.user.id;
+                return (
+                  <li key={m.id}>
+                    <button onClick={() => void openMember(m)} disabled={isSelf}
+                      className="flex w-full items-center gap-3 rounded-[22px] border border-line bg-card p-4 text-left disabled:opacity-70">
+                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-soft text-[20px] font-bold">
+                        {(m.name ?? "?").slice(0, 1).toUpperCase()}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[19px] font-bold">{m.name ?? fmtPhone(m.phone)}{isSelf ? " (You)" : ""}</p>
+                        {m.active_emergency_status ? (
+                          <p className="text-[15px] font-semibold text-red-ink">Active emergency right now</p>
+                        ) : (
+                          <p className="text-[15px] text-muted">{m.blood_group ? `Blood ${m.blood_group}` : isSelf ? "" : "Tap for options"}</p>
+                        )}
+                      </div>
+                      {!isSelf && <Icon name="chevron" size={20} />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </>
+      )}
 
       <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)} title={selected?.name ?? "Family member"}>
         <div className="flex flex-col gap-4">

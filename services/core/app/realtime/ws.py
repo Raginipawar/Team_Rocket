@@ -36,6 +36,8 @@ def channel_allowed(role: str, channel: str) -> bool:
         return role == "paramedic"
     if channel.startswith("hospital:"):
         return role == "hospital_staff"
+    if channel.startswith("family:"):
+        return role == "patient"  # same deferred-ownership-check gap as emergency: above
     return False
 
 

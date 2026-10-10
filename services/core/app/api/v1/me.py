@@ -12,6 +12,7 @@ from app.db.repos import family as family_repo
 from app.db.repos import patient as patient_repo
 from app.db.repos import push_subscriptions as push_repo
 from app.db.session import get_session
+from app.realtime import outbox
 from app.security.deps import CurrentUser, require_role
 
 router = APIRouter()
@@ -121,53 +122,62 @@ async def get_my_emergencies(user: CurrentUser = Depends(require_role("patient")
         ]
 
 
-@router.get("/me/family-code")
-async def get_family_code(user: CurrentUser = Depends(require_role("patient"))) -> dict:
-    async with get_session() as session:
-        code = await family_repo.get_or_create_family_code(session, user.id)
-        await session.commit()
-        return {"code": code}
-
-
-@router.post("/me/family/connect")
-async def connect_family(payload: ConnectByCodeRequest, user: CurrentUser = Depends(require_role("patient"))) -> dict:
-    async with get_session() as session:
-        try:
-            result = await family_repo.connect_by_code(session, user.id, payload.code)
-            await session.commit()
-            return result
-        except family_repo.CodeNotFound:
-            raise HTTPException(404, detail={"error": {"code": "NOT_FOUND", "message": "No one has that code", "details": {}}})
-        except family_repo.CannotWatchSelf:
-            raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "That's your own code", "details": {}}})
+class CreateFamilyRequest(BaseModel):
+    name: str | None = None
 
 
 @router.get("/me/family")
-async def list_family(user: CurrentUser = Depends(require_role("patient"))) -> list[dict]:
+async def get_family(user: CurrentUser = Depends(require_role("patient"))) -> dict:
+    """One family per user (real group membership, not a directional watch
+    list) -- returns {"family": null} if the user hasn't created or joined
+    one yet, so the frontend can show create/join UI instead of a member list."""
     async with get_session() as session:
-        rows = await family_repo.list_watched(session, user.id)
-        return [
-            {
-                "user_id": str(r["id"]), "name": r["name"], "phone": r["phone"],
-                "blood_group": r["blood_group"], "active_emergency_status": r["active_emergency_status"],
-            }
-            for r in rows
-        ]
+        fam = await family_repo.get_my_family(session, user.id)
+        return {"family": fam}
 
 
-@router.get("/me/family/{watched_user_id}/health")
-async def get_family_health(watched_user_id: str, user: CurrentUser = Depends(require_role("patient"))) -> dict:
+@router.post("/me/family/create")
+async def create_family(payload: CreateFamilyRequest, user: CurrentUser = Depends(require_role("patient"))) -> dict:
     async with get_session() as session:
         try:
-            return await family_repo.get_watched_health(session, user.id, watched_user_id)
-        except family_repo.NotConnected:
-            raise HTTPException(403, detail={"error": {"code": "FORBIDDEN", "message": "Not connected to this person", "details": {}}})
+            fam = await family_repo.create_family(session, user.id, payload.name)
+            await session.commit()
+            return {"family": fam}
+        except family_repo.AlreadyInFamily:
+            raise HTTPException(409, detail={"error": {"code": "ALREADY_IN_FAMILY", "message": "You're already in a family", "details": {}}})
 
 
-@router.get("/me/family/{watched_user_id}/contact")
-async def get_family_contact(watched_user_id: str, user: CurrentUser = Depends(require_role("patient"))) -> dict:
+@router.post("/me/family/join")
+async def join_family(payload: ConnectByCodeRequest, user: CurrentUser = Depends(require_role("patient"))) -> dict:
     async with get_session() as session:
         try:
-            return await family_repo.get_watched_contact(session, user.id, watched_user_id)
-        except family_repo.NotConnected:
-            raise HTTPException(403, detail={"error": {"code": "FORBIDDEN", "message": "Not connected to this person", "details": {}}})
+            fam = await family_repo.join_family(session, user.id, payload.code)
+            # Real-time sync (spec: existing members must see the new member
+            # without refreshing or re-entering a code). Every current member
+            # gets told to refetch; the join family:{id} channel itself.
+            await outbox.emit(session, channel=f"family:{fam['family_id']}", event="family.member_joined",
+                              data={"family_id": fam["family_id"], "user_id": user.id})
+            await session.commit()
+            return {"family": fam}
+        except family_repo.CodeNotFound:
+            raise HTTPException(404, detail={"error": {"code": "NOT_FOUND", "message": "No family has that code", "details": {}}})
+        except family_repo.AlreadyInFamily:
+            raise HTTPException(409, detail={"error": {"code": "ALREADY_IN_FAMILY", "message": "You're already in a family", "details": {}}})
+
+
+@router.get("/me/family/{member_user_id}/health")
+async def get_family_member_health(member_user_id: str, user: CurrentUser = Depends(require_role("patient"))) -> dict:
+    async with get_session() as session:
+        try:
+            return await family_repo.get_member_health(session, user.id, member_user_id)
+        except family_repo.NotInFamily:
+            raise HTTPException(403, detail={"error": {"code": "FORBIDDEN", "message": "Not in the same family", "details": {}}})
+
+
+@router.get("/me/family/{member_user_id}/contact")
+async def get_family_member_contact(member_user_id: str, user: CurrentUser = Depends(require_role("patient"))) -> dict:
+    async with get_session() as session:
+        try:
+            return await family_repo.get_member_contact(session, user.id, member_user_id)
+        except family_repo.NotInFamily:
+            raise HTTPException(403, detail={"error": {"code": "FORBIDDEN", "message": "Not in the same family", "details": {}}})
