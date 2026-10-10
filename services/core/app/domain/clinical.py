@@ -51,9 +51,18 @@ async def handle_triage_change(db: AsyncSession, emergency_id: UUID, new_acuity:
     em = await db.get(Emergency, emergency_id)
     if not em: return
 
-    re_run_selection = False
-    if em.acuity != new_acuity or em.facility != new_facility:
-        re_run_selection = True
+    # start_selection is the ONLY place hospital selection ever runs for a
+    # real emergency (nothing calls it on first dispatch). Gating purely on
+    # "did acuity/facility change" meant the paramedic's FIRST triage
+    # confirmation silently did nothing whenever it matched the AI's own
+    # pre-filled guess on the row (the common, correct case -- e.g.
+    # acuity/facility already "critical"/"cardiac" from a real heart-attack
+    # call) -- no hospital_request ever got created, and the case just sat
+    # in hospital_selecting forever with no visible error. Must also run on
+    # the genuine first attempt, not only on a value change.
+    from app.db.repos.hospital_requests import list_attempted_hospital_ids
+    is_first_attempt = not await list_attempted_hospital_ids(db, emergency_id)
+    re_run_selection = is_first_attempt or em.acuity != new_acuity or em.facility != new_facility
 
     em.acuity = new_acuity
     em.facility = new_facility
