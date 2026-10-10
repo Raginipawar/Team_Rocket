@@ -110,7 +110,7 @@ function Shell({ children }: { children: ReactNode }) {
               </div>
               <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-4 overflow-y-auto px-5 py-5">
                 <div className="flex items-center gap-4">
-                  <CountdownRing until={offer.expires_at} total={45} size={104} label="accept" />
+                  <CountdownRing until={offer.expires_at} total={20} size={104} label="accept" />
                   <div className="min-w-0 flex-1">
                     <p className="text-[30px] font-extrabold leading-tight">{t("away", { km: km(offer.distance_m).replace(" km", "") })}</p>
                     <p className="text-[18px] text-muted">{t("pickupIn", { min: minutes(offer.eta_to_pickup_sec) ?? 1 })}</p>

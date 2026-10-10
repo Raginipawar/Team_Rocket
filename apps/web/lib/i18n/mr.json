@@ -73,7 +73,13 @@
     "team": "ऑन-कॉल टीम",
     "teamSub": "Telegram अलर्टमधून उघडले",
     "mockNote": "डेमो मोड: इथे प्रत्येक रुग्णालय, रुग्णवाहिका आणि व्यक्ती सिम्युलेटेड आहे.",
-    "website": "GoldenHour बद्दल"
+    "website": "GoldenHour बद्दल",
+    "sectionPatient": "रुग्ण",
+    "sectionPatientSub": "रुग्णवाहिका मागवा आणि लाइव्ह ट्रॅक करा",
+    "sectionAmbulance": "रुग्णवाहिका",
+    "sectionAmbulanceSub": "टीम साइन इन: ड्युटी, कामे, दिशानिर्देश",
+    "sectionHospital": "रुग्णालय",
+    "sectionHospitalSub": "कर्मचारी साइन इन: येणारे रुग्ण, खोल्या"
   },
   "login": {
     "patientTitle": "तुमच्या फोनने साइन इन करा",

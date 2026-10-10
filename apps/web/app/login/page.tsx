@@ -90,6 +90,18 @@ function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
   const [devCode, setDevCode] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [demoBusy, setDemoBusy] = useState(false);
+
+  const signInAsRagini = async () => {
+    setErr(null);
+    setDemoBusy(true);
+    try {
+      onDone(await post<LoginResponse>("/auth/login", { username_or_phone: "Ragini Pawar", password: "Ragini@21" }, { auth: false }));
+    } catch (e) {
+      setErr(errorText(e));
+      setDemoBusy(false);
+    }
+  };
   const [sentAt, setSentAt] = useState(0);
   const now = useNow(1000);
   const wait = Math.max(0, 30 - Math.floor((now - sentAt) / 1000));
@@ -141,9 +153,14 @@ function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
         </Field>
         <Button type="submit" size="lg" block loading={busy}>{t("sendCode")}</Button>
         {areaMode("AUTH") === "mock" && (
-          <button type="button" className="text-left text-[15px] text-muted underline" onClick={() => setPhone("9200000001")}>
-            {t("demoLogins")}: 92000 00001 ({t("demoPatientHint")})
-          </button>
+          <>
+            <Button type="button" size="lg" variant="outline" block loading={demoBusy} onClick={() => void signInAsRagini()}>
+              Sign in as Ragini Pawar
+            </Button>
+            <button type="button" className="text-left text-[15px] text-muted underline" onClick={() => setPhone("9200000001")}>
+              {t("demoLogins")}: 92000 00001 ({t("demoPatientHint")})
+            </button>
+          </>
         )}
       </form>
     );

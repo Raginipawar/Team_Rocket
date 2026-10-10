@@ -168,6 +168,28 @@ export function Faq() {
   );
 }
 
+const LIVE_APP_URL = (import.meta.env.VITE_APP_URL as string | undefined) || "http://localhost:3000";
+
+export function LiveApp() {
+  const { t } = useI18n();
+  return (
+    <section className="section" id="live-app">
+      <div className="page">
+        <Reveal className="closing">
+          <h2>{t.liveApp.title}</h2>
+          <p>{t.liveApp.lead}</p>
+          <div className="hero-ctas">
+            <a href={LIVE_APP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-red">
+              {t.liveApp.cta}
+            </a>
+          </div>
+          <p className="lead" style={{ marginTop: "0.75rem", fontSize: "0.9rem" }}>{t.liveApp.note}</p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 export function Closing() {
   const { t } = useI18n();
   return (

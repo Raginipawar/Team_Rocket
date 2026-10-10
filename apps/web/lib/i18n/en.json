@@ -73,7 +73,13 @@
     "team": "On call team",
     "teamSub": "Opened from the Telegram alert",
     "mockNote": "Demo mode: every hospital, ambulance and person here is simulated.",
-    "website": "About GoldenHour"
+    "website": "About GoldenHour",
+    "sectionPatient": "Patient",
+    "sectionPatientSub": "Ask for an ambulance and track it live",
+    "sectionAmbulance": "Ambulance",
+    "sectionAmbulanceSub": "Crew sign in: duty, jobs, navigation",
+    "sectionHospital": "Hospital",
+    "sectionHospitalSub": "Staff sign in: incoming patients, rooms"
   },
   "login": {
     "patientTitle": "Sign in with your phone",
@@ -125,9 +131,9 @@
     "liveBanner": "Your emergency is live",
     "open": "Open",
     "navHome": "Home",
-    "navProfile": "Health",
+    "navProfile": "Medical history",
     "navContacts": "Family",
-    "navHistory": "History",
+    "navHistory": "My history",
     "sendFailed": "Could not send. Please call 108 now.",
     "speakTitle": "Tell us what happened",
     "speakHelp": "Press the button and speak. Any language is fine.",

@@ -38,6 +38,7 @@ export default function LiveEmergency() {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [answering, setAnswering] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [guideUp, setGuideUp] = useState(false);
 
   const q = useQuery({
     queryKey: ["emergency", id],
@@ -150,6 +151,8 @@ export default function LiveEmergency() {
     }
   })();
   const heroCls = { dark: "bg-ink text-bg", blue: "bg-blue text-white", green: "bg-green text-white" }[hero.tone as "dark" | "blue" | "green"];
+  // Rapido/Swiggy-style live tracking: real map on top, driver details below, slide up for the quick guide.
+  const tracking = !final && !!amb && (e.status === "ambulance_assigned" || e.status === "at_scene");
 
   return (
     <div className="flex flex-col gap-4">
@@ -167,19 +170,21 @@ export default function LiveEmergency() {
         </a>
       )}
 
-      <section className={cn("rounded-[28px] p-5", heroCls)} aria-live="polite">
-        <div className="flex items-center gap-3">
-          <span className="grid h-12 w-12 place-items-center rounded-full bg-white/15"><Icon name={hero.icon} size={26} /></span>
-          <p className="flex-1 text-[23px] font-extrabold leading-tight">{hero.head}</p>
-        </div>
-        {hero.eta && loc?.eta_sec != null && (
-          <div className="mt-4">
-            <p className="text-[16px] opacity-85">{t("arriveIn")}</p>
-            <EtaRange eta={loc.eta_sec} low={loc.eta_low_sec} high={loc.eta_high_sec} big />
+      {!tracking && (
+        <section className={cn("rounded-[28px] p-5", heroCls)} aria-live="polite">
+          <div className="flex items-center gap-3">
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-white/15"><Icon name={hero.icon} size={26} /></span>
+            <p className="flex-1 text-[23px] font-extrabold leading-tight">{hero.head}</p>
           </div>
-        )}
-        {hero.sub && <p className="mt-2 text-[17px] opacity-90">{hero.sub}</p>}
-      </section>
+          {hero.eta && loc?.eta_sec != null && (
+            <div className="mt-4">
+              <p className="text-[16px] opacity-85">{t("arriveIn")}</p>
+              <EtaRange eta={loc.eta_sec} low={loc.eta_low_sec} high={loc.eta_high_sec} big />
+            </div>
+          )}
+          {hero.sub && <p className="mt-2 text-[17px] opacity-90">{hero.sub}</p>}
+        </section>
+      )}
 
       {rr && !final && (
         <Banner tone="blue" icon="refresh">
@@ -190,19 +195,73 @@ export default function LiveEmergency() {
       {loc?.signal === "weak" && !final && <Banner tone="amber" icon="wifiOff">{t("signalWeak")}</Banner>}
       {loc?.signal === "lost" && !final && <Banner tone="amber" icon="wifiOff">{t("signalLost")}</Banner>}
 
-      {!final && (e.pickup || loc?.location) && (
-        <Map
-          height={260}
-          ambulance={loc?.location ? { ...loc.location, heading: loc.heading, signal: loc.signal, label: `Ambulance ${reg(loc.registration_no)}` } : null}
-          pickup={e.status === "ambulance_assigned" || e.status === "dispatching" || e.status === "at_scene" ? e.pickup ?? null : null}
-          destination={e.hospital?.location ? { ...e.hospital.location, name: e.hospital.name } : null}
-          route={e.route}
-          routeTone={e.leg === "to_hospital" ? "red" : "blue"}
-          label={hero.head}
-        />
+      {tracking ? (
+        <div className="-mx-4 flex flex-col">
+          <div className="relative">
+            <Map
+              height={280}
+              ambulance={loc?.location ? { ...loc.location, heading: loc.heading, signal: loc.signal, label: `Ambulance ${reg(loc.registration_no)}` } : null}
+              pickup={e.pickup ?? null}
+              destination={e.hospital?.location ? { ...e.hospital.location, name: e.hospital.name } : null}
+              route={e.route}
+              routeTone={e.leg === "to_hospital" ? "red" : "blue"}
+              label={hero.head}
+            />
+            {loc?.eta_sec != null && (
+              <div className="absolute left-4 top-4 z-20 rounded-2xl bg-ink/90 px-4 py-2 text-white shadow-lg backdrop-blur">
+                <p className="text-[12px] font-semibold uppercase tracking-wide opacity-80">{hero.head}</p>
+                <EtaRange eta={loc.eta_sec} low={loc.eta_low_sec} high={loc.eta_high_sec} big />
+              </div>
+            )}
+          </div>
+
+          <div className="relative z-10 -mt-5 flex flex-col rounded-t-[28px] bg-card px-4 pb-4 pt-2 shadow-[0_-10px_30px_-10px_rgba(0,0,0,.2)]">
+            <button type="button" onClick={() => setGuideUp((v) => !v)} aria-label={guideUp ? "Slide down" : "Slide up"} className="mx-auto flex flex-col items-center gap-1 py-1.5">
+              <span className="h-1.5 w-12 rounded-full bg-line" />
+              <Icon name={guideUp ? "down" : "chevron"} size={16} className={cn("text-muted transition-transform", guideUp && "rotate-180")} />
+            </button>
+
+            {!guideUp && amb && (
+              <div className="flex items-center gap-4 pt-1">
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-blue-soft text-blue"><Icon name="ambulance" size={28} /></span>
+                <div className="min-w-0 flex-1">
+                  <SectionLabel>{t("ambulance")}</SectionLabel>
+                  <p className="whitespace-nowrap text-[21px] font-bold tracking-wide">{reg(amb.registration_no)}</p>
+                  <p className="text-[15px] text-muted">{amb.type === "ALS" ? "Advanced life support" : "Basic life support"}{amb.is_simulated ? " · " + tc("simulated") : ""}</p>
+                </div>
+                {amb.crew_phone && <Button asChild variant="soft" size="md"><a href={`tel:${amb.crew_phone}`} aria-label={t("callCrew")}><Icon name="phone" size={20} /></a></Button>}
+              </div>
+            )}
+            {!guideUp && (f?.question || firstAid) && (
+              <button type="button" onClick={() => setGuideUp(true)} className="mt-3 flex items-center justify-center gap-2 rounded-2xl bg-soft py-3 text-[16px] font-semibold text-ink">
+                <Icon name="info" size={18} />Answer for quick guide
+              </button>
+            )}
+
+            {guideUp && (
+              <div className="flex flex-col gap-3 pt-1">
+                {f?.question && <FollowupCard q={f.question} onAnswer={(a) => void answer(a)} busy={answering} />}
+                {firstAid && <FirstAidCard aid={firstAid} onCpr={() => setCpr(true)} />}
+                {amb?.crew_phone && <Button asChild variant="soft" size="md" block><a href={`tel:${amb.crew_phone}`}><Icon name="phone" size={20} />{t("callCrew")}</a></Button>}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        !final && (e.pickup || loc?.location) && (
+          <Map
+            height={260}
+            ambulance={loc?.location ? { ...loc.location, heading: loc.heading, signal: loc.signal, label: `Ambulance ${reg(loc.registration_no)}` } : null}
+            pickup={e.status === "dispatching" ? e.pickup ?? null : null}
+            destination={e.hospital?.location ? { ...e.hospital.location, name: e.hospital.name } : null}
+            route={e.route}
+            routeTone={e.leg === "to_hospital" ? "red" : "blue"}
+            label={hero.head}
+          />
+        )
       )}
 
-      {f?.question && !final && <FollowupCard q={f.question} onAnswer={(a) => void answer(a)} busy={answering} />}
+      {!tracking && f?.question && !final && <FollowupCard q={f.question} onAnswer={(a) => void answer(a)} busy={answering} />}
 
       {e.hospital && (
         <Card>
@@ -227,7 +286,7 @@ export default function LiveEmergency() {
         </Card>
       )}
 
-      {amb && !final && (
+      {!tracking && amb && !final && (
         <Card>
           <div className="flex items-center gap-4">
             <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-blue-soft text-blue"><Icon name="ambulance" size={28} /></span>
@@ -241,7 +300,7 @@ export default function LiveEmergency() {
         </Card>
       )}
 
-      {firstAid && !final && <FirstAidCard aid={firstAid} onCpr={() => setCpr(true)} />}
+      {!tracking && firstAid && !final && <FirstAidCard aid={firstAid} onCpr={() => setCpr(true)} />}
 
       {e.triage && (
         <Card>
