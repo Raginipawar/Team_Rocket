@@ -35,7 +35,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`${noto.variable} ${deva.variable}`}>
       <body>
-        <NextIntlClientProvider>
+        {/* key={locale} forces a full remount of everything below on a
+            language switch -- without it, React re-renders the existing
+            component tree in place (same component type/position = update,
+            not remount), so any component with locale-derived state set up
+            once in useState/useEffect (a disabled flag, a bound handler)
+            can get stuck on the old language's values instead of
+            reinitializing. This was the real cause of "buttons go inactive
+            after switching language" -- not a missing translation key
+            (verified: en/hi/mr have the exact same 270 keys each). */}
+        <NextIntlClientProvider key={locale}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
       </body>
