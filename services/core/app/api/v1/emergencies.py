@@ -80,6 +80,23 @@ async def create_emergency(
             user = await identity_repo.get_or_create_patient_user(session, caller_phone)
             caller_user_id = user["id"]
 
+        # "Call ambulance for them" (family space) sends no lat/lng at all --
+        # the caller may not even be with the person they're calling for.
+        # Fall back to that person's OWN last-known location (their phone,
+        # their app, pinged periodically while open: POST /me/location),
+        # not the caller's. Only when the request itself has no coordinates,
+        # so a real app_button/app_voice SOS (which always has the actual
+        # caller's live GPS) is never silently overridden.
+        if lat is None and lng is None and caller_user_id:
+            from sqlalchemy import text as sql_text  # `text` is shadowed here by this endpoint's own Form(text=...) SOS-message param
+            loc_row = (await session.execute(
+                sql_text("SELECT ST_Y(last_location::geometry) AS lat, ST_X(last_location::geometry) AS lng, "
+                         "last_location_accuracy_m FROM users WHERE id = :uid AND last_location IS NOT NULL"),
+                {"uid": caller_user_id},
+            )).mappings().first()
+            if loc_row:
+                lat, lng, accuracy_m = loc_row["lat"], loc_row["lng"], loc_row["last_location_accuracy_m"]
+
         incident_id = await emergencies_repo.create_incident(session, lat=lat, lng=lng)
 
         raw_track_token, track_token_hash = new_token()

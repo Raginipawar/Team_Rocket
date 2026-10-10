@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Call108, ConnectionBanners, MockRibbon, RequireRole } from "@/components/shell";
 import Icon, { type IconName } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
+import { useLocationPing } from "@/lib/hooks";
 
 function Tab({ href, icon, label }: { href: string; icon: IconName; label: string }) {
   const path = usePathname();
@@ -23,6 +24,10 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
   const t = useTranslations("patient");
   const path = usePathname();
   const live = path.startsWith("/patient/emergency/");
+  // Reports real GPS to the backend periodically while this app is open --
+  // "call ambulance for them" (family space) reads this to use a family
+  // member's own recent location, not the caller's.
+  useLocationPing(true);
   return (
     <RequireRole role="patient">
       <div className="mx-auto flex min-h-dvh max-w-[520px] flex-col bg-bg sm:my-4 sm:min-h-[calc(100dvh-2rem)] sm:rounded-[36px] sm:border sm:border-line sm:shadow-[0_30px_60px_-30px_rgba(0,0,0,.25)]">

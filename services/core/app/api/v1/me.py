@@ -18,6 +18,28 @@ from app.security.deps import CurrentUser, require_role
 router = APIRouter()
 
 
+class LocationPing(BaseModel):
+    lat: float
+    lng: float
+    accuracy_m: float | None = None
+
+
+@router.post("/me/location", status_code=204)
+async def update_my_location(payload: LocationPing, user: CurrentUser = Depends(require_role("patient"))) -> None:
+    """Patient app pings this periodically while open (lib/location-ping.ts)
+    so "call ambulance for them" (family space) can use a family member's
+    own last-known location instead of the caller's -- they may not even
+    be in the same place."""
+    from sqlalchemy import text
+    async with get_session() as session:
+        await session.execute(
+            text("UPDATE users SET last_location = ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, "
+                 "last_location_accuracy_m = :acc, last_location_at = now() WHERE id = :uid"),
+            {"lng": payload.lng, "lat": payload.lat, "acc": payload.accuracy_m, "uid": user.id},
+        )
+        await session.commit()
+
+
 class ConnectByCodeRequest(BaseModel):
     code: str
 

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, errorText, get, post, ApiError } from "@/lib/api";
 import type { CreateEmergencyResponse } from "@/lib/api-types";
-import { useGeolocation } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import { useChannel, useWsClient } from "@/components/realtime/WsProvider";
 import { Button } from "@/components/ui/button";
@@ -15,15 +14,26 @@ import Icon from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
 import { phone as fmtPhone } from "@/lib/format";
 
-type Member = { id: string; name: string | null; phone: string; blood_group: string | null; active_emergency_status: string | null };
+type Member = {
+  id: string; name: string | null; phone: string; blood_group: string | null;
+  active_emergency_status: string | null;
+  last_location_at: string | null; location_age_sec: number | null;
+};
 type Family = { family_id: string; code: string; name: string | null; is_owner: boolean; members: Member[] };
 type MemberHealth = { name: string | null; blood_group: string | null; allergies: string[]; conditions: string[]; medications: string[]; home_address: string | null };
+
+function locationFreshness(ageSec: number | null): string {
+  if (ageSec == null) return "No location yet -- they need to open the app at least once.";
+  if (ageSec < 120) return "Location updated moments ago";
+  if (ageSec < 3600) return `Location updated ${Math.round(ageSec / 60)} min ago`;
+  if (ageSec < 86400) return `Location updated ${Math.round(ageSec / 3600)} h ago -- may be out of date`;
+  return "Last location is over a day old -- may be out of date";
+}
 
 export default function FamilyPage() {
   const toast = useToast();
   const router = useRouter();
   const qc = useQueryClient();
-  const geo = useGeolocation(true);
   const { session } = useAuth();
 
   // Single source of truth: one family per account, or none. Real-time sync
@@ -111,17 +121,13 @@ export default function FamilyPage() {
 
   const callAmbulanceFor = async () => {
     if (!selected) return;
-    // Unlike the main SOS page (which shows a visible LocationIndicator
-    // before the user ever taps send), this flow had no location UI at
-    // all -- geo.pos silently missing meant lat/lng were just left off the
-    // form entirely. The real backend dispatch round bails out immediately
-    // with no location ("no_location", domain/dispatch.py), so the request
-    // would succeed (202) and navigate to a tracking page where nothing
-    // ever happened -- indistinguishable from "doesn't work" to the family
-    // member who just tapped the button. Now blocks on it explicitly.
-    if (!geo.pos) {
-      toast(geo.status === "denied" ? "Location access is off -- turn it on to call an ambulance." : "Still finding your location, try again in a moment.", "error");
-      if (geo.status !== "asking") geo.request();
+    // Deliberately sends NO location of our own -- the caller may not even
+    // be with the person they're calling for. The backend resolves THEIR
+    // own last-reported location instead (POST /me/location, pinged by
+    // their own app while it's open), which is what's actually correct
+    // here: this person's location, not the caller's.
+    if (selected.location_age_sec == null) {
+      toast(`We don't have a recent location for ${selected.name ?? "them"} yet -- they need to have the app open.`, "error");
       return;
     }
     setCalling(true);
@@ -131,9 +137,6 @@ export default function FamilyPage() {
       const note = `Called by a family member on GoldenHour for ${selected.name ?? "a family member"}.${health?.home_address ? ` Registered address: ${health.home_address}.` : ""}`;
       form.set("text", note);
       form.set("caller_phone", selected.phone);
-      form.set("lat", String(geo.pos.lat));
-      form.set("lng", String(geo.pos.lng));
-      form.set("accuracy_m", String(geo.pos.accuracy));
       const r = await api<CreateEmergencyResponse>("/emergencies", { method: "POST", form });
       toast("Ambulance called", "success");
       setSelected(null);
@@ -238,13 +241,11 @@ export default function FamilyPage() {
           <Button asChild variant="soft" size="lg" block>
             <a href={`tel:${selected?.phone}`}><Icon name="phone" size={20} />Call {selected?.name ?? "them"}</a>
           </Button>
-          {!geo.pos && (
-            <p className="flex items-center gap-2 text-[14px] text-muted">
-              <Icon name={geo.status === "denied" ? "alert" : "pin"} size={16} />
-              {geo.status === "denied" ? "Location access is off -- turn it on to call an ambulance." : "Finding your location…"}
-            </p>
-          )}
-          <Button variant="danger" size="xl" block loading={calling} disabled={!geo.pos} onClick={() => void callAmbulanceFor()}>
+          <p className="flex items-center gap-2 text-[14px] text-muted">
+            <Icon name="pin" size={16} />
+            {selected && locationFreshness(selected.location_age_sec)}
+          </p>
+          <Button variant="danger" size="xl" block loading={calling} disabled={selected?.location_age_sec == null} onClick={() => void callAmbulanceFor()}>
             <Icon name="ambulance" size={24} />
             Call an ambulance for them
           </Button>

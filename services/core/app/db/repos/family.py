@@ -42,7 +42,9 @@ async def get_my_family(session: AsyncSession, user_id: str) -> dict | None:
             SELECT u.id, u.name, u.phone, hp.blood_group,
                    (SELECT em.status FROM emergencies em WHERE em.caller_user_id = u.id
                     AND em.status NOT IN ('handed_off','cancelled','closed','merged_duplicate','refused_transport')
-                    ORDER BY em.received_at DESC LIMIT 1) AS active_emergency_status
+                    ORDER BY em.received_at DESC LIMIT 1) AS active_emergency_status,
+                   u.last_location_at,
+                   EXTRACT(EPOCH FROM (now() - u.last_location_at))::float8 AS location_age_sec
             FROM family_members fm
             JOIN users u ON u.id = fm.user_id
             LEFT JOIN health_profiles hp ON hp.user_id = u.id

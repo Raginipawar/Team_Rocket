@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { post } from "./api";
 
 /** Ticking clock for countdowns and "5 s ago" labels. */
 export function useNow(ms = 1000) {
@@ -35,6 +36,25 @@ export function useGeolocation(watch = true): GeoState & { request: () => void }
     navigator.geolocation.getCurrentPosition(ok, fail, opts);
   }, [watch, tick]);
   return { ...state, request: () => setTick((x) => x + 1) };
+}
+
+/** Reports this patient's live location to the backend periodically while
+ * the app is open (watchPosition already fires on movement) -- so "call
+ * ambulance for them" (family space) can use a family member's own real
+ * recent location instead of the caller's, who may not even be with them.
+ * Throttled: watchPosition can fire far more often than is useful to send. */
+export function useLocationPing(enabled: boolean, minIntervalMs = 15000) {
+  const geo = useGeolocation(enabled);
+  const lastSentAt = useRef(0);
+  useEffect(() => {
+    if (!enabled || !geo.pos) return;
+    const now = Date.now();
+    if (now - lastSentAt.current < minIntervalMs) return;
+    lastSentAt.current = now;
+    void post("/me/location", { lat: geo.pos.lat, lng: geo.pos.lng, accuracy_m: geo.pos.accuracy }).catch(() => {
+      /* best-effort -- a missed ping just means a slightly staler fallback location later */
+    });
+  }, [enabled, geo.pos, minIntervalMs]);
 }
 
 /** Short haptic feedback (UI rule 5). */
