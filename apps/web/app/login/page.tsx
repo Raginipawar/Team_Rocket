@@ -223,6 +223,7 @@ function StaffLogin({ role, onDone }: { role: Role; onDone: (r: LoginResponse) =
   const [pw, setPw] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const submit = async (ident = id, pass = pw) => {
     setErr(null);
     setBusy(true);
@@ -234,6 +235,11 @@ function StaffLogin({ role, onDone }: { role: Role; onDone: (r: LoginResponse) =
     }
   };
   const who = role === "paramedic" ? "Ambulance crew" : role === "hospital_staff" ? "Hospital staff" : "Staff";
+
+  if (role === "hospital_staff" && mode === "signup") {
+    return <HospitalSignup onDone={onDone} onBackToSignIn={() => setMode("signin")} />;
+  }
+
   return (
     <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
       <div>
@@ -247,6 +253,11 @@ function StaffLogin({ role, onDone }: { role: Role; onDone: (r: LoginResponse) =
         <Input id="pw" type="password" autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} />
       </Field>
       <Button type="submit" size="lg" block loading={busy}>{t("signIn")}</Button>
+      {role === "hospital_staff" && (
+        <button type="button" className="text-center text-[15px] font-semibold text-ink underline" onClick={() => setMode("signup")}>
+          Register your hospital
+        </button>
+      )}
       {areaMode("AUTH") === "mock" && DEMO[role] && (
         <div className="flex flex-col gap-2 rounded-[24px] bg-soft p-4">
           <p className="text-[14px] font-bold uppercase tracking-wider text-muted">{t("demoLogins")} · password demo1234</p>
@@ -258,6 +269,111 @@ function StaffLogin({ role, onDone }: { role: Role; onDone: (r: LoginResponse) =
           ))}
         </div>
       )}
+    </form>
+  );
+}
+
+const HOSPITAL_CAPABILITIES = [
+  { id: "general_er", label: "General ER" },
+  { id: "cardiac_cathlab", label: "Cardiac / cath lab" },
+  { id: "stroke_thrombolysis", label: "Stroke / thrombolysis" },
+  { id: "trauma_center", label: "Trauma center" },
+  { id: "burns_unit", label: "Burns unit" },
+  { id: "obstetrics", label: "Obstetrics" },
+  { id: "pediatrics", label: "Paediatrics" },
+  { id: "toxicology", label: "Toxicology" },
+  { id: "icu", label: "ICU" },
+];
+
+function HospitalSignup({ onDone, onBackToSignIn }: { onDone: (r: LoginResponse) => void; onBackToSignIn: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [f, setF] = useState({
+    hospital_name: "", address: "", lat: "", lng: "",
+    capabilities: ["general_er"] as string[],
+    duty_manager_phone: "", er_entrance_note: "",
+    staff_name: "", staff_phone: "", staff_password: "",
+    integration_mode: "manual" as "manual" | "api",
+  });
+  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((s) => ({ ...s, [k]: v }));
+  const toggleCap = (id: string) => set("capabilities", f.capabilities.includes(id) ? f.capabilities.filter((c) => c !== id) : [...f.capabilities, id]);
+
+  const submit = async () => {
+    setErr(null);
+    if (!f.hospital_name || !f.address || !f.lat || !f.lng || !f.duty_manager_phone || !f.staff_name || !f.staff_phone || f.staff_password.length < 8) {
+      setErr("Please fill in all required fields (password needs at least 8 characters).");
+      return;
+    }
+    setBusy(true);
+    try {
+      const r = await post<LoginResponse & { hospital_code: string }>("/auth/register-hospital", {
+        ...f, lat: Number(f.lat), lng: Number(f.lng),
+      }, { auth: false });
+      onDone(r);
+    } catch (e) {
+      setErr(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+      <div className="flex items-center gap-2">
+        <Button type="button" variant="ghost" size="icon" onClick={onBackToSignIn}><Icon name="back" size={20} /></Button>
+        <h1 className="text-[24px] font-extrabold">Register your hospital</h1>
+      </div>
+      <p className="text-[15px] text-muted -mt-3">You'll get access to the dashboard right away. This creates a demo-labelled registration -- not an independently verified claim of real-world accreditation.</p>
+
+      <Field label="Hospital name" htmlFor="hname"><Input id="hname" value={f.hospital_name} onChange={(e) => set("hospital_name", e.target.value)} /></Field>
+      <Field label="Address" htmlFor="addr"><Input id="addr" value={f.address} onChange={(e) => set("address", e.target.value)} /></Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Latitude" htmlFor="lat"><Input id="lat" inputMode="decimal" value={f.lat} onChange={(e) => set("lat", e.target.value)} placeholder="18.63" /></Field>
+        <Field label="Longitude" htmlFor="lng"><Input id="lng" inputMode="decimal" value={f.lng} onChange={(e) => set("lng", e.target.value)} placeholder="73.80" /></Field>
+      </div>
+      <Field label="Duty manager phone" htmlFor="dmp"><Input id="dmp" value={f.duty_manager_phone} onChange={(e) => set("duty_manager_phone", e.target.value)} placeholder="+91..." /></Field>
+      <Field label="ER entrance note (optional)" htmlFor="ern"><Input id="ern" value={f.er_entrance_note} onChange={(e) => set("er_entrance_note", e.target.value)} /></Field>
+
+      <div>
+        <p className="mb-2 text-[14px] font-bold uppercase tracking-wider text-muted">Services available</p>
+        <div className="flex flex-wrap gap-2">
+          {HOSPITAL_CAPABILITIES.map((c) => {
+            const on = f.capabilities.includes(c.id);
+            return (
+              <button key={c.id} type="button" onClick={() => toggleCap(c.id)}
+                className={`rounded-full border-2 px-4 py-2 text-[15px] font-semibold ${on ? "border-ink bg-ink text-bg" : "border-line bg-card text-ink"}`}>
+                {c.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 text-[14px] font-bold uppercase tracking-wider text-muted">Data integration</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button type="button" onClick={() => set("integration_mode", "manual")}
+            className={`rounded-2xl border-2 p-3 text-left ${f.integration_mode === "manual" ? "border-ink" : "border-line"}`}>
+            <p className="text-[16px] font-bold">Manual dashboard</p>
+            <p className="text-[13px] text-muted">Update capacity yourself in-app</p>
+          </button>
+          <button type="button" onClick={() => set("integration_mode", "api")}
+            className={`rounded-2xl border-2 p-3 text-left ${f.integration_mode === "api" ? "border-ink" : "border-line"}`}>
+            <p className="text-[16px] font-bold">API integration</p>
+            <p className="text-[13px] text-muted">Connect your own system later</p>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 text-[14px] font-bold uppercase tracking-wider text-muted">Administrator account</p>
+        <Field label="Full name" htmlFor="sname"><Input id="sname" value={f.staff_name} onChange={(e) => set("staff_name", e.target.value)} /></Field>
+        <Field label="Phone (used to sign in)" htmlFor="sphone"><Input id="sphone" value={f.staff_phone} onChange={(e) => set("staff_phone", e.target.value)} placeholder="+91..." /></Field>
+        <Field label="Password" htmlFor="spw"><Input id="spw" type="password" value={f.staff_password} onChange={(e) => set("staff_password", e.target.value)} /></Field>
+      </div>
+
+      {err && <p className="text-[15px] font-semibold text-red-ink">{err}</p>}
+      <Button type="submit" size="xl" block loading={busy}>Create hospital & open dashboard</Button>
     </form>
   );
 }

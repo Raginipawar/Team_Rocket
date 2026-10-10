@@ -1,10 +1,17 @@
-"""Real hospital and ambulance self-registration. Didn't exist anywhere --
-every hospital_staff/paramedic account was seed data (data/seed/seed.py),
-so there was no way for a real hospital or a real ambulance crew to
-actually sign up. Each registration creates the real org record (hospital
-or ambulance) AND its first staff/paramedic login in one transaction, then
-logs them straight in (same pattern as patient OTP verify) so there's no
-separate "wait for an email" step.
+"""Real hospital self-registration. Didn't exist anywhere -- every
+hospital_staff account was seed data (data/seed/seed.py), so there was no
+way for a real hospital to actually sign up. Creates the real hospital
+org record AND its first staff login in one transaction, then logs them
+straight in (same pattern as patient OTP verify) -- no approval wait, per
+explicit spec decision: automatic dashboard access, demo_mode distinguishes
+"signed up" from "independently verified for real dispatch" without a
+separate review workflow blocking the demo.
+
+(Ambulance registration used to live here too -- superseded by the real
+OTP-first flow in api/v1/ambulance.py register/register-demo, which ties
+registration to an already-authenticated phone, not a password set at
+registration time. Removed here to avoid two different ambulance signup
+paths existing at once.)
 
 Scope note (deliberate, not an oversight): we don't own bed/resource
 tracking -- that's the hospital's own job -- we only allocate. So
@@ -12,7 +19,9 @@ registration creates real room/resource ROWS (so the hospital's own
 dashboard, PATCH /hospital/rooms, PATCH /hospital/resources -- both
 already real -- has something to edit), not a live integration with
 whatever system the hospital already uses for that. A real HMS push/pull
-API is a legitimate v2, not a same-day build."""
+API is a legitimate v2, not a same-day build -- integration_mode is
+captured now so that's a config flip later, not a schema change."""
+import random
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -54,24 +63,11 @@ class HospitalRegisterRequest(BaseModel):
     staff_phone: str
     staff_password: str = Field(min_length=8)
     rooms: list[RoomCount] = []
+    integration_mode: str = "manual"  # "manual" | "api" -- Data Integration section's choice
 
 
-class AmbulanceRegisterRequest(BaseModel):
-    registration_no: str
-    type: str  # ALS | BLS
-    equipment: list[str] = []
-    driver_license_no: str
-    paramedic_name: str
-    paramedic_phone: str
-    paramedic_password: str = Field(min_length=8)
-
-
-def _issue_tokens_for(user: dict) -> str:
-    return create_access_token(
-        sub=str(user["id"]), role=user["role"],
-        hospital_id=str(user.get("hospital_id")) if user.get("hospital_id") else None,
-        ambulance_id=str(user.get("ambulance_id")) if user.get("ambulance_id") else None,
-    )
+def _generate_hospital_code() -> str:
+    return f"HSP-{random.randint(100000, 999999)}"
 
 
 @router.post("/auth/register-hospital", status_code=201)
@@ -82,26 +78,40 @@ async def register_hospital(payload: HospitalRegisterRequest) -> dict:
     bad_rooms = [r.type for r in payload.rooms if r.type not in ROOM_TYPES]
     if bad_rooms:
         raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": f"Unknown room types: {bad_rooms}", "details": {}}})
+    if payload.integration_mode not in ("manual", "api"):
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "integration_mode must be manual or api", "details": {}}})
 
     async with get_session() as session:
         existing = (await session.execute(
-            text("SELECT id FROM users WHERE phone = :phone"), {"phone": payload.staff_phone}
+            text("SELECT id FROM users WHERE phone = :phone AND role = 'hospital_staff'"), {"phone": payload.staff_phone}
         )).scalar_one_or_none()
         if existing:
-            raise HTTPException(409, detail={"error": {"code": "ALREADY_EXISTS", "message": "A user with this phone already exists", "details": {}}})
+            raise HTTPException(409, detail={"error": {"code": "ALREADY_EXISTS", "message": "A hospital staff account with this phone already exists", "details": {}}})
+
+        hospital_code = None
+        for _ in range(10):
+            candidate = _generate_hospital_code()
+            dup = (await session.execute(
+                text("SELECT 1 FROM hospitals WHERE hospital_code = :c"), {"c": candidate},
+            )).scalar_one_or_none()
+            if not dup:
+                hospital_code = candidate
+                break
+        if not hospital_code:
+            raise HTTPException(500, detail={"error": {"code": "INTERNAL_ERROR", "message": "Could not allocate a hospital code", "details": {}}})
 
         hospital_id = (await session.execute(
             text("""
                 INSERT INTO hospitals (name, address, location, er_entrance_note, duty_manager_phone,
-                                        capabilities, is_active, is_simulated)
+                                        capabilities, is_active, is_simulated, integration_mode, hospital_code)
                 VALUES (:name, :address, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
-                        :er_entrance_note, :duty_manager_phone, :capabilities, true, false)
+                        :er_entrance_note, :duty_manager_phone, :capabilities, true, false, :integration_mode, :code)
                 RETURNING id
             """),
             {
                 "name": payload.hospital_name, "address": payload.address, "lng": payload.lng, "lat": payload.lat,
                 "er_entrance_note": payload.er_entrance_note, "duty_manager_phone": payload.duty_manager_phone,
-                "capabilities": payload.capabilities,
+                "capabilities": payload.capabilities, "integration_mode": payload.integration_mode, "code": hospital_code,
             },
         )).scalar_one()
 
@@ -140,77 +150,15 @@ async def register_hospital(payload: HospitalRegisterRequest) -> dict:
         await audit.write(
             session, actor_type="user", actor_id=str(user_row["id"]), entity="hospitals",
             entity_id=hospital_id, action="register", before=None,
-            after={"name": payload.hospital_name, "staff_phone": payload.staff_phone},
+            after={"name": payload.hospital_name, "staff_phone": payload.staff_phone, "hospital_code": hospital_code},
         )
         await session.commit()
 
-    user = dict(user_row)
-    access = _issue_tokens_for(user)
-    refresh = create_refresh_token(sub=str(user["id"]), role="hospital_staff")
+    access = create_access_token(sub=str(user_row["id"]), role="hospital_staff", hospital_id=str(hospital_id))
+    refresh = create_refresh_token(sub=str(user_row["id"]), role="hospital_staff")
     return {
         "access_token": access, "refresh_token": refresh,
-        "hospital_id": str(hospital_id),
-        "user": {"id": str(user["id"]), "role": "hospital_staff", "name": user["name"],
-                  "phone": user["phone"], "hospital_id": str(hospital_id)},
-    }
-
-
-@router.post("/auth/register-ambulance", status_code=201)
-async def register_ambulance(payload: AmbulanceRegisterRequest) -> dict:
-    if payload.type not in ("ALS", "BLS"):
-        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "type must be ALS or BLS", "details": {}}})
-
-    async with get_session() as session:
-        existing_user = (await session.execute(
-            text("SELECT id FROM users WHERE phone = :phone"), {"phone": payload.paramedic_phone}
-        )).scalar_one_or_none()
-        if existing_user:
-            raise HTTPException(409, detail={"error": {"code": "ALREADY_EXISTS", "message": "A user with this phone already exists", "details": {}}})
-        existing_amb = (await session.execute(
-            text("SELECT id FROM ambulances WHERE registration_no = :reg"), {"reg": payload.registration_no}
-        )).scalar_one_or_none()
-        if existing_amb:
-            raise HTTPException(409, detail={"error": {"code": "ALREADY_EXISTS", "message": "This registration number is already registered", "details": {}}})
-
-        # kyc_verified stays the real default (false) -- a self-registered
-        # ambulance cannot be dispatched to (db/repos/ambulances.py's
-        # find_candidates filters on it) until an ops/admin operator
-        # verifies the license, matching real EMS compliance expectations,
-        # not silently granting trust on signup.
-        ambulance_id = (await session.execute(
-            text("""
-                INSERT INTO ambulances (registration_no, type, equipment, status, driver_license_no,
-                                         kyc_verified, is_simulated)
-                VALUES (:reg, :type, :equipment, 'offline', :license, false, false)
-                RETURNING id
-            """),
-            {"reg": payload.registration_no, "type": payload.type, "equipment": payload.equipment,
-             "license": payload.driver_license_no},
-        )).scalar_one()
-
-        password_hash = hash_password(payload.paramedic_password)
-        user_row = (await session.execute(
-            text("""
-                INSERT INTO users (role, name, phone, password_hash, ambulance_id, is_active)
-                VALUES ('paramedic', :name, :phone, :password_hash, :ambulance_id, true)
-                RETURNING id, role, name, phone, ambulance_id
-            """),
-            {"name": payload.paramedic_name, "phone": payload.paramedic_phone, "password_hash": password_hash, "ambulance_id": ambulance_id},
-        )).mappings().first()
-
-        await audit.write(
-            session, actor_type="user", actor_id=str(user_row["id"]), entity="ambulances",
-            entity_id=ambulance_id, action="register", before=None,
-            after={"registration_no": payload.registration_no, "paramedic_phone": payload.paramedic_phone},
-        )
-        await session.commit()
-
-    user = dict(user_row)
-    access = _issue_tokens_for(user)
-    refresh = create_refresh_token(sub=str(user["id"]), role="paramedic")
-    return {
-        "access_token": access, "refresh_token": refresh,
-        "ambulance_id": str(ambulance_id), "kyc_verified": False,
-        "user": {"id": str(user["id"]), "role": "paramedic", "name": user["name"],
-                  "phone": user["phone"], "ambulance_id": str(ambulance_id)},
+        "hospital_id": str(hospital_id), "hospital_code": hospital_code,
+        "user": {"id": str(user_row["id"]), "role": "hospital_staff", "name": user_row["name"],
+                  "phone": user_row["phone"], "hospital_id": str(hospital_id)},
     }

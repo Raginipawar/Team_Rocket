@@ -22,7 +22,7 @@ from sqlalchemy import text
 
 from app.api.v1 import (
     ambulance, analytics, auth, clinical, emergencies, hospital, me, offers, ops,
-    webhooks_sms, webhooks_telegram,
+    registration, webhooks_sms, webhooks_telegram,
 )
 from app.config import settings
 from app.db.engine import engine
@@ -84,6 +84,7 @@ app.add_middleware(
 install_error_handlers(app)
 
 app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
+app.include_router(registration.router, prefix="/api/v1", tags=["registration"])
 app.include_router(emergencies.router, prefix="/api/v1", tags=["emergencies"])
 app.include_router(offers.router, prefix="/api/v1/ambulance", tags=["dispatch"])
 app.include_router(ambulance.router, prefix="/api/v1/ambulance", tags=["ambulance"])
