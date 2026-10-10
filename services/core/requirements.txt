@@ -12,5 +12,6 @@ alembic==1.13.2
 httpx==0.27.2
 h3>=4.0                           # H3 hex indexing for demand-forecast/pre-positioning feeder (jobs/ml_feeder.py)
 geoalchemy2==0.20.0
+shapely==2.1.2
 websockets==15.0.1
 pyyaml==6.0.1
