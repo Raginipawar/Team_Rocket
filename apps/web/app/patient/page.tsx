@@ -74,12 +74,34 @@ export default function PatientHome() {
     }
   };
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between gap-3 pt-2">
-        <h1 className="text-[28px] font-extrabold tracking-tight">{name ? t("hi", { name }) : t("hiNoName")}</h1>
+        <div className="flex items-center gap-3">
+          <button type="button" aria-label="Menu" onClick={() => setMenuOpen(true)} className="grid h-10 w-10 place-items-center rounded-full bg-soft">
+            <Icon name="menu" size={22} />
+          </button>
+          <span className="inline-flex items-center gap-2 text-[20px] font-extrabold tracking-tight">
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-red text-white" aria-hidden>
+              <svg width={14} height={14} viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /></svg>
+            </span>
+            GoldenHour
+          </span>
+        </div>
         <LanguageSwitcher compact />
       </div>
+
+      {menuOpen && (
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen} title={name ? t("hi", { name }) : t("hiNoName")}>
+          <nav className="flex flex-col gap-1 pb-2">
+            <Link href="/patient/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-[18px] font-semibold"><Icon name="heart" size={22} />{t("navProfile")}</Link>
+            <Link href="/patient/contacts" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-[18px] font-semibold"><Icon name="users" size={22} />{t("navContacts")}</Link>
+            <Link href="/patient/history" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-[18px] font-semibold"><Icon name="history" size={22} />{t("navHistory")}</Link>
+          </nav>
+        </Sheet>
+      )}
 
       {live && (
         <Link href={`/patient/emergency/${live}`} className="flex items-center gap-3 rounded-[22px] bg-red px-5 py-4 text-white shadow-lg">
@@ -89,38 +111,32 @@ export default function PatientHome() {
         </Link>
       )}
 
-      <section aria-labelledby="who">
-        <p id="who" className="mb-2 text-[19px] font-bold">{t("whoNeedsHelp")}</p>
-        <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-labelledby="who">
+      <section aria-labelledby="who" className="flex justify-center">
+        <div className="inline-grid grid-cols-2 gap-2 rounded-full bg-soft p-1" role="radiogroup" aria-labelledby="who">
           {[true, false].map((self) => (
             <button key={String(self)} role="radio" aria-checked={forSelf === self} onClick={() => setForSelf(self)}
-              className={cn("flex h-16 items-center justify-center gap-2 rounded-[20px] border-2 text-[19px] font-bold transition",
-                forSelf === self ? "border-ink bg-ink text-bg" : "border-line bg-card text-ink")}>
-              <Icon name={self ? "user" : "users"} size={22} />
+              className={cn("flex h-10 items-center justify-center gap-1.5 rounded-full px-4 text-[15px] font-bold transition",
+                forSelf === self ? "bg-ink text-bg" : "text-ink")}>
+              <Icon name={self ? "user" : "users"} size={17} />
               {self ? t("me") : t("someoneElse")}
             </button>
           ))}
         </div>
-        <p className="mt-2 text-[16px] text-muted">{forSelf ? t("meHint") : t("otherHint")}</p>
       </section>
+      <span id="who" className="sr-only">{t("whoNeedsHelp")}</span>
 
-      <SosButton busy={busy} onFire={() => void send("app_button")} />
-
-      <section>
-        <p className="mb-2 text-center text-[17px] font-semibold text-muted">{t("orDescribe")}</p>
-        <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => setSheet("voice")} className="flex flex-col items-start gap-2 rounded-[22px] bg-soft p-4 text-left">
-            <span className="grid h-12 w-12 place-items-center rounded-full bg-card"><Icon name="mic" size={24} /></span>
-            <span className="text-[19px] font-bold">{t("speak")}</span>
-            <span className="text-[15px] text-muted">{t("speakSub")}</span>
-          </button>
-          <button onClick={() => setSheet("text")} className="flex flex-col items-start gap-2 rounded-[22px] bg-soft p-4 text-left">
-            <span className="grid h-12 w-12 place-items-center rounded-full bg-card"><Icon name="keyboard" size={24} /></span>
-            <span className="text-[19px] font-bold">{t("type")}</span>
-            <span className="text-[15px] text-muted">{t("typeSub")}</span>
-          </button>
-        </div>
-      </section>
+      <div className="relative mx-auto flex w-full max-w-[340px] items-center justify-center py-2">
+        <button onClick={() => setSheet("voice")} aria-label={t("speak")}
+          className="absolute left-0 grid h-16 w-16 place-items-center rounded-full bg-soft shadow-md active:scale-95">
+          <Icon name="mic" size={26} />
+        </button>
+        <SosButton busy={busy} onFire={() => void send("app_button")} />
+        <button onClick={() => setSheet("text")} aria-label={t("type")}
+          className="absolute right-0 grid h-16 w-16 place-items-center rounded-full bg-soft shadow-md active:scale-95">
+          <Icon name="keyboard" size={26} />
+        </button>
+      </div>
+      <p className="-mt-2 text-center text-[16px] text-muted">{forSelf ? t("meHint") : t("otherHint")}</p>
 
       <LocationIndicator geo={geo} landmark={landmark} onLandmark={setLandmark} />
 

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import HowItWorks from "../components/HowItWorks";
-import { Closing, Coverage, Faq, Footer, Highlights, Safety, TwoApps } from "../components/Sections";
+import { Closing, Coverage, Faq, Footer, Highlights, LiveApp, Safety, TwoApps } from "../components/Sections";
 
 /** The public marketing website. */
 export default function SitePage() {
@@ -29,6 +29,7 @@ export default function SitePage() {
         <Hero />
         <HowItWorks />
         <TwoApps />
+        <LiveApp />
         <Highlights />
         <Safety />
         <Coverage />

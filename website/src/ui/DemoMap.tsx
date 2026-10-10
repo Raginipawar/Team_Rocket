@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import * as maplibregl from "maplibre-gl";
+import type { Map as MLMap, Marker } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import Icon from "./Icon";
 import { HOSPITALS, PICKUP, ROUTE_TO_HOSPITAL, ROUTE_TO_PATIENT, hospitalById, type Severity } from "../demo/data";
 import type { Derived } from "../demo/engine";
+import { DEMO_BOUNDS, routeToLngLat, toLngLat } from "./geo";
 
 type Pt = [number, number];
 
@@ -12,7 +15,7 @@ function length(pts: Pt[]) {
   return L;
 }
 
-/** Splits a polyline at fraction p; returns the point, heading, and both halves. */
+/** Splits a polyline at fraction p; returns the point, heading, and both halves (in the abstract demo plane). */
 function along(pts: Pt[], p: number) {
   const total = length(pts);
   let target = total * Math.min(1, Math.max(0, p));
@@ -33,48 +36,80 @@ function along(pts: Pt[], p: number) {
   return { x: last[0], y: last[1], angle: 0, done: pts, rest: [last] as Pt[] };
 }
 
-const poly = (pts: Pt[]) => pts.map((p) => p.join(",")).join(" ");
-const routeFor = (id: string): Pt[] =>
-  ROUTE_TO_HOSPITAL[id] ?? [[PICKUP.x, PICKUP.y], [hospitalById(id).x, hospitalById(id).y]];
+const routeFor = (id: string): Pt[] => ROUTE_TO_HOSPITAL[id] ?? [[PICKUP.x, PICKUP.y], [hospitalById(id).x, hospitalById(id).y]];
 
 const SEV_COLOR: Record<Severity, string> = { critical: "#dc2626", urgent: "#d97706", stable: "#16a34a" };
 
-// Background: a schematic road grid of the demo area, not a real map.
-const ROADS: Pt[][] = [
-  [[0, 130], [180, 140], [420, 150], [760, 170]],
-  [[40, 420], [300, 400], [560, 380], [800, 360]],
-  [[120, 20], [170, 240], [220, 460], [260, 700]],
-  [[430, 0], [440, 250], [470, 460], [520, 700]],
-  [[0, 280], [260, 300], [620, 300], [800, 260]],
-  [[520, 410], [470, 400], [430, 340], [360, 330], [330, 270], [275, 225], [205, 150], [120, 60]],
-  [[600, 0], [640, 200], [700, 520]],
-  [[0, 560], [420, 540], [800, 520]],
-];
-const AREAS: [string, number, number][] = [
-  ["Dehu Road", 40, 80], ["Nigdi", 160, 115], ["Akurdi", 250, 265], ["Chinchwad", 470, 215], ["Pimpri", 590, 350],
-  ["Bhosari", 690, 145], ["Ravet", 110, 365], ["Wakad", 400, 580],
-];
+const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+const ATTR = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+// the worker is served from /public (scripts/copy-maplibre-worker.mjs)
+maplibregl.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+
+function style(dark: boolean): maplibregl.StyleSpecification {
+  return {
+    version: 8,
+    sources: { base: { type: "raster", tiles: [TILES], tileSize: 256, attribution: ATTR, maxzoom: 19 } },
+    layers: [
+      { id: "bg", type: "background", paint: { "background-color": dark ? "#141416" : "#f2f1ee" } },
+      {
+        id: "base", type: "raster", source: "base",
+        paint: dark
+          ? { "raster-brightness-min": 0.92, "raster-brightness-max": 0.08, "raster-saturation": -0.7, "raster-hue-rotate": 180, "raster-contrast": 0.1 }
+          : { "raster-saturation": -0.35, "raster-contrast": -0.05 },
+      },
+    ],
+  };
+}
+
+function el(html: string, cls = "") {
+  const d = document.createElement("div");
+  d.className = cls;
+  d.innerHTML = html;
+  return d;
+}
+
+const hospitalPin = (dark: boolean) => `
+  <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+    <rect x="3" y="3" width="22" height="22" rx="7" fill="${dark ? "#3a3a3a" : "#fff"}" stroke="${dark ? "#666" : "#bdbdb8"}" stroke-width="2"/>
+    <path d="M14 8v12M8 14h12" stroke="${dark ? "#aaa" : "#8a8a85"}" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>`;
+
+const destPin = () => `
+  <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+    <circle cx="15" cy="15" r="13" fill="#16a34a" stroke="#fff" stroke-width="3"/>
+    <path d="M15 8v14M8 15h14" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+  </svg>`;
+
+const pickupPin = () => `
+  <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+    <circle cx="13" cy="13" r="12" fill="#ef4444" opacity="0.18"/>
+    <circle cx="13" cy="13" r="8" fill="#ef4444" stroke="#fff" stroke-width="2.6"/>
+  </svg>`;
+
+const ambSvg = (color: string) => `
+  <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
+    <g>
+      <rect x="4" y="11" width="28" height="18" rx="6" fill="${color}"/>
+      <path d="M14 15h8M18 11v8" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </svg>`;
 
 export default function DemoMap({ d, now, severity = "critical", dark, height = 260, variant = "patient", signal = "ok", showHospitals }: {
   d: Derived; now: number; severity?: Severity; dark?: boolean; height?: number | string;
   variant?: "patient" | "ambulance" | "hospital" | "ops"; signal?: "ok" | "weak" | "lost"; showHospitals?: boolean;
 }) {
-  const [zoom, setZoom] = useState(1);
+  const box = useRef<HTMLDivElement>(null);
+  const mapBox = useRef<HTMLDivElement>(null);
+  const map = useRef<MLMap | null>(null);
+  const loaded = useRef(false);
+  const pickupMarker = useRef<Marker | null>(null);
+  const destMarker = useRef<Marker | null>(null);
+  const ambMarker = useRef<Marker | null>(null);
+  const hospitalMarkers = useRef<Marker[]>([]);
   const [follow, setFollow] = useState(true);
   const [full, setFull] = useState(false);
-  // The box is fitted to the container shape so nothing important is cropped.
-  const box = useRef<HTMLDivElement>(null);
-  const [ratio, setRatio] = useState(760 / 520);
-  useEffect(() => {
-    const el = box.current;
-    if (!el || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(([e]) => {
-      const { width, height: hh } = e.contentRect;
-      if (width > 0 && hh > 0) setRatio(width / hh);
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
+  const [, forceRerender] = useState(0);
 
   const toPatient = ROUTE_TO_PATIENT as Pt[];
   const toHospital = routeFor(d.hospitalId);
@@ -87,111 +122,180 @@ export default function DemoMap({ d, now, severity = "critical", dark, height = 
   const hospitalKnown = d.hospitalAcceptedAt !== null || d.stage === "asking";
   const prevRoute = d.reroute ? routeFor(d.reroute.from) : null;
   const showPrev = prevRoute && d.reroute && now - d.reroute.at < 10000;
-
-  // Camera: frame whatever matters right now (ambulance + where it is heading, or
-  // every hospital on overview maps), then follow the ambulance when zoomed in.
-  const pts: Pt[] = [];
-  const overview = !d.active && (showHospitals || variant === "hospital" || variant === "ops" || variant === "ambulance");
-  if (overview || variant === "ops") HOSPITALS.forEach((hh) => pts.push([hh.x, hh.y]));
-  if (d.active) {
-    pts.push([PICKUP.x, PICKUP.y]);
-    if (showAmbulance) pts.push([pos.x, pos.y]);
-    if (hospitalKnown) pts.push([dest.x, dest.y]);
-  }
-  if (pts.length === 0) pts.push([100, 100], [700, 520]);
-  const xs = pts.map((p) => p[0]);
-  const ys = pts.map((p) => p[1]);
-  const PAD = 70;
-  let bw = Math.max(420, Math.max(...xs) - Math.min(...xs) + PAD * 2);
-  let bh = Math.max(290, Math.max(...ys) - Math.min(...ys) + PAD * 2);
-  if (bw / bh > ratio) bh = bw / ratio; else bw = bh * ratio;
-  const fitCx = (Math.max(...xs) + Math.min(...xs)) / 2;
-  const fitCy = (Math.max(...ys) + Math.min(...ys)) / 2;
-  const w = bw / zoom;
-  const h = bh / zoom;
-  const cx = zoom > 1 && follow && showAmbulance ? pos.x : fitCx;
-  const cy = zoom > 1 && follow && showAmbulance ? pos.y : fitCy;
-  const viewBox = `${cx - w / 2} ${cy - h / 2} ${w} ${h}`;
-
-  const bg = dark ? "#141414" : "#f4f4f2";
-  const road = dark ? "#2b2b2b" : "#e4e4e0";
-  const label = dark ? "#6b6b6b" : "#9a9a95";
-  const toPatientColor = "#2563eb";
   const lost = signal === "lost";
+
+  // create the map once
+  useEffect(() => {
+    if (!mapBox.current || map.current) return;
+    const m = new maplibregl.Map({
+      container: mapBox.current,
+      style: style(!!dark),
+      bounds: DEMO_BOUNDS,
+      attributionControl: { compact: true },
+      interactive: true,
+    });
+    map.current = m;
+    m.on("load", () => {
+      loaded.current = true;
+      m.resize();
+      forceRerender((n) => n + 1);
+    });
+
+    // the container may not have its final size yet when the map is created
+    // (flex/phone-frame layout settles after mount), so keep the canvas synced.
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && box.current) {
+      ro = new ResizeObserver(() => m.resize());
+      ro.observe(box.current);
+    }
+
+    return () => {
+      ro?.disconnect();
+      m.remove();
+      map.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // hospital markers: created once the map is loaded, static positions
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !loaded.current) return;
+    hospitalMarkers.current.forEach((mk) => mk.remove());
+    hospitalMarkers.current = [];
+    const show = showHospitals || variant === "hospital" || variant === "ops" || variant === "ambulance";
+    if (!show) return;
+    for (const hh of HOSPITALS) {
+      if (hh.id === d.hospitalId && hospitalKnown) continue;
+      const marker = new maplibregl.Marker({ element: el(hospitalPin(!!dark)) })
+        .setLngLat(toLngLat([hh.x, hh.y]))
+        .addTo(m);
+      hospitalMarkers.current.push(marker);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded.current, showHospitals, variant, dark, d.hospitalId, hospitalKnown]);
+
+  // pickup / destination / ambulance markers + route lines, every tick
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !loaded.current) return;
+
+    const showPickup = d.active && d.stage !== "handedOver" && leg !== "hospital";
+    if (showPickup) {
+      if (!pickupMarker.current) pickupMarker.current = new maplibregl.Marker({ element: el(pickupPin()) }).setLngLat(toLngLat([PICKUP.x, PICKUP.y])).addTo(m);
+      pickupMarker.current.setLngLat(toLngLat([PICKUP.x, PICKUP.y]));
+    } else if (pickupMarker.current) {
+      pickupMarker.current.remove();
+      pickupMarker.current = null;
+    }
+
+    if (hospitalKnown) {
+      if (!destMarker.current) destMarker.current = new maplibregl.Marker({ element: el(destPin()) }).setLngLat(toLngLat([dest.x, dest.y])).addTo(m);
+      destMarker.current.setLngLat(toLngLat([dest.x, dest.y]));
+    } else if (destMarker.current) {
+      destMarker.current.remove();
+      destMarker.current = null;
+    }
+
+    if (showAmbulance) {
+      const color = variant === "ambulance" ? "#2563eb" : dark ? "#fff" : "#0a0a0a";
+      if (!ambMarker.current) {
+        ambMarker.current = new maplibregl.Marker({ element: el(ambSvg(color), "amb-marker"), rotationAlignment: "map" }).setLngLat(toLngLat([pos.x, pos.y])).addTo(m);
+      }
+      ambMarker.current.setLngLat(toLngLat([pos.x, pos.y]));
+      ambMarker.current.setRotation(pos.angle + 90);
+      const markerEl = ambMarker.current.getElement();
+      markerEl.style.opacity = lost ? "0.45" : "1";
+      if (follow && showAmbulance) m.panTo(toLngLat([pos.x, pos.y]), { duration: 400 });
+    } else if (ambMarker.current) {
+      ambMarker.current.remove();
+      ambMarker.current = null;
+    }
+
+    const setLine = (id: string, coords: Pt[] | null, color: string, width: number, dashed = false) => {
+      const src = m.getSource(id) as maplibregl.GeoJSONSource | undefined;
+      const data = {
+        type: "Feature" as const, properties: {},
+        geometry: { type: "LineString" as const, coordinates: coords ?? [] },
+      };
+      if (src) {
+        src.setData(data);
+      } else {
+        m.addSource(id, { type: "geojson", data });
+        m.addLayer({
+          id, type: "line", source: id,
+          layout: { "line-cap": "round", "line-join": "round" },
+          paint: { "line-color": color, "line-width": width, ...(dashed ? { "line-dasharray": [2, 2] } : {}) },
+        });
+      }
+    };
+
+    setLine("demo-prev-route", showPrev && prevRoute ? routeToLngLat(prevRoute) : null, "#9ca3af", 4, true);
+
+    if (showAmbulance && onPatientLeg) {
+      setLine("demo-done-route", routeToLngLat(pos.done), dark ? "#444" : "#cfcfcb", 5);
+      setLine("demo-rest-route", routeToLngLat(pos.rest), "#2563eb", 5);
+    } else if (hospitalKnown && leg === "hospital") {
+      setLine("demo-done-route", routeToLngLat(pos.done), dark ? "#444" : "#cfcfcb", 5);
+      setLine("demo-rest-route", routeToLngLat(pos.rest), SEV_COLOR[severity], 5, d.hospitalAcceptedAt === null);
+    } else {
+      setLine("demo-done-route", null, "#000", 0);
+      setLine("demo-rest-route", null, "#000", 0);
+    }
+  });
+
+  // camera fit when not following, or on overview maps
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !loaded.current || full === undefined) return;
+    if (!d.active || !showAmbulance || !follow) {
+      const pts: Pt[] = [];
+      const overview = !d.active && (showHospitals || variant === "hospital" || variant === "ops" || variant === "ambulance");
+      if (overview) HOSPITALS.forEach((hh) => pts.push([hh.x, hh.y]));
+      if (d.active) {
+        pts.push([PICKUP.x, PICKUP.y]);
+        if (showAmbulance) pts.push([pos.x, pos.y]);
+        if (hospitalKnown) pts.push([dest.x, dest.y]);
+      }
+      if (pts.length === 0) {
+        m.fitBounds(DEMO_BOUNDS, { padding: 40, duration: 0 });
+        return;
+      }
+      const lnglats = pts.map(toLngLat);
+      const lngs = lnglats.map((p) => p[0]);
+      const lats = lnglats.map((p) => p[1]);
+      m.fitBounds(
+        [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
+        { padding: 60, duration: 400, maxZoom: 15 },
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [d.active, d.hospitalId, hospitalKnown, showAmbulance]);
+
+  useEffect(() => {
+    const m = map.current;
+    if (m) setTimeout(() => m.resize(), full ? 50 : 10);
+  }, [full]);
+
+  const recenter = () => {
+    setFollow(true);
+    const m = map.current;
+    if (!m) return;
+    if (showAmbulance) m.flyTo({ center: toLngLat([pos.x, pos.y]), zoom: 14, duration: 500 });
+    else m.fitBounds(DEMO_BOUNDS, { padding: 40, duration: 500 });
+  };
 
   return (
     <div ref={box} className={`map${dark ? " map-dark" : ""}${full ? " map-full" : ""}`} style={{ height: full ? undefined : height }}>
-      <svg viewBox={viewBox} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Schematic map of the emergency">
-        <rect x="-500" y="-500" width="2000" height="1700" fill={bg} />
-        <path d="M-50 480 C120 440 260 470 380 450 S620 400 850 430" stroke={dark ? "#16263a" : "#dbe8f5"} strokeWidth="16" fill="none" />
-        {ROADS.map((r, i) => <polyline key={i} points={poly(r)} fill="none" stroke={road} strokeWidth={i === 5 ? 11 : 8} strokeLinecap="round" strokeLinejoin="round" />)}
-        {AREAS.map(([n, x, y]) => <text key={n} x={x} y={y} fontSize="15" fill={label} fontFamily="inherit">{n}</text>)}
-
-        {(showHospitals || variant === "hospital" || variant === "ops" || variant === "ambulance") &&
-          HOSPITALS.filter((hh) => hh.id !== d.hospitalId || !hospitalKnown).map((hh) => (
-            <g key={hh.id} transform={`translate(${hh.x} ${hh.y})`} opacity={0.75}>
-              <rect x="-8" y="-8" width="16" height="16" rx="4" fill={dark ? "#3a3a3a" : "#fff"} stroke={dark ? "#555" : "#bdbdb8"} />
-              <path d="M0 -4v8M-4 0h8" stroke={dark ? "#aaa" : "#8a8a85"} strokeWidth="2" />
-              {(variant === "ops" || variant === "hospital") && <text x="12" y="5" fontSize={variant === "ops" ? 15 : 11} fill={label}>{hh.name.split(" ")[0]} · {hh.free.split(",")[0]}</text>}
-            </g>
-          ))}
-
-        {/* Routes */}
-        {showPrev && prevRoute && <polyline points={poly(prevRoute)} fill="none" stroke="#9ca3af" strokeWidth="4" strokeDasharray="8 8" />}
-        {showAmbulance && onPatientLeg && (
-          <>
-            <polyline points={poly(pos.done)} fill="none" stroke={dark ? "#444" : "#cfcfcb"} strokeWidth="5" strokeLinecap="round" />
-            <polyline points={poly(pos.rest)} fill="none" stroke={toPatientColor} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-          </>
-        )}
-        {hospitalKnown && leg === "hospital" && (
-          <>
-            <polyline points={poly(pos.done)} fill="none" stroke={dark ? "#444" : "#cfcfcb"} strokeWidth="5" strokeLinecap="round" />
-            <polyline points={poly(pos.rest)} fill="none" stroke={SEV_COLOR[severity]} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
-              strokeDasharray={d.hospitalAcceptedAt === null ? "10 8" : undefined} />
-          </>
-        )}
-
-        {/* Pickup: red pin with pulse and accuracy circle */}
-        {d.active && d.stage !== "handedOver" && leg !== "hospital" && (
-          <g transform={`translate(${PICKUP.x} ${PICKUP.y})`}>
-            <circle r="34" fill="#ef4444" opacity="0.08" stroke="#ef4444" strokeOpacity="0.25" />
-            <motion.circle r="12" fill="none" stroke="#ef4444" strokeWidth="2" animate={{ r: [12, 30], opacity: [0.6, 0] }} transition={{ duration: 1.6, repeat: Infinity }} />
-            {searching && <motion.circle r="40" fill="none" stroke="#2563eb" strokeWidth="2" animate={{ r: [30, 90], opacity: [0.5, 0] }} transition={{ duration: 2, repeat: Infinity }} />}
-            <circle r="9" fill="#ef4444" stroke="#fff" strokeWidth="3" />
-          </g>
-        )}
-
-        {/* Destination hospital: large green pin */}
-        {hospitalKnown && (
-          <g transform={`translate(${dest.x} ${dest.y})`}>
-            <circle r="16" fill="#16a34a" stroke="#fff" strokeWidth="3" />
-            <path d="M0 -7v14M-7 0h14" stroke="#fff" strokeWidth="3" />
-          </g>
-        )}
-
-        {/* Ambulance */}
-        {showAmbulance && (
-          <g transform={`translate(${pos.x} ${pos.y})`} opacity={lost ? 0.45 : 1}>
-            {lost && <circle r="22" fill="none" stroke="#9ca3af" strokeWidth="2" strokeDasharray="4 4" transform="translate(18 -6)" />}
-            <g transform={`rotate(${pos.angle})`}>
-              <rect x="-16" y="-10" width="32" height="20" rx="6" fill={variant === "ambulance" ? "#2563eb" : dark ? "#fff" : "#0a0a0a"} />
-              <path d="M-4 0h8M0 -4v8" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" />
-              <path d="M16 -5l6 5-6 5" fill={variant === "ambulance" ? "#2563eb" : dark ? "#fff" : "#0a0a0a"} />
-            </g>
-          </g>
-        )}
-      </svg>
-
+      <div ref={mapBox} className="map-canvas" />
       <span className="map-sim">Simulated</span>
-      <span className="map-attr">Schematic demo map</span>
       {searching && <span className="map-note">Finding the nearest ambulance…</span>}
 
       <div className="map-ctrl">
-        <button aria-label="Recenter" onClick={() => { setZoom(1); setFollow(true); }}><Icon name="target" size={16} /></button>
+        <button aria-label="Recenter" onClick={recenter}><Icon name="target" size={16} /></button>
         <button aria-label="Follow ambulance" aria-pressed={follow} className={follow ? "on" : ""} onClick={() => setFollow((f) => !f)}><Icon name="ambulance" size={16} /></button>
-        <button aria-label="Zoom in" onClick={() => setZoom((z) => Math.min(3, z + 0.5))}><Icon name="plus" size={16} /></button>
-        <button aria-label="Zoom out" onClick={() => setZoom((z) => Math.max(1, z - 0.5))}><Icon name="minus" size={16} /></button>
+        <button aria-label="Zoom in" onClick={() => map.current?.zoomIn()}><Icon name="plus" size={16} /></button>
+        <button aria-label="Zoom out" onClick={() => map.current?.zoomOut()}><Icon name="minus" size={16} /></button>
         <button aria-label="Full screen" onClick={() => setFull((f) => !f)}><Icon name={full ? "x" : "expand"} size={16} /></button>
       </div>
     </div>
