@@ -32,16 +32,18 @@ def export_landmarks(output_path: str = 'data/processed/landmarks.csv') -> None:
     """Pull POIs from Overpass, normalize, export to CSV."""
     # Ensure directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
-    # Fetch data using OSMnx
-    # Bbox in osmnx is (north, south, east, west)
-    north = PUNE_BBOX[2]
-    south = PUNE_BBOX[0]
-    east = PUNE_BBOX[3]
-    west = PUNE_BBOX[1]
-    
+
+    # osmnx 2.x's features_from_bbox takes ONE bbox tuple (left, bottom,
+    # right, top) = (west, south, east, north) plus tags -- the previous
+    # code called it with 4 separate positional floats (north, south, east,
+    # west), which is a TypeError against the real signature and would have
+    # crashed on the very first real run (confirmed: this function had
+    # never actually been run before).
+    south, west, north, east = PUNE_BBOX
+    bbox = (west, south, east, north)
+
     try:
-        pois = ox.features_from_bbox(north, south, east, west, tags=TAGS)
+        pois = ox.features_from_bbox(bbox, tags=TAGS)
     except Exception as e:
         print(f"Failed to fetch POIs: {e}")
         return

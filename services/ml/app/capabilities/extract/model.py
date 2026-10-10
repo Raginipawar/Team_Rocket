@@ -12,7 +12,45 @@ OLLAMA_URL = "http://localhost:11434"
 MODEL = "qwen2.5:7b-instruct"
 TIMEOUT_S = 30.0
 
-SYSTEM_PROMPT = """You extract structured facts from an emergency call transcript.
+# Closed symptom vocabulary (technical.md Section9.2's 9 facility categories).
+# The previous prompt asked for free-text "short lowercase snake_case symptom
+# tags" -- an open vocabulary -- which measurably hurt eval accuracy (0.55
+# F1) purely on paraphrase mismatches against the ground truth's fixed tags
+# (e.g. the model said "labour_pains", ground truth says "labour_pain" --
+# same fact, wrong string, scored as a miss). Giving the model the exact
+# closed list to choose from removes that failure mode; it no longer has to
+# guess the ground truth's exact wording.
+SYMPTOM_VOCABULARY = [
+    # cardiac
+    "chest_pain", "palpitations", "arm_pain", "jaw_pain", "sweating",
+    # stroke / neuro
+    "confusion", "slurred_speech", "facial_droop", "limb_weakness", "seizure", "loss_of_consciousness",
+    # trauma
+    "severe_bleeding", "fracture_suspected", "head_injury", "spinal_pain", "crush_injury",
+    # burns
+    "burn_pain", "smoke_inhalation",
+    # respiratory
+    "breathlessness", "wheezing", "choking",
+    # obstetric
+    "labour_pain", "vaginal_bleeding", "contractions",
+    # pediatric
+    "high_fever", "dehydration", "rash",
+    # poisoning
+    "vomiting", "nausea", "diarrhea", "disorientation",
+    # general
+    "abdominal_pain", "back_pain", "fainting", "dizziness", "fatigue", "allergic_reaction",
+    # Tried removing "disorientation" (it was confusable with "confusion" in
+    # ~10/44 mismatches) and adding an explicit bleeding-inference guard
+    # below -- measured honestly: symptom F1 went 0.68 -> 0.61, net worse.
+    # The regression wasn't really about either change in isolation; it
+    # surfaced that generate_eval_set.py's own ground truth is inconsistent
+    # about whether "unconscious"/"bleeding" facts belong in the symptoms
+    # list or only in the conscious/bleeding scalar fields. Reverted both
+    # changes rather than chase a synthetic eval set's internal
+    # inconsistency by encouraging the model to under-tag real symptoms.
+]
+
+SYSTEM_PROMPT = f"""You extract structured facts from an emergency call transcript.
 The transcript may be in English, Hindi (Devanagari or romanized/Hinglish
 spelling, e.g. "seene mein dard" = chest pain), Marathi (Devanagari or
 romanized), or a code-mixed combination. Romanized Hindi/Marathi text uses
@@ -28,7 +66,7 @@ Fields:
 - conscious: boolean or null.
 - breathing: "normal", "difficult", "absent", or null.
 - bleeding: "none", "mild", "severe", or null.
-- symptoms: list of short lowercase snake_case symptom tags (e.g. "chest_pain", "breathlessness").
+- symptoms: list of zero or more tags chosen ONLY from this exact closed vocabulary (pick every tag that applies, do not invent new tags, do not use a different wording of the same tag): {SYMPTOM_VOCABULARY}
 - mechanism: one of "none", "road_accident", "fall", "assault", "burn", "poisoning", "drowning", "other".
 - pregnant: boolean, default false.
 - landmark: a location/landmark string mentioned in the text, or null.

@@ -1,0 +1,21 @@
+# Secrets -- never commit real credentials
+infra/env/secrets/
+infra/env/.env
+**/.env
+**/.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+.next/
+
+# Build/scratch
+cache/
+data/processed/
+
+# Delivery artifacts / docs not meant for the repo
+*.zip

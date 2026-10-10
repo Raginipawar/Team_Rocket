@@ -58,6 +58,24 @@ async def get_offer(session: AsyncSession, offer_id: str) -> dict | None:
     return dict(row) if row else None
 
 
+async def decline_offer(session: AsyncSession, *, offer_id: str, paramedic_ambulance_id: str) -> dict:
+    """Mark a pending offer declined. No immediate re-dispatch here --
+    emergency.status stays 'dispatching', so the existing 30s round loop
+    (domain/dispatch.py's _continue_rounds) picks this ambulance up as
+    already-excluded and keeps offering others on schedule."""
+    row = (await session.execute(
+        text(
+            "UPDATE dispatch_offers SET status = 'declined', responded_at = now() "
+            "WHERE id = :id AND ambulance_id = :ambulance_id AND status = 'pending' "
+            "RETURNING id, emergency_id, ambulance_id"
+        ),
+        {"id": offer_id, "ambulance_id": paramedic_ambulance_id},
+    )).mappings().first()
+    if not row:
+        raise OfferNotAvailable()
+    return dict(row)
+
+
 async def accept_offer(session: AsyncSession, *, offer_id: str, paramedic_ambulance_id: str) -> dict:
     """technical.md §11.1 accept transaction, verbatim. Caller (api/v1/offers.py)
     wraps this in try/except for AlreadyTaken/AmbulanceBusy/OfferNotAvailable

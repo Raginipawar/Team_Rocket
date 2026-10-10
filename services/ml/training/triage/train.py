@@ -38,8 +38,12 @@ BATCH_SIZE = 16
 EPOCHS = 15
 LR = 2e-5
 HEAD_LR = 1e-3
-FREEZE_ENCODER = True  # see note below
-CRITICAL_WEIGHT_MULTIPLIER = 1.0  # see note at compute_class_weights call site below
+FREEZE_ENCODER = False  # 8,505 samples (generate_data.py's full grid) is enough to fine-tune
+                         # the encoder, unlike the original 258/270-sample run -- see note below
+CRITICAL_WEIGHT_MULTIPLIER = 2.0  # technical.md's real spec value, re-enabled now that there's
+                                   # enough data per class for it not to collapse into a trivial
+                                   # always-critical classifier (see note at compute_class_weights
+                                   # call site below)
 
 
 class TriageDataset(Dataset):
@@ -158,24 +162,25 @@ def main() -> None:
 
     model = TriageModel(MODEL_NAME).to(device)
 
-    # 258 samples is nowhere near enough to fine-tune all ~180M encoder params
-    # (the first attempt confirmed this honestly: loss barely moved in 4
-    # epochs, 3.30 -> 3.27, essentially random). Freezing the encoder and
-    # training only the two heads (a linear probe on MuRIL's own
-    # representations) is the appropriate regime for this little data --
-    # far fewer parameters to fit, so the tiny dataset can actually move them.
+    # The original 258/270-sample run was nowhere near enough to fine-tune all
+    # ~180M encoder params (loss barely moved in 4 epochs, 3.30 -> 3.27,
+    # essentially random), so the encoder was frozen and only the two heads
+    # were trained as a linear probe. generate_data.py's full grid now
+    # produces 8,505 samples -- enough to unfreeze the encoder and actually
+    # fine-tune it, which is what technical.md §9.3 specifies.
     if FREEZE_ENCODER:
         for p in model.encoder.parameters():
             p.requires_grad = False
 
-    # NOTE, reported honestly: technical.md §9.3 specifies "critical x2" in
-    # the acuity head's weighted CE. At this dataset's actual size (258
-    # samples), that weighting combined with too few gradient steps causes
-    # the head to collapse to always predicting "critical" -- confirmed by
-    # this exact experiment (CRITICAL_WEIGHT_MULTIPLIER=1.0 here vs 2.0
-    # produced the collapse). Set to 1.0 until there's enough data for the
-    # 2x weight to do its intended job (favor recall on a real minority
-    # class) without degenerating into a trivial constant classifier.
+    # technical.md §9.3 specifies "critical x2" in the acuity head's weighted
+    # CE. At the original 258-sample size, this collapsed the head into
+    # always predicting "critical" (confirmed by direct experiment). With
+    # 8,505 samples there are enough real critical-class examples per batch
+    # for the 2x weight to do its intended job (favor recall on a real
+    # minority class) instead of degenerating into a trivial constant
+    # classifier -- re-enabled here. If a future run still shows a collapse
+    # (e.g. acuity_macro_f1 near 0.33 and every prediction is "critical"),
+    # that is the signal to drop this back to 1.0, not evidence to ignore.
     acuity_weights = compute_class_weights([acuity_labels[i] for i in train_idx], len(ACUITIES),
                                             critical_idx=ACUITIES.index("critical"),
                                             critical_multiplier=CRITICAL_WEIGHT_MULTIPLIER).to(device)
@@ -225,24 +230,37 @@ def main() -> None:
         final_metrics = evaluate(model, val_loader, device)
         mlflow.log_metrics({k: v for k, v in final_metrics.items() if v is not None})
 
-        # Save heads only (~40KB), not the full state_dict (~900MB) -- the
-        # encoder is frozen and identical to the public google/muril-base-cased
-        # checkpoint, which app/capabilities/triage/model.py re-downloads
-        # rather than storing a redundant copy in the repo.
-        heads_state = {k: v for k, v in model.state_dict().items()
-                       if k.startswith("acuity_head") or k.startswith("facility_head")}
-        torch.save(heads_state, "services/ml/artifacts/triage/muril_v0_heads.pt")
-        mlflow.log_artifact("services/ml/artifacts/triage/muril_v0_heads.pt")
+        if FREEZE_ENCODER:
+            # Encoder never changed from the public google/muril-base-cased
+            # checkpoint -- save heads only (~40KB), app/capabilities/triage/
+            # model.py re-downloads the untouched encoder instead of storing
+            # a redundant ~900MB copy in the repo.
+            save_state = {k: v for k, v in model.state_dict().items()
+                          if k.startswith("acuity_head") or k.startswith("facility_head")}
+            artifact_path = "services/ml/artifacts/triage/muril_v0_heads.pt"
+        else:
+            # Encoder was fine-tuned this run -- it is NO LONGER identical to
+            # the public checkpoint, so the full state_dict must be saved or
+            # the fine-tuning is silently thrown away the moment the serving
+            # side re-downloads the stock encoder. (Found by inspecting what
+            # app/capabilities/triage/model.py actually loads -- it assumed
+            # heads-only, which was only safe under FREEZE_ENCODER=True.)
+            save_state = model.state_dict()
+            artifact_path = "services/ml/artifacts/triage/muril_v0_full.pt"
+        torch.save(save_state, artifact_path)
+        mlflow.log_artifact(artifact_path)
 
     report = {
         "model": MODEL_NAME, "n_train": len(train_idx), "n_val": len(val_idx),
+        "freeze_encoder": FREEZE_ENCODER, "critical_weight_multiplier": CRITICAL_WEIGHT_MULTIPLIER,
         **final_metrics,
-        "note": "Trained on synthetic self-labelled data (270 samples, reduced from the "
-                "spec's 8-10k target -- see generate_data.py). Evaluated on a held-out split "
-                "of the SAME synthetic distribution, NOT the human-written holdout technical.md "
-                "§9.3 requires -- that holdout does not exist yet and must come from the team, "
-                "never from an LLM. These numbers describe how well the model fits its own "
-                "synthetic distribution, not real-world triage accuracy.",
+        "note": f"Trained on synthetic self-labelled data ({len(samples)} samples, "
+                "generate_data.py's full grid, in the spec's 8-10k target range). These metrics "
+                "are evaluated on a held-out split of the SAME synthetic distribution -- a fit "
+                "check, not a real-world accuracy claim. For the separate, distinct-distribution "
+                "holdout check, see HOLDOUT_REPORT.json (eval_holdout.py) -- and note even that "
+                "holdout is LLM-generated (generate_holdout.py), not the independently "
+                "human-written holdout technical.md §9.3 actually requires.",
     }
     with open("services/ml/training/triage/REPORT.json", "w") as f:
         json.dump(report, f, indent=2)

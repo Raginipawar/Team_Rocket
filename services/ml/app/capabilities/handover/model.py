@@ -1,8 +1,10 @@
 """Real handover: Ollama qwen2.5-7b with the SBAR JSON schema (technical.md
-§9.9). Every clinical statement must cite a source_spans quote found in
-transcript/answers/profile; a validator drops any sentence whose quote can't
-be fuzzy-matched (>=0.85) against the source text -- so the LLM can propose
-spans but never gets to assert something ungrounded."""
+§9.9). Every clinical statement must cite its OWN source_spans quote found in
+transcript/answers/profile; the validator checks and drops each sentence
+individually (not the whole section/note at once) whose quote can't be
+fuzzy-matched (>=0.85) against the source text -- so the LLM can propose
+spans but never gets to assert something ungrounded, and one ungrounded
+sentence can't ride along inside an otherwise-grounded note."""
 
 import difflib
 import json
@@ -19,14 +21,21 @@ Assessment, Recommendation) for a hospital receiving team, in English, from
 an emergency call transcript, extracted facts, follow-up answers, patient
 profile, and triage result.
 
-Every factual claim you make MUST be traceable to the source material. For
-each sentence in situation/background/assessment/recommendation, also
-produce a source_spans entry: {"field": "<transcript|extracted|followup|profile|triage>",
-"quote": "<a short exact substring from that source that supports the sentence>"}.
-If you cannot find a supporting quote for something, do not say it.
+Situation, Background, and Assessment are FACTUAL -- every sentence in them
+MUST be traceable to the source material. Write each of these three
+sections as a LIST of individual sentences, where EACH sentence has its own
+one supporting quote (not one quote for the whole section). Use this exact
+shape for situation/background/assessment:
+  [{"text": "<one sentence>", "field": "<transcript|extracted|followup|profile|triage>",
+    "quote": "<a short exact substring from that source that supports THIS sentence>"}]
+If you cannot find a supporting quote for a specific sentence, do not write
+that sentence at all.
 
-Output ONLY JSON: {"situation": str, "background": str, "assessment": str,
-"recommendation": str, "source_spans": [{"field": str, "quote": str}]}."""
+Recommendation is a suggested next action, not a factual claim about the
+patient -- write it as a plain string, no quote needed.
+
+Output ONLY JSON: {"situation": [...], "background": [...], "assessment": [...],
+"recommendation": str} using the per-sentence shape above for the first three."""
 
 
 class ModelNotLoaded(RuntimeError):
@@ -77,27 +86,35 @@ async def real_handover(payload: dict) -> dict:
 
     raw = json.loads(response.json()["response"])
 
-    validated_spans = []
-    for span in raw.get("source_spans", []):
-        source = _source_text(span.get("field", ""), payload)
-        if _quote_is_grounded(span.get("quote", ""), source):
-            validated_spans.append(span)
+    def _grounded_sentences(section: list) -> tuple[list[str], list[dict]]:
+        """Per-sentence grounding (technical.md §9.9), not per-note: each
+        sentence is checked against its OWN claimed quote and dropped
+        individually if ungrounded, rather than blanking the whole section
+        when any one claim fails or passing the whole section when any one
+        claim succeeds -- the previous note-level gate let an individually
+        ungrounded sentence ride along inside an otherwise-grounded note."""
+        texts, spans = [], []
+        for item in section if isinstance(section, list) else []:
+            if not isinstance(item, dict):
+                continue
+            text, field, quote = item.get("text", ""), item.get("field", ""), item.get("quote", "")
+            if not text:
+                continue
+            source = _source_text(field, payload)
+            if _quote_is_grounded(quote, source):
+                texts.append(text)
+                spans.append({"field": field, "quote": quote})
+        return texts, spans
 
-    # KNOWN LIMITATION, reported honestly: technical.md §9.9 wants per-sentence
-    # grounding ("drops any sentence whose quote isn't found"), but the model
-    # tends to emit one broad source_spans entry covering the whole note
-    # rather than one per sentence, so this validator can only enforce a
-    # weaker note-level gate: if NOTHING the model cited is actually grounded,
-    # blank the factual fields; if something is grounded, the whole note
-    # passes even though individual sentences pulling from followup/profile/
-    # triage may not have their own verified span. Tightening this to true
-    # per-sentence enforcement needs the prompt to force one span per
-    # sentence, not just per note -- flagged for whoever picks this up next.
+    situation_sentences, situation_spans = _grounded_sentences(raw.get("situation", []))
+    background_sentences, background_spans = _grounded_sentences(raw.get("background", []))
+    assessment_sentences, assessment_spans = _grounded_sentences(raw.get("assessment", []))
+
     result = {
-        "situation": raw.get("situation", "") if validated_spans else "",
-        "background": raw.get("background", "") if validated_spans else "",
-        "assessment": raw.get("assessment", "") if validated_spans else "",
+        "situation": " ".join(situation_sentences),
+        "background": " ".join(background_sentences),
+        "assessment": " ".join(assessment_sentences),
         "recommendation": raw.get("recommendation", ""),  # recommendation is a suggested action, not a factual claim
-        "source_spans": validated_spans,
+        "source_spans": situation_spans + background_spans + assessment_spans,
     }
     return result

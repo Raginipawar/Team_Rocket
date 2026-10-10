@@ -77,6 +77,12 @@ class Room(TimestampMixin, Base):
     reservation_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     status_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Not in technical.md §5.2's room table, but §11.7 (walk-in override) needs
+    # somewhere to record why a room was force-occupied, and both
+    # db/repos/rooms.py (patch_room) and domain/reservations.py
+    # (walk_in_override) already assume this column exists -- added to match
+    # what the real code needs rather than leaving both of them broken.
+    override_reason: Mapped[str | None] = mapped_column(Text)
 
     hospital: Mapped["Hospital"] = relationship("Hospital", back_populates="rooms")
 

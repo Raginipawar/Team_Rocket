@@ -1,0 +1,1 @@
+{"emergency_id": "test-1", "text": "My father has severe chest pain and is sweating a lot", "extracted": {}, "predicted_acuity": "urgent", "predicted_facility": "cardiac", "confirmed_acuity": "critical", "confirmed_facility": "cardiac", "language": "en"}

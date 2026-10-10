@@ -86,6 +86,28 @@ async def get_user_by_id(session: AsyncSession, user_id: str) -> dict | None:
     return dict(row) if row else None
 
 
+async def get_user_ids_by_ambulance_id(session: AsyncSession, ambulance_id: str) -> list[str]:
+    """The paramedic(s) logged in as a given ambulance -- used to push a new
+    offer to the right person (technical.md Section12.3). No caller existed
+    for this lookup before; push notifications had no way to find who to
+    notify."""
+    rows = (await session.execute(
+        text("SELECT id FROM users WHERE ambulance_id = :aid AND is_active"),
+        {"aid": ambulance_id},
+    )).scalars().all()
+    return [str(r) for r in rows]
+
+
+async def get_user_ids_by_hospital_id(session: AsyncSession, hospital_id: str) -> list[str]:
+    """All hospital_staff users at a hospital -- a new hospital request
+    pushes to everyone on duty there, not one specific person."""
+    rows = (await session.execute(
+        text("SELECT id FROM users WHERE hospital_id = :hid AND role = 'hospital_staff' AND is_active"),
+        {"hid": hospital_id},
+    )).scalars().all()
+    return [str(r) for r in rows]
+
+
 async def create_staff_user(session: AsyncSession, *, role: str, name: str, phone: str | None,
                              password_hash: str, hospital_id: str | None = None,
                              ambulance_id: str | None = None) -> dict:

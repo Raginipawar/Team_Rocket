@@ -1,8 +1,68 @@
-from .schemas import ETARequest, ETAResponse, ETAMatrixRequest, ETAMatrixResponse
-from .mock import get_eta_mock, get_eta_matrix_mock
+"""Real ETA: calls OSRM (app/geo/osrm_client.py) for actual road routing.
+Was a pure pass-through to the haversine mock -- never called OSRM at all.
+Mock is now only the documented fallback if OSRM is unreachable, not the
+default path."""
+
+import logging
+import uuid
+
+from app.geo import osrm_client
+
+from .mock import get_eta_matrix_mock, get_eta_mock
+from .schemas import ETAMatrixRequest, ETAMatrixResponse, ETARequest, ETAResponse, Route
+
+logger = logging.getLogger("eta")
+
+# OSRM gives a point duration estimate with no uncertainty band of its own;
+# +-15% is a documented, simple band (not a statistically fit one) until a
+# real historical-traffic-variance model exists.
+UNCERTAINTY_PCT = 0.15
+
 
 async def get_eta(req: ETARequest) -> ETAResponse:
-    return await get_eta_mock(req)
+    origin = {"lat": req.origin.lat, "lng": req.origin.lng}
+    destination = {"lat": req.destination.lat, "lng": req.destination.lng}
+    try:
+        data = await osrm_client.route(origin, destination, alternatives=req.alternatives)
+        if data.get("code") != "Ok" or not data.get("routes"):
+            raise ValueError(f"OSRM returned no route: {data.get('code')}")
+
+        routes = []
+        for r in data["routes"]:
+            eta_sec = r["duration"]
+            routes.append(Route(
+                route_id=str(uuid.uuid4()),
+                geometry=_encode_geometry(r.get("geometry")),
+                distance_m=r["distance"],
+                eta_sec=eta_sec,
+                eta_low_sec=eta_sec * (1 - UNCERTAINTY_PCT),
+                eta_high_sec=eta_sec * (1 + UNCERTAINTY_PCT),
+                source="osrm",
+            ))
+        return ETAResponse(routes=routes)
+    except Exception:
+        logger.exception("OSRM route call failed -- falling back to haversine estimate")
+        return await get_eta_mock(req)
+
 
 async def get_eta_matrix(req: ETAMatrixRequest) -> ETAMatrixResponse:
-    return await get_eta_matrix_mock(req)
+    origins = [{"lat": p.lat, "lng": p.lng} for p in req.origins]
+    destinations = [{"lat": p.lat, "lng": p.lng} for p in req.destinations]
+    try:
+        data = await osrm_client.table(origins, destinations)
+        if data.get("code") != "Ok":
+            raise ValueError(f"OSRM returned: {data.get('code')}")
+        return ETAMatrixResponse(durations=data["durations"], distances=data["distances"])
+    except Exception:
+        logger.exception("OSRM table call failed -- falling back to haversine estimate")
+        return await get_eta_matrix_mock(req)
+
+
+def _encode_geometry(geojson_geometry: dict | None) -> str:
+    if not geojson_geometry:
+        return ""
+    # GeoJSON LineString coordinates -> "lng,lat;lng,lat;..." -- simple and
+    # sufficient for the frontend to draw a polyline; not Google's encoded
+    # polyline format, documented here so nobody assumes it is.
+    coords = geojson_geometry.get("coordinates", [])
+    return ";".join(f"{lng},{lat}" for lng, lat in coords)

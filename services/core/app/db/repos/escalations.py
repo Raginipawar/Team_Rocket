@@ -23,7 +23,7 @@ async def claim_escalation(db: AsyncSession, escalation_id: UUID, user_id: UUID)
     stmt = (
         update(Escalation)
         .where(Escalation.id == escalation_id, Escalation.status == 'open')
-        .values(status='claimed', claimed_by=user_id)
+        .values(status='claimed', claimed_by=user_id, claimed_at=datetime.utcnow())
         .returning(Escalation)
     )
     result = await db.execute(stmt)
@@ -33,10 +33,14 @@ async def claim_escalation(db: AsyncSession, escalation_id: UUID, user_id: UUID)
     return esc
 
 async def resolve_escalation(db: AsyncSession, escalation_id: UUID, option_id: str, claimer_id: UUID) -> Escalation:
+    # resolution_option_id/resolved_by don't exist on the real table
+    # (chosen_option_id does; there is no separate resolved_by column --
+    # claimed_by already records who's handling it) -- would have raised
+    # UndefinedColumnError on every real call.
     stmt = (
         update(Escalation)
         .where(Escalation.id == escalation_id) # potentially check claimer_id
-        .values(status='resolved', resolution_option_id=option_id, resolved_by=claimer_id, resolved_at=datetime.utcnow())
+        .values(status='resolved', chosen_option_id=option_id, resolved_at=datetime.utcnow())
         .returning(Escalation)
     )
     result = await db.execute(stmt)

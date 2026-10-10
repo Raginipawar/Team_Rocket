@@ -2,7 +2,7 @@ from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
-from app.db.models import Reservation, Room # type: ignore
+from app.db.models import Reservation, ReservationItem, Room # type: ignore
 from .resources import increment_resource
 
 async def create_reservation(db: AsyncSession, **kwargs) -> Reservation:
@@ -23,7 +23,7 @@ async def extend_hold(db: AsyncSession, reservation_id: UUID, new_expires_at: da
     await db.execute(
         update(Reservation)
         .where(Reservation.id == reservation_id, Reservation.status == 'held')
-        .values(expires_at=new_expires_at)
+        .values(hold_expires_at=new_expires_at)
     )
 
 async def release_reservation(db: AsyncSession, reservation_id: UUID, status: str) -> None:
@@ -42,7 +42,10 @@ async def release_reservation(db: AsyncSession, reservation_id: UUID, status: st
                 update(Room).where(Room.id == res.room_id).values(status='free', reservation_id=None)
             )
             
-    # Load items and increment resources
-    for item in res.items:
-        if item.resource_type:
+    # Load items explicitly -- async SQLAlchemy can't lazy-load a
+    # relationship implicitly (raises MissingGreenlet), confirmed by
+    # actually running this against the real DB.
+    items_result = await db.execute(select(ReservationItem).where(ReservationItem.reservation_id == reservation_id))
+    for item in items_result.scalars().all():
+        if item.kind == 'resource' and item.resource_type:
             await increment_resource(db, res.hospital_id, item.resource_type, item.quantity)

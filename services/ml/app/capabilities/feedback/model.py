@@ -1,15 +1,19 @@
 """Learning loop (technical.md §9.19): feedback rows append to
 services/ml/data/feedback/. Retrain merges synthetic + feedback (feedback x3
-weight), evaluates on the fixed human holdout (data/holdout/triage.jsonl,
-never used in training), and promotes the new checkpoint only if macro-F1 AND
-critical-recall are >= the current model's. MLflow tracks versions; this module
-is the not-yet-implemented in-process job runner behind /retrain and /jobs/{id}."""
+weight), evaluates on the holdout (data/holdout/triage.jsonl, never used in
+training), and promotes the new checkpoint only if macro-F1 AND
+critical-recall are >= the current model's -- real now (retrain_job.py);
+this used to always return status="queued" with detail="not implemented
+yet" and never actually do anything."""
 
+import asyncio
 import json
 import uuid
 from pathlib import Path
 
-FEEDBACK_DIR = Path("services/ml/data/feedback")
+from .retrain_job import run_retrain_job
+
+FEEDBACK_DIR = Path(__file__).resolve().parents[3] / "data" / "feedback"
 _JOBS: dict[str, dict] = {}
 
 
@@ -26,8 +30,9 @@ def start_retrain_job() -> str:
         "job_id": job_id,
         "status": "queued",
         "progress": 0.0,
-        "detail": "retrain pipeline not implemented yet -- see training/triage/",
+        "detail": "queued",
     }
+    asyncio.create_task(run_retrain_job(job_id, _JOBS))
     return job_id
 
 

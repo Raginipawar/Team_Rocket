@@ -1,0 +1,39 @@
+{
+  "n_train_rows": 55262,
+  "n_test_rows": 9783,
+  "n_train_queries": 8500,
+  "n_test_queries": 1500,
+  "ndcg_at_3": 0.9942,
+  "mean_abs_shap_by_feature": {
+    "facility_match": 2.2362,
+    "eta_high_sec": 0.9219,
+    "eta_sec": 0.7601,
+    "required_resources_available_prob": 0.7439,
+    "staleness_min": 0.6326,
+    "p_bed_available_at_eta": 0.3088,
+    "road_comfort": 0.2786,
+    "occupancy_ratio": 0.1502,
+    "rejection_rate_24h": 0.1233,
+    "fragility_high": 0.0439,
+    "fragility_medium": 0.0038,
+    "stabilization_capable": 0.003,
+    "incoming_reserved_count": 0.0027,
+    "specialist_on_duty_at_eta": 0.0
+  },
+  "features": [
+    "facility_match",
+    "required_resources_available_prob",
+    "p_bed_available_at_eta",
+    "eta_sec",
+    "eta_high_sec",
+    "road_comfort",
+    "specialist_on_duty_at_eta",
+    "staleness_min",
+    "occupancy_ratio",
+    "rejection_rate_24h",
+    "incoming_reserved_count",
+    "stabilization_capable",
+    "fragility_high",
+    "fragility_medium"
+  ]
+}

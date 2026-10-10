@@ -66,16 +66,43 @@ async def create_patient_row(session: AsyncSession, *, emergency_id: str, user_i
     return str(row)
 
 
+_EMERGENCY_FULL_COLUMNS = (
+    "id, status, version, caller_user_id, caller_phone, raw_text, transcript, language, "
+    "stt_confidence, extracted, "
+    "ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng, location_accuracy_m, "
+    "location_source, landmark_text, "
+    "ai_acuity, ai_facility, ai_confidence, ai_probs, needs_review, "
+    "final_acuity, final_facility, "
+    "required_ambulance_type, fragility, mlc_flag, prank_score, prank_verified, duplicate_of, "
+    "predicted_resources, handover_note, "
+    "ambulance_id, hospital_id, reservation_id, "
+    "eta_to_patient_sec, eta_to_hospital_sec, eta_low_sec, eta_high_sec, escalated, "
+    "received_at, triaged_at, assigned_at, at_scene_at, on_board_at, "
+    "hospital_confirmed_at, arrived_hospital_at, handed_off_at, closed_at"
+)
+# Originally selected only a dozen of the Emergency row's ~40 real columns --
+# missing ambulance_id/hospital_id/eta/timestamps meant family/patient-facing
+# code had nothing non-clinical to actually show, which is what a real
+# per-role privacy projection (domain/privacy.py) needs to choose from. Now
+# selects every real column once (the full picture), and project() is what
+# strips it down per role -- not this function silently deciding in advance.
+
+
 async def get_emergency(session: AsyncSession, emergency_id: str) -> dict | None:
     row = (await session.execute(
-        text(
-            "SELECT id, status, version, transcript, language, extracted, "
-            "ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng, location_accuracy_m, "
-            "location_source, ai_acuity, ai_facility, ai_confidence, needs_review, "
-            "required_ambulance_type, prank_score, duplicate_of, handover_note "
-            "FROM emergencies WHERE id = :id"
-        ),
+        text(f"SELECT {_EMERGENCY_FULL_COLUMNS} FROM emergencies WHERE id = :id"),
         {"id": emergency_id},
+    )).mappings().first()
+    return dict(row) if row else None
+
+
+async def get_emergency_by_track_token_hash(session: AsyncSession, token_hash: str) -> dict | None:
+    """Family tracking (technical.md Section18/Section11): the raw token is
+    handed to the client once at creation and never stored -- only its
+    SHA-256 hash is, so a leaked database row can't be replayed as a token."""
+    row = (await session.execute(
+        text(f"SELECT {_EMERGENCY_FULL_COLUMNS} FROM emergencies WHERE family_track_token_hash = :h"),
+        {"h": token_hash},
     )).mappings().first()
     return dict(row) if row else None
 

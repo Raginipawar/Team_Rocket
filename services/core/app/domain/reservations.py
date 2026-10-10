@@ -10,6 +10,21 @@ from app.db.models import Emergency, HospitalRequest, Reservation, Room # type: 
 from sqlalchemy import update
 import json
 
+# technical.md §11.5 — acceptable_room_types by facility. The previous
+# version of this function passed the raw `facility` string (e.g. "cardiac")
+# directly as if it were a room `type` value, but room types are
+# er_bed/resus_bay/trauma_bay/etc -- that string never matched any real row,
+# so lock_free_room_skip_locked silently always returned None and no room
+# was ever actually held. Found by running this against a real seeded room.
+ACCEPTABLE_ROOM_TYPES = {
+    "cardiac": ["resus_bay", "er_bed"], "trauma": ["trauma_bay", "resus_bay"],
+    "obstetric": ["labour_room"], "pediatric": ["pediatric_er", "er_bed"],
+    "burns": ["burns_unit"], "stroke": ["resus_bay", "er_bed"],
+    "respiratory": ["resus_bay", "er_bed"], "poisoning": ["resus_bay", "er_bed"],
+    "general": ["er_bed"],
+}
+
+
 async def create_hospital_request_with_hold(
     db: AsyncSession,
     emergency_id: UUID,
@@ -20,36 +35,91 @@ async def create_hospital_request_with_hold(
     acuity: str,
     facility: str,
     is_family_choice: bool = False,
+    score: float | None = None,
 ) -> HospitalRequest:
-    room = await lock_free_room_skip_locked(db, hospital_id, [facility])
+    acceptable_types = ACCEPTABLE_ROOM_TYPES.get(facility, ["er_bed"])
+    room = await lock_free_room_skip_locked(db, hospital_id, acceptable_types)
     resource_ok = await decrement_resource(db, hospital_id, "ventilator", 1)
-    
+
     expires = datetime.utcnow() + timedelta(minutes=5)
     res = await create_reservation(
-        db, 
-        hospital_id=hospital_id, 
+        db,
+        hospital_id=hospital_id,
         emergency_id=emergency_id,
         status="held",
         room_id=room.id if room else None,
-        expires_at=expires
+        hold_expires_at=expires
     )
-    
+
+    # Without a reservation_items row, release_reservation has nothing to
+    # find on reject/timeout/refused-transport -- the decremented resource
+    # would leak permanently (available/reserved never credited back).
+    if resource_ok:
+        from app.db.models import ReservationItem
+        db.add(ReservationItem(reservation_id=res.id, kind="resource", resource_type="ventilator", quantity=1))
+
+    if room:
+        # technical.md §11.3 step 1's second half -- the actual double-booking
+        # guard. SKIP LOCKED only holds the row lock for the duration of this
+        # transaction; without this UPDATE the room's status column never
+        # actually changes, so a second concurrent request could select the
+        # same "free" room again once this transaction's lock releases. This
+        # was missing entirely -- the function locked the room but never
+        # marked it reserved.
+        room_update = await db.execute(
+            update(Room).where(Room.id == room.id, Room.status == "free")
+            .values(status="reserved", reservation_id=res.id, version=Room.version + 1)
+        )
+        if room_update.rowcount == 0:
+            # Someone else grabbed it between the SELECT FOR UPDATE and here
+            # (shouldn't happen under SKIP LOCKED, but don't silently proceed
+            # as if we hold a room we don't).
+            room = None
+
     req = HospitalRequest(
         emergency_id=emergency_id,
         hospital_id=hospital_id,
         reservation_id=res.id,
         status="pending",
         rank=rank,
+        score=score,
+        explanation=explanation,
+        features=features,
         is_family_choice=is_family_choice
     )
     db.add(req)
-    
+
     em = await db.get(Emergency, emergency_id)
     if em and em.status != "hospital_selecting":
         em.status = "hospital_selecting"
         em.version += 1
-        
+
     await db.flush()
+
+    # technical.md Section12.3: a new hospital request should notify hospital
+    # staff both over WS (primary) and push (wakes a backgrounded tab). This
+    # function never emitted ANY event for hospital staff before -- found by
+    # searching for an outbox.emit call here and finding none at all, not
+    # even the WS one push is supposed to merely supplement.
+    from app.db.repos import identity as identity_repo
+    from app.integrations.push.sender import send_push
+    from app.realtime.outbox import emit as outbox_emit_real
+
+    await outbox_emit_real(db, channel=f"hospital:{hospital_id}", event="hospital_request.new", data={
+        "hospital_request_id": str(req.id), "emergency_id": str(emergency_id),
+        "rank": rank, "score": score, "is_family_choice": is_family_choice,
+    })
+    for staff_user_id in await identity_repo.get_user_ids_by_hospital_id(db, str(hospital_id)):
+        try:
+            await send_push(staff_user_id, "New incoming patient",
+                             "A new hospital request needs a response.", data={
+                                 "hospital_request_id": str(req.id), "emergency_id": str(emergency_id),
+                             })
+        except Exception:
+            import logging
+            logging.getLogger("reservations").exception(
+                "send_push failed for hospital staff user %s (request %s)", staff_user_id, req.id)
+
     return req
 
 async def accept_hospital_request(
@@ -72,6 +142,13 @@ async def accept_hospital_request(
     em = await db.get(Emergency, req.emergency_id)
     if em:
         em.status = "hospital_confirmed"
+        # em.hospital_id/hospital_confirmed_at were never set here -- the
+        # hospital dashboard's "Incoming"/"at_door" lists filter on
+        # emergencies.hospital_id, so an accepted request was invisible to
+        # the very hospital that just accepted it. Found by checking why a
+        # confirmed request still showed "No confirmed ambulances on the way".
+        em.hospital_id = req.hospital_id
+        em.hospital_confirmed_at = datetime.utcnow()
         em.version += 1
 
 async def reject_hospital_request(
@@ -121,27 +198,34 @@ async def walk_in_override(
     res = res_result.scalar_one_or_none()
 
     if res:
-        outbox_emit(db, "reservation.overridden", str(res.id), {"reason": override_reason})
-    
-    # 2. SAME TRANSACTION: try to find another free acceptable room
-    facility = room.type if room else "ICU" # fallback
-    new_room = await lock_free_room_skip_locked(db, hospital_id, [facility])
-    
+        await outbox_emit(db, "reservation.overridden", str(res.id), {"reason": override_reason})
+
+    # 2. SAME TRANSACTION: try to find another free acceptable room of the
+    # SAME type the overridden room was (not the room's literal `type`
+    # string treated as if it were a facility -- that bug meant this never
+    # found anything either, same root cause as create_hospital_request_with_hold).
+    acceptable_types = [room.type] if room else ["er_bed"]
+    new_room = await lock_free_room_skip_locked(db, hospital_id, acceptable_types)
+
     if new_room:
         # Re-create reservation as confirmed
         new_res = await create_reservation(
-            db, 
-            hospital_id=hospital_id, 
+            db,
+            hospital_id=hospital_id,
             emergency_id=emergency_id_for_reservation,
             status="confirmed",
             room_id=new_room.id,
-            expires_at=datetime.utcnow() + timedelta(hours=1)
+            hold_expires_at=datetime.utcnow() + timedelta(hours=1)
         )
-        outbox_emit(db, "reservation.changed", str(new_res.id), {"new_room_id": str(new_room.id)})
+        await db.execute(
+            update(Room).where(Room.id == new_room.id, Room.status == "free")
+            .values(status="reserved", reservation_id=new_res.id, version=Room.version + 1)
+        )
+        await outbox_emit(db, "reservation.changed", str(new_res.id), {"new_room_id": str(new_room.id)})
         return {"re_allocated": True, "new_room_id": new_room.id, "rerouted": False}
     else:
         # start new selection with is_priority=True
         # Need redis/ml client, assuming start_selection can be called here or handled outside
         # we'll emit the event to trigger it
-        outbox_emit(db, "emergency.reroute_required", str(emergency_id_for_reservation), {"reason": "walk_in_override"})
+        await outbox_emit(db, "emergency.reroute_required", str(emergency_id_for_reservation), {"reason": "walk_in_override"})
         return {"re_allocated": False, "new_room_id": None, "rerouted": True}

@@ -62,10 +62,12 @@ async def get_escalation_details(db: AsyncSession, escalation_id: UUID) -> Optio
         return None
     return {
         "id": str(esc.id),
-        "type": esc.escalation_type,
+        "type": esc.type,
         "status": esc.status,
-        "context": esc.context,
+        "summary": esc.summary,
         "options": esc.options,
+        "default_option_id": esc.default_option_id,
+        "chosen_option_id": esc.chosen_option_id,
         "claimed_by": str(esc.claimed_by) if esc.claimed_by else None,
         "created_at": esc.created_at.isoformat() if esc.created_at else None,
     }
@@ -79,14 +81,20 @@ async def claim_escalation(db: AsyncSession, escalation_id: UUID, ops_user_id: U
 async def resolve_escalation(
     db: AsyncSession,
     escalation_id: UUID,
-    option_id: UUID,
+    option_id: str,
     ops_user_id: UUID,
 ) -> None:
     """Resolve an escalation with chosen option (only claimer can resolve)."""
     esc = await get_escalation(db, escalation_id)
     if not esc:
         raise ValueError("Escalation not found")
-    if esc.claimed_by != ops_user_id:
+    # esc.claimed_by is a real uuid.UUID (ORM-mapped); ops_user_id arrives as
+    # a plain str (CurrentUser.id, security/deps.py) -- UUID != str is
+    # ALWAYS true in Python regardless of value, so this rejected literally
+    # every claimer, including the real one, every time. Confirmed by
+    # actually claiming then resolving with the same real user and getting
+    # FORBIDDEN anyway.
+    if str(esc.claimed_by) != str(ops_user_id):
         raise ValueError("Only the claimer can resolve this escalation")
     await repo_resolve_escalation(db, escalation_id, str(option_id), claimer_id=ops_user_id)
 
@@ -102,13 +110,27 @@ async def manual_override(
     em = await db.get(Emergency, emergency_id)
     if not em:
         raise ValueError("Emergency not found")
+    before_status = em.status
     em.status = "hospital_selecting"
-    # Trigger selection to the specific hospital
+
     from app.domain.audit import write as audit_write
-    await audit_write(db, "emergency", emergency_id, actor_id, "manual_override", {
-        "hospital_id": str(hospital_id),
-        "reason": reason,
-    })
+    # Real signature is keyword-only (actor_type, actor_id, entity,
+    # entity_id, action, before, after) -- the previous positional call
+    # would have raised TypeError on the first real override, same bug
+    # pattern already found and fixed in domain/clinical.py this session.
+    await audit_write(
+        db, actor_type="user", actor_id=str(actor_id), entity="emergencies",
+        entity_id=emergency_id, action="manual_override",
+        before={"status": before_status}, after={"status": "hospital_selecting", "hospital_id": str(hospital_id), "reason": reason},
+    )
+
+    from app.domain.reservations import create_hospital_request_with_hold
+    acuity = em.acuity or "urgent"
+    facility = em.facility or "general"
+    await create_hospital_request_with_hold(
+        db, emergency_id=emergency_id, hospital_id=hospital_id, rank=1, features={},
+        explanation=[f"Manually overridden by ops: {reason}"], acuity=acuity, facility=facility,
+    )
     await db.commit()
 
 
@@ -121,19 +143,21 @@ async def get_ops_audit(db: AsyncSession, entity_id: UUID) -> list[dict]:
     """Return audit log entries for an entity."""
     result = await db.execute(
         select(AuditLog)
-        .where(AuditLog.record_id == entity_id)
-        .order_by(AuditLog.created_at.desc())
+        .where(AuditLog.entity_id == entity_id)
+        .order_by(AuditLog.at.desc())
         .limit(100)
     )
     rows = result.scalars().all()
     return [
         {
             "id": str(r.id),
-            "table_name": r.table_name,
+            "entity": r.entity,
             "action": r.action,
-            "actor_id": str(r.actor_id) if r.actor_id else None,
-            "changes": r.changes,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "actor_type": r.actor_type,
+            "actor_id": r.actor_id,
+            "before": r.before,
+            "after": r.after,
+            "at": r.at.isoformat() if r.at else None,
         }
         for r in rows
     ]

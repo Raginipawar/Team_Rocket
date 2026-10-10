@@ -1,107 +1,101 @@
-from ortools.sat.python import cp_model
-from .schemas import MCIAllocateRequest, MCIAllocateResponse, Assignment, Unassigned
+"""Real mass-casualty allocation: OR-Tools MIP (technical.md Section9,
+same tool already used for Person A's pre-positioning solver). Was a plain
+round-robin in router.py (patient 1 -> ambulance 1 + hospital 1, patient 2
+-> ambulance 2 + hospital 2, wrapping around in list order) -- ignored
+acuity, ETA, and hospital capacity entirely.
 
-async def allocate_mci(req: MCIAllocateRequest) -> MCIAllocateResponse:
-    model = cp_model.CpModel()
-    
-    num_p = len(req.patients)
-    num_h = len(req.hospitals)
-    num_a = len(req.ambulances)
-    
-    if num_p == 0:
+x[p][a][h] = 1 if patient p is assigned to ambulance a and hospital h.
+Maximise sum(x[p,a,h] * (ACUITY_BONUS[p] - time_cost(a,h))), subject to:
+each patient assigned at most once, each ambulance used at most once, and
+each hospital's per-facility-type capacity not exceeded. The large
+per-acuity bonus means the solver strongly prefers assigning more (and
+more critical) patients over minimizing time among a fixed set -- coverage
+first, speed second, matching the spec's prioritization intent."""
+
+from ortools.linear_solver import pywraplp
+
+from .schemas import Assignment, MCIAllocateRequest, MCIAllocateResponse, Unassigned
+
+ACUITY_BONUS = {"critical": 100000.0, "urgent": 20000.0, "stable": 5000.0}
+
+
+class SolverFailed(Exception):
+    pass
+
+
+async def real_mci_allocate(req: MCIAllocateRequest) -> MCIAllocateResponse:
+    patients, hospitals, ambulances = req.patients, req.hospitals, req.ambulances
+    if not patients:
         return MCIAllocateResponse(assignments=[], unassigned=[], objective=0.0)
-    
-    # Variables: assign[p][h][a] = 1 if patient p goes to hospital h in ambulance a
-    assign = {}
-    for p in range(num_p):
-        for h in range(num_h):
-            for a in range(num_a):
-                assign[(p, h, a)] = model.NewBoolVar(f'assign_p{p}_h{h}_a{a}')
-                
-    # Each patient assigned to at most 1 hospital and 1 ambulance
-    for p in range(num_p):
-        model.AddAtMostOne([assign[(p, h, a)] for h in range(num_h) for a in range(num_a)])
-        
-    # Capacity constraints: sum of assignments to hospital h for required facility <= capacity
-    for h, hosp in enumerate(req.hospitals):
-        # group patients by needed facility
-        facility_patients = {}
-        for p, pat in enumerate(req.patients):
-            fac = pat.facility
-            if fac not in facility_patients:
-                facility_patients[fac] = []
-            facility_patients[fac].append(p)
-            
-        for fac, p_list in facility_patients.items():
-            cap = hosp.capacities_by_type.get(fac, 0)
-            model.AddSum([assign[(p, h, a)] for p in p_list for a in range(num_a)]) <= cap
-            
-    # Max share per hospital: <= 33% of total patients (rounded up)
-    max_share = max(1, (num_p + 2) // 3)
-    for h in range(num_h):
-        model.AddSum([assign[(p, h, a)] for p in range(num_p) for a in range(num_a)]) <= max_share
-        
-    # Objective: Minimize weighted time, maximize assignments (especially for critical)
-    # We negate the objective for maximization OR use minimization
-    # Let's minimize a score:
-    # If not assigned: huge penalty (larger for critical)
-    # If assigned: time = eta_to_scene + eta_hosp
-    
-    # Track if assigned
-    is_assigned = []
-    for p in range(num_p):
-        var = model.NewBoolVar(f'is_assigned_p{p}')
-        model.Add(var == sum([assign[(p, h, a)] for h in range(num_h) for a in range(num_a)]))
-        is_assigned.append(var)
-        
+    if not ambulances or not hospitals:
+        return MCIAllocateResponse(
+            assignments=[],
+            unassigned=[Unassigned(patient_id=p.id, reason="no_ambulances_or_hospitals_available") for p in patients],
+            objective=0.0,
+        )
+
+    solver = pywraplp.Solver.CreateSolver("CBC")
+    if solver is None:
+        raise SolverFailed("CBC solver unavailable")
+
+    x = {}
+    for pi, p in enumerate(patients):
+        for ai, a in enumerate(ambulances):
+            for hi, h in enumerate(hospitals):
+                # Only create a variable if this hospital even has a capacity
+                # entry for this patient's facility need -- otherwise it can
+                # never legally take this patient, no point in a free variable.
+                if h.capacities_by_type.get(p.facility, 0) > 0:
+                    x[pi, ai, hi] = solver.BoolVar(f"x_{pi}_{ai}_{hi}")
+
+    # Each patient assigned to at most one (ambulance, hospital) pair.
+    for pi in range(len(patients)):
+        vars_for_patient = [x[pi, ai, hi] for ai in range(len(ambulances)) for hi in range(len(hospitals))
+                             if (pi, ai, hi) in x]
+        if vars_for_patient:
+            solver.Add(solver.Sum(vars_for_patient) <= 1)
+
+    # Each ambulance used for at most one patient.
+    for ai in range(len(ambulances)):
+        vars_for_amb = [x[pi, ai, hi] for pi in range(len(patients)) for hi in range(len(hospitals))
+                         if (pi, ai, hi) in x]
+        if vars_for_amb:
+            solver.Add(solver.Sum(vars_for_amb) <= 1)
+
+    # Each hospital's per-facility-type capacity respected.
+    for hi, h in enumerate(hospitals):
+        for facility, capacity in h.capacities_by_type.items():
+            vars_for_type = [x[pi, ai, hi] for pi, p in enumerate(patients) if p.facility == facility
+                              for ai in range(len(ambulances)) if (pi, ai, hi) in x]
+            if vars_for_type:
+                solver.Add(solver.Sum(vars_for_type) <= capacity)
+
     objective_terms = []
-    
-    # Penalty for unassigned
-    for p, pat in enumerate(req.patients):
-        weight = 1000000 if pat.acuity == 'critical' else 100000
-        # Add penalty if NOT assigned: weight * (1 - is_assigned[p])
-        objective_terms.append(weight * (1 - is_assigned[p]))
-        
-        # Time cost if assigned
-        for h, hosp in enumerate(req.hospitals):
-            for a, amb in enumerate(req.ambulances):
-                time_val = int(amb.eta_to_scene + hosp.eta_sec)
-                objective_terms.append(time_val * assign[(p, h, a)])
-                
-    model.Minimize(sum(objective_terms))
-    
-    solver = cp_model.CpSolver()
-    # Set time limit
-    solver.parameters.max_time_in_seconds = 2.0
-    status = solver.Solve(model)
-    
+    for (pi, ai, hi), var in x.items():
+        time_cost = ambulances[ai].eta_to_scene + hospitals[hi].eta_sec
+        value = ACUITY_BONUS.get(patients[pi].acuity, 1000.0) - time_cost
+        objective_terms.append(value * var)
+    solver.Maximize(solver.Sum(objective_terms))
+
+    status = solver.Solve()
+    if status not in (pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE):
+        raise SolverFailed(f"solver status={status}")
+
     assignments = []
+    assigned_patient_ids = set()
+    for (pi, ai, hi), var in x.items():
+        if var.solution_value() > 0.5:
+            assignments.append(Assignment(
+                patient_id=patients[pi].id, ambulance_id=ambulances[ai].id, hospital_id=hospitals[hi].id,
+            ))
+            assigned_patient_ids.add(patients[pi].id)
+
     unassigned = []
-    objective_val = 0.0
-    
-    if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-        objective_val = solver.ObjectiveValue()
-        for p, pat in enumerate(req.patients):
-            assigned = False
-            for h, hosp in enumerate(req.hospitals):
-                for a, amb in enumerate(req.ambulances):
-                    if solver.Value(assign[(p, h, a)]):
-                        assignments.append(Assignment(
-                            patient_id=pat.id,
-                            ambulance_id=amb.id,
-                            hospital_id=hosp.id
-                        ))
-                        assigned = True
-            if not assigned:
-                unassigned.append(Unassigned(patient_id=pat.id, reason="No capacity or constraints prevented assignment"))
-    else:
-        # Fallback if infeasible (shouldn't happen with our formulation unless hard constraints clash severely, 
-        # but all hard constraints can be met trivially by assigning no one)
-        for pat in req.patients:
-            unassigned.append(Unassigned(patient_id=pat.id, reason="Solver could not find a feasible solution"))
-            
-    return MCIAllocateResponse(
-        assignments=assignments,
-        unassigned=unassigned,
-        objective=objective_val
-    )
+    for p in patients:
+        if p.id in assigned_patient_ids:
+            continue
+        has_capacity = any(h.capacities_by_type.get(p.facility, 0) > 0 for h in hospitals)
+        reason = "no_hospital_capacity_for_facility" if not has_capacity else "no_ambulance_or_hospital_slot_left"
+        unassigned.append(Unassigned(patient_id=p.id, reason=reason))
+
+    return MCIAllocateResponse(assignments=assignments, unassigned=unassigned, objective=solver.Objective().Value())

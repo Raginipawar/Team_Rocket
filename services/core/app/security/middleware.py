@@ -92,6 +92,15 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                 k: v for k, v in response.headers.items()
                 if k.lower() not in ("content-length", "content-type")
             }
+            if record["body"] is None:
+                # JSONResponse(content=None) still serializes a literal b"null"
+                # body -- wrong for a 204/empty response and the mismatch
+                # between that body and the original 204's implied zero length
+                # is exactly what caused every 204 endpoint (otp/request,
+                # vehicle-issue, push-subscriptions, ...) sent with an
+                # Idempotency-Key to blow up with "Response content longer
+                # than Content-Length". A bare Response has a real empty body.
+                return Response(status_code=response.status_code, headers=safe_headers)
             return JSONResponse(status_code=response.status_code, content=record["body"], headers=safe_headers)
 
         return response

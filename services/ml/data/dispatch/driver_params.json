@@ -1,902 +1,1802 @@
 {
   "drv_0000": {
     "base_accept_propensity": 0.5247,
-    "distance_aversion": 0.2721,
-    "fatigue_sensitivity": 0.7394,
-    "base_latency_s": 6.02
+    "distance_aversion": 0.398,
+    "fatigue_sensitivity": 0.0773,
+    "base_latency_s": 9.46
   },
   "drv_0001": {
     "base_accept_propensity": 0.5734,
-    "distance_aversion": 0.3891,
-    "fatigue_sensitivity": 0.3027,
-    "base_latency_s": 6.33
+    "distance_aversion": 0.0807,
+    "fatigue_sensitivity": 0.3871,
+    "base_latency_s": 11.62
   },
   "drv_0002": {
     "base_accept_propensity": 0.5547,
-    "distance_aversion": 0.079,
-    "fatigue_sensitivity": 0.7218,
-    "base_latency_s": 4.77
+    "distance_aversion": 0.1212,
+    "fatigue_sensitivity": 0.2858,
+    "base_latency_s": 4.74
   },
   "drv_0003": {
     "base_accept_propensity": 0.7805,
-    "distance_aversion": 0.323,
-    "fatigue_sensitivity": 0.1141,
-    "base_latency_s": 2.0
+    "distance_aversion": 0.2923,
+    "fatigue_sensitivity": 0.4345,
+    "base_latency_s": 12.74
   },
   "drv_0004": {
     "base_accept_propensity": 0.7643,
-    "distance_aversion": 0.7112,
-    "fatigue_sensitivity": 0.0458,
-    "base_latency_s": 7.21
+    "distance_aversion": 0.1941,
+    "fatigue_sensitivity": 0.0872,
+    "base_latency_s": 12.86
   },
   "drv_0005": {
     "base_accept_propensity": 0.5328,
-    "distance_aversion": 0.1072,
-    "fatigue_sensitivity": 0.1546,
-    "base_latency_s": 8.91
+    "distance_aversion": 0.415,
+    "fatigue_sensitivity": 0.5033,
+    "base_latency_s": 4.36
   },
   "drv_0006": {
     "base_accept_propensity": 0.5287,
-    "distance_aversion": 0.261,
-    "fatigue_sensitivity": 0.2198,
-    "base_latency_s": 3.47
+    "distance_aversion": 2.1811,
+    "fatigue_sensitivity": 0.3877,
+    "base_latency_s": 5.58
   },
   "drv_0007": {
     "base_accept_propensity": 0.3884,
-    "distance_aversion": 0.6688,
-    "fatigue_sensitivity": 0.4042,
-    "base_latency_s": 8.0
+    "distance_aversion": 0.285,
+    "fatigue_sensitivity": 1.6665,
+    "base_latency_s": 6.26
   },
   "drv_0008": {
     "base_accept_propensity": 0.5035,
-    "distance_aversion": 0.318,
-    "fatigue_sensitivity": 0.3124,
-    "base_latency_s": 4.35
+    "distance_aversion": 0.4051,
+    "fatigue_sensitivity": 0.3163,
+    "base_latency_s": 7.92
   },
   "drv_0009": {
     "base_accept_propensity": 0.751,
-    "distance_aversion": 0.5916,
-    "fatigue_sensitivity": 0.2216,
-    "base_latency_s": 7.87
+    "distance_aversion": 0.1135,
+    "fatigue_sensitivity": 0.1049,
+    "base_latency_s": 8.56
   },
   "drv_0010": {
     "base_accept_propensity": 0.5718,
-    "distance_aversion": 0.5376,
-    "fatigue_sensitivity": 0.1742,
-    "base_latency_s": 9.06
+    "distance_aversion": 0.1613,
+    "fatigue_sensitivity": 0.5212,
+    "base_latency_s": 2.0
   },
   "drv_0011": {
     "base_accept_propensity": 0.8548,
-    "distance_aversion": 0.2799,
-    "fatigue_sensitivity": 0.1777,
-    "base_latency_s": 9.43
+    "distance_aversion": 0.6491,
+    "fatigue_sensitivity": 0.8453,
+    "base_latency_s": 9.79
   },
   "drv_0012": {
     "base_accept_propensity": 0.5549,
-    "distance_aversion": 0.2161,
-    "fatigue_sensitivity": 0.0406,
-    "base_latency_s": 9.28
+    "distance_aversion": 0.6846,
+    "fatigue_sensitivity": 0.9297,
+    "base_latency_s": 7.22
   },
   "drv_0013": {
     "base_accept_propensity": 0.6158,
-    "distance_aversion": 0.7172,
-    "fatigue_sensitivity": 0.0787,
-    "base_latency_s": 5.86
+    "distance_aversion": 0.9196,
+    "fatigue_sensitivity": 0.0153,
+    "base_latency_s": 4.91
   },
   "drv_0014": {
     "base_accept_propensity": 0.9125,
-    "distance_aversion": 0.2271,
-    "fatigue_sensitivity": 0.099,
-    "base_latency_s": 10.62
+    "distance_aversion": 0.6445,
+    "fatigue_sensitivity": 0.3799,
+    "base_latency_s": 10.87
   },
   "drv_0015": {
     "base_accept_propensity": 0.7167,
-    "distance_aversion": 0.5638,
-    "fatigue_sensitivity": 0.3053,
-    "base_latency_s": 6.63
+    "distance_aversion": 0.3885,
+    "fatigue_sensitivity": 0.3528,
+    "base_latency_s": 6.95
   },
   "drv_0016": {
     "base_accept_propensity": 0.6338,
-    "distance_aversion": 0.2436,
-    "fatigue_sensitivity": 0.2848,
-    "base_latency_s": 9.03
+    "distance_aversion": 0.7729,
+    "fatigue_sensitivity": 0.644,
+    "base_latency_s": 11.43
   },
   "drv_0017": {
     "base_accept_propensity": 0.5874,
-    "distance_aversion": 0.3673,
-    "fatigue_sensitivity": 0.1788,
-    "base_latency_s": 10.09
+    "distance_aversion": 0.2262,
+    "fatigue_sensitivity": 0.0494,
+    "base_latency_s": 9.6
   },
   "drv_0018": {
     "base_accept_propensity": 0.4979,
-    "distance_aversion": 0.1705,
-    "fatigue_sensitivity": 0.0428,
-    "base_latency_s": 7.06
+    "distance_aversion": 0.8975,
+    "fatigue_sensitivity": 1.0255,
+    "base_latency_s": 7.02
   },
   "drv_0019": {
     "base_accept_propensity": 0.4341,
-    "distance_aversion": 0.1842,
-    "fatigue_sensitivity": 0.1804,
-    "base_latency_s": 4.12
+    "distance_aversion": 0.0363,
+    "fatigue_sensitivity": 0.2046,
+    "base_latency_s": 11.54
   },
   "drv_0020": {
     "base_accept_propensity": 0.767,
-    "distance_aversion": 0.2307,
-    "fatigue_sensitivity": 0.4285,
-    "base_latency_s": 9.82
+    "distance_aversion": 1.7992,
+    "fatigue_sensitivity": 0.1107,
+    "base_latency_s": 10.43
   },
   "drv_0021": {
     "base_accept_propensity": 0.8096,
-    "distance_aversion": 0.2447,
-    "fatigue_sensitivity": 0.3064,
-    "base_latency_s": 4.62
+    "distance_aversion": 0.3081,
+    "fatigue_sensitivity": 0.417,
+    "base_latency_s": 6.46
   },
   "drv_0022": {
     "base_accept_propensity": 0.4545,
-    "distance_aversion": 0.9956,
-    "fatigue_sensitivity": 0.2804,
-    "base_latency_s": 5.3
+    "distance_aversion": 0.7194,
+    "fatigue_sensitivity": 0.4994,
+    "base_latency_s": 3.11
   },
   "drv_0023": {
     "base_accept_propensity": 0.4167,
-    "distance_aversion": 0.3142,
-    "fatigue_sensitivity": 0.1229,
-    "base_latency_s": 4.67
+    "distance_aversion": 0.5098,
+    "fatigue_sensitivity": 0.1194,
+    "base_latency_s": 6.33
   },
   "drv_0024": {
     "base_accept_propensity": 0.6066,
-    "distance_aversion": 0.0249,
-    "fatigue_sensitivity": 0.0871,
-    "base_latency_s": 10.5
+    "distance_aversion": 0.8475,
+    "fatigue_sensitivity": 0.8454,
+    "base_latency_s": 9.85
   },
   "drv_0025": {
     "base_accept_propensity": 0.561,
-    "distance_aversion": 0.0832,
-    "fatigue_sensitivity": 0.2258,
-    "base_latency_s": 7.48
+    "distance_aversion": 0.1397,
+    "fatigue_sensitivity": 0.5548,
+    "base_latency_s": 7.27
   },
   "drv_0026": {
     "base_accept_propensity": 0.7257,
-    "distance_aversion": 1.0827,
-    "fatigue_sensitivity": 0.4002,
-    "base_latency_s": 2.0
+    "distance_aversion": 0.6069,
+    "fatigue_sensitivity": 0.3324,
+    "base_latency_s": 13.32
   },
   "drv_0027": {
     "base_accept_propensity": 0.4875,
-    "distance_aversion": 0.5645,
-    "fatigue_sensitivity": 0.1454,
-    "base_latency_s": 10.18
+    "distance_aversion": 0.7264,
+    "fatigue_sensitivity": 0.5366,
+    "base_latency_s": 8.78
   },
   "drv_0028": {
     "base_accept_propensity": 0.8613,
-    "distance_aversion": 0.7166,
-    "fatigue_sensitivity": 0.2469,
-    "base_latency_s": 14.19
+    "distance_aversion": 0.7349,
+    "fatigue_sensitivity": 0.5916,
+    "base_latency_s": 8.57
   },
   "drv_0029": {
     "base_accept_propensity": 0.8599,
-    "distance_aversion": 0.0163,
-    "fatigue_sensitivity": 0.4138,
-    "base_latency_s": 13.37
+    "distance_aversion": 0.1365,
+    "fatigue_sensitivity": 0.7154,
+    "base_latency_s": 9.21
   },
   "drv_0030": {
     "base_accept_propensity": 0.7622,
-    "distance_aversion": 0.2875,
-    "fatigue_sensitivity": 0.088,
-    "base_latency_s": 6.27
+    "distance_aversion": 1.2544,
+    "fatigue_sensitivity": 0.5681,
+    "base_latency_s": 5.31
   },
   "drv_0031": {
     "base_accept_propensity": 0.6942,
-    "distance_aversion": 0.5348,
-    "fatigue_sensitivity": 0.1373,
-    "base_latency_s": 8.2
+    "distance_aversion": 0.4827,
+    "fatigue_sensitivity": 0.4828,
+    "base_latency_s": 7.61
   },
   "drv_0032": {
     "base_accept_propensity": 0.9083,
-    "distance_aversion": 0.5402,
-    "fatigue_sensitivity": 0.0378,
-    "base_latency_s": 9.5
+    "distance_aversion": 1.2866,
+    "fatigue_sensitivity": 0.974,
+    "base_latency_s": 5.98
   },
   "drv_0033": {
     "base_accept_propensity": 0.6759,
-    "distance_aversion": 0.1292,
-    "fatigue_sensitivity": 0.0728,
-    "base_latency_s": 10.65
+    "distance_aversion": 0.6381,
+    "fatigue_sensitivity": 0.6544,
+    "base_latency_s": 2.0
   },
   "drv_0034": {
     "base_accept_propensity": 0.6676,
-    "distance_aversion": 0.4517,
-    "fatigue_sensitivity": 0.0221,
-    "base_latency_s": 8.08
+    "distance_aversion": 0.2561,
+    "fatigue_sensitivity": 0.8497,
+    "base_latency_s": 2.6
   },
   "drv_0035": {
     "base_accept_propensity": 0.6813,
-    "distance_aversion": 0.4568,
-    "fatigue_sensitivity": 0.1494,
-    "base_latency_s": 4.69
+    "distance_aversion": 0.2403,
+    "fatigue_sensitivity": 0.2565,
+    "base_latency_s": 10.22
   },
   "drv_0036": {
     "base_accept_propensity": 0.5901,
-    "distance_aversion": 0.4413,
-    "fatigue_sensitivity": 0.3568,
-    "base_latency_s": 10.23
+    "distance_aversion": 0.4489,
+    "fatigue_sensitivity": 0.3854,
+    "base_latency_s": 6.64
   },
   "drv_0037": {
     "base_accept_propensity": 0.42,
-    "distance_aversion": 0.1752,
-    "fatigue_sensitivity": 0.2438,
-    "base_latency_s": 9.82
+    "distance_aversion": 0.0459,
+    "fatigue_sensitivity": 0.5753,
+    "base_latency_s": 7.61
   },
   "drv_0038": {
     "base_accept_propensity": 0.8126,
-    "distance_aversion": 0.2989,
-    "fatigue_sensitivity": 0.1947,
-    "base_latency_s": 3.98
+    "distance_aversion": 0.6341,
+    "fatigue_sensitivity": 0.2344,
+    "base_latency_s": 3.51
   },
   "drv_0039": {
     "base_accept_propensity": 0.4933,
-    "distance_aversion": 0.2003,
-    "fatigue_sensitivity": 0.2416,
-    "base_latency_s": 6.87
+    "distance_aversion": 0.3581,
+    "fatigue_sensitivity": 0.5827,
+    "base_latency_s": 6.2
   },
   "drv_0040": {
     "base_accept_propensity": 0.6427,
-    "distance_aversion": 0.4057,
-    "fatigue_sensitivity": 0.0446,
-    "base_latency_s": 8.78
+    "distance_aversion": 0.8094,
+    "fatigue_sensitivity": 1.9567,
+    "base_latency_s": 10.35
   },
   "drv_0041": {
     "base_accept_propensity": 0.8739,
-    "distance_aversion": 0.7502,
-    "fatigue_sensitivity": 0.0676,
-    "base_latency_s": 7.96
+    "distance_aversion": 0.2445,
+    "fatigue_sensitivity": 0.387,
+    "base_latency_s": 8.28
   },
   "drv_0042": {
     "base_accept_propensity": 0.754,
-    "distance_aversion": 0.088,
-    "fatigue_sensitivity": 0.2292,
-    "base_latency_s": 9.54
+    "distance_aversion": 0.3764,
+    "fatigue_sensitivity": 1.006,
+    "base_latency_s": 6.41
   },
   "drv_0043": {
     "base_accept_propensity": 0.6942,
-    "distance_aversion": 0.7301,
-    "fatigue_sensitivity": 0.0991,
-    "base_latency_s": 10.35
+    "distance_aversion": 0.1132,
+    "fatigue_sensitivity": 0.0679,
+    "base_latency_s": 12.61
   },
   "drv_0044": {
     "base_accept_propensity": 0.7099,
-    "distance_aversion": 0.1141,
-    "fatigue_sensitivity": 0.1009,
-    "base_latency_s": 9.59
+    "distance_aversion": 0.2286,
+    "fatigue_sensitivity": 0.4301,
+    "base_latency_s": 7.8
   },
   "drv_0045": {
     "base_accept_propensity": 0.6402,
-    "distance_aversion": 0.1387,
-    "fatigue_sensitivity": 0.1463,
-    "base_latency_s": 7.62
+    "distance_aversion": 0.4567,
+    "fatigue_sensitivity": 0.0599,
+    "base_latency_s": 6.92
   },
   "drv_0046": {
     "base_accept_propensity": 0.831,
-    "distance_aversion": 0.6895,
-    "fatigue_sensitivity": 0.0773,
-    "base_latency_s": 3.92
+    "distance_aversion": 0.3561,
+    "fatigue_sensitivity": 0.3672,
+    "base_latency_s": 11.45
   },
   "drv_0047": {
     "base_accept_propensity": 0.7071,
-    "distance_aversion": 0.2792,
-    "fatigue_sensitivity": 0.1769,
-    "base_latency_s": 9.81
+    "distance_aversion": 0.2131,
+    "fatigue_sensitivity": 0.329,
+    "base_latency_s": 2.74
   },
   "drv_0048": {
     "base_accept_propensity": 0.5863,
-    "distance_aversion": 0.2389,
-    "fatigue_sensitivity": 0.6656,
-    "base_latency_s": 12.17
+    "distance_aversion": 0.2531,
+    "fatigue_sensitivity": 0.8998,
+    "base_latency_s": 9.65
   },
   "drv_0049": {
     "base_accept_propensity": 0.4559,
-    "distance_aversion": 0.4619,
-    "fatigue_sensitivity": 0.1832,
-    "base_latency_s": 13.89
+    "distance_aversion": 0.4799,
+    "fatigue_sensitivity": 0.8599,
+    "base_latency_s": 4.61
   },
   "drv_0050": {
     "base_accept_propensity": 0.8809,
-    "distance_aversion": 0.2709,
-    "fatigue_sensitivity": 0.1248,
-    "base_latency_s": 7.86
+    "distance_aversion": 0.125,
+    "fatigue_sensitivity": 0.2993,
+    "base_latency_s": 5.6
   },
   "drv_0051": {
     "base_accept_propensity": 0.7291,
-    "distance_aversion": 0.3409,
-    "fatigue_sensitivity": 0.2515,
-    "base_latency_s": 7.86
+    "distance_aversion": 1.4107,
+    "fatigue_sensitivity": 0.2763,
+    "base_latency_s": 5.91
   },
   "drv_0052": {
     "base_accept_propensity": 0.6429,
-    "distance_aversion": 0.894,
-    "fatigue_sensitivity": 0.2233,
-    "base_latency_s": 12.3
+    "distance_aversion": 0.4285,
+    "fatigue_sensitivity": 0.0788,
+    "base_latency_s": 8.37
   },
   "drv_0053": {
     "base_accept_propensity": 0.6361,
-    "distance_aversion": 0.092,
-    "fatigue_sensitivity": 0.0227,
-    "base_latency_s": 12.28
+    "distance_aversion": 1.0965,
+    "fatigue_sensitivity": 1.2392,
+    "base_latency_s": 8.31
   },
   "drv_0054": {
     "base_accept_propensity": 0.3466,
-    "distance_aversion": 0.1131,
-    "fatigue_sensitivity": 0.6785,
-    "base_latency_s": 8.98
+    "distance_aversion": 0.5245,
+    "fatigue_sensitivity": 1.0139,
+    "base_latency_s": 8.9
   },
   "drv_0055": {
     "base_accept_propensity": 0.6944,
-    "distance_aversion": 0.3187,
-    "fatigue_sensitivity": 0.1594,
-    "base_latency_s": 10.1
+    "distance_aversion": 0.9321,
+    "fatigue_sensitivity": 0.2261,
+    "base_latency_s": 8.61
   },
   "drv_0056": {
     "base_accept_propensity": 0.6629,
-    "distance_aversion": 0.1294,
-    "fatigue_sensitivity": 0.0503,
-    "base_latency_s": 5.68
+    "distance_aversion": 0.6635,
+    "fatigue_sensitivity": 0.0133,
+    "base_latency_s": 12.22
   },
   "drv_0057": {
     "base_accept_propensity": 0.8259,
-    "distance_aversion": 0.1518,
-    "fatigue_sensitivity": 0.3058,
-    "base_latency_s": 9.71
+    "distance_aversion": 1.0565,
+    "fatigue_sensitivity": 0.6531,
+    "base_latency_s": 13.09
   },
   "drv_0058": {
     "base_accept_propensity": 0.7498,
-    "distance_aversion": 0.1348,
-    "fatigue_sensitivity": 0.2843,
-    "base_latency_s": 5.48
+    "distance_aversion": 1.0384,
+    "fatigue_sensitivity": 0.0441,
+    "base_latency_s": 10.13
   },
   "drv_0059": {
     "base_accept_propensity": 0.6342,
-    "distance_aversion": 0.8889,
-    "fatigue_sensitivity": 0.7059,
-    "base_latency_s": 7.52
+    "distance_aversion": 0.3911,
+    "fatigue_sensitivity": 0.4994,
+    "base_latency_s": 10.27
   },
   "drv_0060": {
     "base_accept_propensity": 0.5588,
-    "distance_aversion": 0.6636,
-    "fatigue_sensitivity": 0.0454,
-    "base_latency_s": 7.59
+    "distance_aversion": 0.228,
+    "fatigue_sensitivity": 1.9564,
+    "base_latency_s": 6.85
   },
   "drv_0061": {
     "base_accept_propensity": 0.5476,
-    "distance_aversion": 0.2216,
-    "fatigue_sensitivity": 0.4277,
-    "base_latency_s": 6.55
+    "distance_aversion": 0.4445,
+    "fatigue_sensitivity": 0.0974,
+    "base_latency_s": 4.66
   },
   "drv_0062": {
     "base_accept_propensity": 0.8036,
-    "distance_aversion": 0.3484,
-    "fatigue_sensitivity": 0.3421,
-    "base_latency_s": 2.0
+    "distance_aversion": 0.183,
+    "fatigue_sensitivity": 0.4783,
+    "base_latency_s": 9.77
   },
   "drv_0063": {
     "base_accept_propensity": 0.6327,
-    "distance_aversion": 0.4881,
-    "fatigue_sensitivity": 0.0557,
-    "base_latency_s": 5.48
+    "distance_aversion": 0.5322,
+    "fatigue_sensitivity": 0.0862,
+    "base_latency_s": 8.09
   },
   "drv_0064": {
     "base_accept_propensity": 0.6442,
-    "distance_aversion": 0.5633,
-    "fatigue_sensitivity": 0.4623,
-    "base_latency_s": 8.96
+    "distance_aversion": 0.253,
+    "fatigue_sensitivity": 0.2979,
+    "base_latency_s": 10.58
   },
   "drv_0065": {
     "base_accept_propensity": 0.3492,
-    "distance_aversion": 0.0964,
-    "fatigue_sensitivity": 0.1162,
-    "base_latency_s": 7.78
+    "distance_aversion": 0.8564,
+    "fatigue_sensitivity": 0.3746,
+    "base_latency_s": 2.47
   },
   "drv_0066": {
     "base_accept_propensity": 0.5208,
-    "distance_aversion": 0.2853,
-    "fatigue_sensitivity": 0.0567,
-    "base_latency_s": 6.78
+    "distance_aversion": 0.4525,
+    "fatigue_sensitivity": 0.8858,
+    "base_latency_s": 16.08
   },
   "drv_0067": {
     "base_accept_propensity": 0.8577,
-    "distance_aversion": 0.1932,
-    "fatigue_sensitivity": 0.2537,
-    "base_latency_s": 9.24
+    "distance_aversion": 0.3946,
+    "fatigue_sensitivity": 0.7336,
+    "base_latency_s": 4.14
   },
   "drv_0068": {
     "base_accept_propensity": 0.6339,
-    "distance_aversion": 0.4931,
-    "fatigue_sensitivity": 0.0416,
-    "base_latency_s": 10.02
+    "distance_aversion": 0.3227,
+    "fatigue_sensitivity": 0.1763,
+    "base_latency_s": 8.09
   },
   "drv_0069": {
     "base_accept_propensity": 0.4175,
-    "distance_aversion": 0.2665,
-    "fatigue_sensitivity": 0.169,
-    "base_latency_s": 10.5
+    "distance_aversion": 0.8599,
+    "fatigue_sensitivity": 0.6288,
+    "base_latency_s": 10.98
   },
   "drv_0070": {
     "base_accept_propensity": 0.6336,
-    "distance_aversion": 0.2175,
-    "fatigue_sensitivity": 0.1636,
-    "base_latency_s": 5.53
+    "distance_aversion": 0.3764,
+    "fatigue_sensitivity": 0.4956,
+    "base_latency_s": 3.81
   },
   "drv_0071": {
     "base_accept_propensity": 0.7382,
-    "distance_aversion": 0.0607,
-    "fatigue_sensitivity": 0.2556,
-    "base_latency_s": 8.02
+    "distance_aversion": 0.6007,
+    "fatigue_sensitivity": 0.3436,
+    "base_latency_s": 6.32
   },
   "drv_0072": {
     "base_accept_propensity": 0.3678,
-    "distance_aversion": 0.1086,
-    "fatigue_sensitivity": 0.1975,
-    "base_latency_s": 6.95
+    "distance_aversion": 1.1175,
+    "fatigue_sensitivity": 0.2617,
+    "base_latency_s": 2.0
   },
   "drv_0073": {
     "base_accept_propensity": 0.7197,
-    "distance_aversion": 0.1506,
-    "fatigue_sensitivity": 0.2232,
-    "base_latency_s": 5.32
+    "distance_aversion": 0.853,
+    "fatigue_sensitivity": 0.5872,
+    "base_latency_s": 3.67
   },
   "drv_0074": {
     "base_accept_propensity": 0.8356,
-    "distance_aversion": 0.4233,
-    "fatigue_sensitivity": 0.0156,
-    "base_latency_s": 3.46
+    "distance_aversion": 0.2468,
+    "fatigue_sensitivity": 1.0846,
+    "base_latency_s": 2.13
   },
   "drv_0075": {
     "base_accept_propensity": 0.6616,
-    "distance_aversion": 0.1409,
-    "fatigue_sensitivity": 0.1348,
-    "base_latency_s": 7.66
+    "distance_aversion": 0.6346,
+    "fatigue_sensitivity": 0.2712,
+    "base_latency_s": 8.3
   },
   "drv_0076": {
     "base_accept_propensity": 0.6418,
-    "distance_aversion": 0.1697,
-    "fatigue_sensitivity": 0.1466,
-    "base_latency_s": 5.33
+    "distance_aversion": 1.0918,
+    "fatigue_sensitivity": 0.0829,
+    "base_latency_s": 8.88
   },
   "drv_0077": {
     "base_accept_propensity": 0.5887,
-    "distance_aversion": 0.2752,
-    "fatigue_sensitivity": 0.1955,
-    "base_latency_s": 14.41
+    "distance_aversion": 0.462,
+    "fatigue_sensitivity": 2.1711,
+    "base_latency_s": 7.03
   },
   "drv_0078": {
     "base_accept_propensity": 0.403,
-    "distance_aversion": 0.1917,
-    "fatigue_sensitivity": 0.1154,
-    "base_latency_s": 7.65
+    "distance_aversion": 0.29,
+    "fatigue_sensitivity": 0.6439,
+    "base_latency_s": 11.81
   },
   "drv_0079": {
     "base_accept_propensity": 0.7803,
-    "distance_aversion": 0.2943,
-    "fatigue_sensitivity": 0.5357,
-    "base_latency_s": 7.28
+    "distance_aversion": 0.2862,
+    "fatigue_sensitivity": 0.7967,
+    "base_latency_s": 12.19
   },
   "drv_0080": {
     "base_accept_propensity": 0.6071,
-    "distance_aversion": 0.7101,
-    "fatigue_sensitivity": 0.1264,
-    "base_latency_s": 6.76
+    "distance_aversion": 0.5035,
+    "fatigue_sensitivity": 0.7219,
+    "base_latency_s": 7.97
   },
   "drv_0081": {
     "base_accept_propensity": 0.8309,
-    "distance_aversion": 0.1553,
-    "fatigue_sensitivity": 0.2207,
-    "base_latency_s": 13.58
+    "distance_aversion": 1.9415,
+    "fatigue_sensitivity": 0.324,
+    "base_latency_s": 7.33
   },
   "drv_0082": {
     "base_accept_propensity": 0.4659,
-    "distance_aversion": 0.2956,
-    "fatigue_sensitivity": 0.287,
-    "base_latency_s": 5.12
+    "distance_aversion": 0.7789,
+    "fatigue_sensitivity": 0.4353,
+    "base_latency_s": 7.16
   },
   "drv_0083": {
     "base_accept_propensity": 0.5394,
-    "distance_aversion": 0.1532,
-    "fatigue_sensitivity": 0.2081,
-    "base_latency_s": 7.47
+    "distance_aversion": 0.3201,
+    "fatigue_sensitivity": 1.6038,
+    "base_latency_s": 6.63
   },
   "drv_0084": {
     "base_accept_propensity": 0.6524,
-    "distance_aversion": 0.2876,
-    "fatigue_sensitivity": 0.0671,
-    "base_latency_s": 5.64
+    "distance_aversion": 1.0212,
+    "fatigue_sensitivity": 0.0872,
+    "base_latency_s": 11.94
   },
   "drv_0085": {
     "base_accept_propensity": 0.5686,
-    "distance_aversion": 0.1131,
-    "fatigue_sensitivity": 0.1243,
-    "base_latency_s": 7.58
+    "distance_aversion": 0.1594,
+    "fatigue_sensitivity": 0.4482,
+    "base_latency_s": 8.71
   },
   "drv_0086": {
     "base_accept_propensity": 0.7482,
-    "distance_aversion": 0.0891,
-    "fatigue_sensitivity": 0.2066,
-    "base_latency_s": 7.84
+    "distance_aversion": 0.3638,
+    "fatigue_sensitivity": 0.7469,
+    "base_latency_s": 6.99
   },
   "drv_0087": {
     "base_accept_propensity": 0.2569,
-    "distance_aversion": 0.3613,
-    "fatigue_sensitivity": 0.0908,
-    "base_latency_s": 11.25
+    "distance_aversion": 0.7475,
+    "fatigue_sensitivity": 0.5468,
+    "base_latency_s": 7.31
   },
   "drv_0088": {
     "base_accept_propensity": 0.72,
-    "distance_aversion": 0.4091,
-    "fatigue_sensitivity": 0.2788,
-    "base_latency_s": 3.7
+    "distance_aversion": 0.3969,
+    "fatigue_sensitivity": 0.2443,
+    "base_latency_s": 9.65
   },
   "drv_0089": {
     "base_accept_propensity": 0.4506,
-    "distance_aversion": 0.0987,
-    "fatigue_sensitivity": 0.1981,
-    "base_latency_s": 7.89
+    "distance_aversion": 1.4521,
+    "fatigue_sensitivity": 0.61,
+    "base_latency_s": 6.79
   },
   "drv_0090": {
     "base_accept_propensity": 0.9563,
-    "distance_aversion": 0.0818,
-    "fatigue_sensitivity": 0.196,
-    "base_latency_s": 12.8
+    "distance_aversion": 1.289,
+    "fatigue_sensitivity": 0.3779,
+    "base_latency_s": 8.95
   },
   "drv_0091": {
     "base_accept_propensity": 0.6992,
-    "distance_aversion": 0.063,
-    "fatigue_sensitivity": 0.0453,
-    "base_latency_s": 6.42
+    "distance_aversion": 0.0999,
+    "fatigue_sensitivity": 0.1941,
+    "base_latency_s": 7.89
   },
   "drv_0092": {
     "base_accept_propensity": 0.5823,
-    "distance_aversion": 0.1422,
-    "fatigue_sensitivity": 0.1451,
-    "base_latency_s": 7.42
+    "distance_aversion": 0.6383,
+    "fatigue_sensitivity": 0.2087,
+    "base_latency_s": 12.09
   },
   "drv_0093": {
     "base_accept_propensity": 0.6798,
-    "distance_aversion": 1.1052,
-    "fatigue_sensitivity": 0.1172,
-    "base_latency_s": 5.29
+    "distance_aversion": 0.1866,
+    "fatigue_sensitivity": 0.354,
+    "base_latency_s": 11.5
   },
   "drv_0094": {
     "base_accept_propensity": 0.8041,
-    "distance_aversion": 0.0772,
-    "fatigue_sensitivity": 0.2737,
-    "base_latency_s": 2.0
+    "distance_aversion": 0.1813,
+    "fatigue_sensitivity": 0.6677,
+    "base_latency_s": 3.72
   },
   "drv_0095": {
     "base_accept_propensity": 0.7018,
-    "distance_aversion": 0.5504,
-    "fatigue_sensitivity": 0.0999,
-    "base_latency_s": 7.64
+    "distance_aversion": 0.169,
+    "fatigue_sensitivity": 1.1625,
+    "base_latency_s": 7.52
   },
   "drv_0096": {
     "base_accept_propensity": 0.6069,
-    "distance_aversion": 0.0594,
-    "fatigue_sensitivity": 0.1327,
-    "base_latency_s": 11.48
+    "distance_aversion": 0.2972,
+    "fatigue_sensitivity": 0.3202,
+    "base_latency_s": 10.15
   },
   "drv_0097": {
     "base_accept_propensity": 0.8005,
-    "distance_aversion": 0.5387,
-    "fatigue_sensitivity": 0.1259,
-    "base_latency_s": 6.55
+    "distance_aversion": 0.3942,
+    "fatigue_sensitivity": 0.119,
+    "base_latency_s": 6.65
   },
   "drv_0098": {
     "base_accept_propensity": 0.7508,
-    "distance_aversion": 0.1238,
-    "fatigue_sensitivity": 0.3241,
-    "base_latency_s": 2.41
+    "distance_aversion": 1.2096,
+    "fatigue_sensitivity": 0.6606,
+    "base_latency_s": 10.45
   },
   "drv_0099": {
     "base_accept_propensity": 0.6714,
-    "distance_aversion": 0.5632,
-    "fatigue_sensitivity": 0.0692,
-    "base_latency_s": 8.75
+    "distance_aversion": 0.7698,
+    "fatigue_sensitivity": 0.1642,
+    "base_latency_s": 9.02
   },
   "drv_0100": {
     "base_accept_propensity": 0.6635,
-    "distance_aversion": 0.1828,
-    "fatigue_sensitivity": 0.0954,
-    "base_latency_s": 8.19
+    "distance_aversion": 0.6386,
+    "fatigue_sensitivity": 1.2933,
+    "base_latency_s": 9.8
   },
   "drv_0101": {
     "base_accept_propensity": 0.8201,
-    "distance_aversion": 0.9507,
-    "fatigue_sensitivity": 0.0568,
-    "base_latency_s": 10.95
+    "distance_aversion": 0.571,
+    "fatigue_sensitivity": 0.0916,
+    "base_latency_s": 7.81
   },
   "drv_0102": {
     "base_accept_propensity": 0.6644,
-    "distance_aversion": 0.4831,
-    "fatigue_sensitivity": 0.273,
-    "base_latency_s": 10.68
+    "distance_aversion": 0.1976,
+    "fatigue_sensitivity": 0.4573,
+    "base_latency_s": 8.92
   },
   "drv_0103": {
     "base_accept_propensity": 0.65,
-    "distance_aversion": 0.4006,
-    "fatigue_sensitivity": 0.0743,
-    "base_latency_s": 7.14
+    "distance_aversion": 0.3398,
+    "fatigue_sensitivity": 0.4505,
+    "base_latency_s": 9.59
   },
   "drv_0104": {
     "base_accept_propensity": 0.7075,
-    "distance_aversion": 0.3074,
-    "fatigue_sensitivity": 0.1832,
-    "base_latency_s": 9.15
+    "distance_aversion": 0.9405,
+    "fatigue_sensitivity": 0.5317,
+    "base_latency_s": 3.56
   },
   "drv_0105": {
     "base_accept_propensity": 0.6952,
-    "distance_aversion": 0.0712,
-    "fatigue_sensitivity": 0.2998,
-    "base_latency_s": 2.55
+    "distance_aversion": 0.7844,
+    "fatigue_sensitivity": 0.8729,
+    "base_latency_s": 5.24
   },
   "drv_0106": {
     "base_accept_propensity": 0.8479,
-    "distance_aversion": 0.1881,
-    "fatigue_sensitivity": 0.0479,
-    "base_latency_s": 11.29
+    "distance_aversion": 0.6996,
+    "fatigue_sensitivity": 0.5562,
+    "base_latency_s": 4.93
   },
   "drv_0107": {
     "base_accept_propensity": 0.5731,
-    "distance_aversion": 0.4117,
-    "fatigue_sensitivity": 0.2082,
-    "base_latency_s": 8.51
+    "distance_aversion": 0.1192,
+    "fatigue_sensitivity": 0.2644,
+    "base_latency_s": 13.09
   },
   "drv_0108": {
     "base_accept_propensity": 0.6248,
-    "distance_aversion": 0.1081,
-    "fatigue_sensitivity": 0.2093,
-    "base_latency_s": 11.2
+    "distance_aversion": 0.6964,
+    "fatigue_sensitivity": 0.2224,
+    "base_latency_s": 8.92
   },
   "drv_0109": {
     "base_accept_propensity": 0.493,
-    "distance_aversion": 0.2273,
-    "fatigue_sensitivity": 0.1287,
-    "base_latency_s": 11.14
+    "distance_aversion": 0.067,
+    "fatigue_sensitivity": 0.2282,
+    "base_latency_s": 9.13
   },
   "drv_0110": {
     "base_accept_propensity": 0.8222,
-    "distance_aversion": 0.1111,
-    "fatigue_sensitivity": 0.3387,
-    "base_latency_s": 7.09
+    "distance_aversion": 0.1677,
+    "fatigue_sensitivity": 0.2893,
+    "base_latency_s": 8.53
   },
   "drv_0111": {
     "base_accept_propensity": 0.8027,
-    "distance_aversion": 0.3604,
-    "fatigue_sensitivity": 0.2165,
-    "base_latency_s": 7.5
+    "distance_aversion": 0.7808,
+    "fatigue_sensitivity": 0.4704,
+    "base_latency_s": 6.44
   },
   "drv_0112": {
     "base_accept_propensity": 0.8113,
-    "distance_aversion": 0.9408,
-    "fatigue_sensitivity": 0.2764,
-    "base_latency_s": 5.32
+    "distance_aversion": 0.3742,
+    "fatigue_sensitivity": 1.2577,
+    "base_latency_s": 5.76
   },
   "drv_0113": {
     "base_accept_propensity": 0.7565,
-    "distance_aversion": 0.2142,
-    "fatigue_sensitivity": 0.4265,
-    "base_latency_s": 2.0
+    "distance_aversion": 1.1001,
+    "fatigue_sensitivity": 0.1618,
+    "base_latency_s": 10.57
   },
   "drv_0114": {
     "base_accept_propensity": 0.8192,
-    "distance_aversion": 0.3606,
-    "fatigue_sensitivity": 0.3204,
-    "base_latency_s": 7.55
+    "distance_aversion": 0.0924,
+    "fatigue_sensitivity": 0.4344,
+    "base_latency_s": 6.88
   },
   "drv_0115": {
     "base_accept_propensity": 0.6376,
-    "distance_aversion": 0.1632,
-    "fatigue_sensitivity": 0.3017,
-    "base_latency_s": 8.41
+    "distance_aversion": 0.7756,
+    "fatigue_sensitivity": 0.6859,
+    "base_latency_s": 12.78
   },
   "drv_0116": {
     "base_accept_propensity": 0.762,
-    "distance_aversion": 0.291,
-    "fatigue_sensitivity": 0.1076,
-    "base_latency_s": 4.69
+    "distance_aversion": 1.2848,
+    "fatigue_sensitivity": 0.2041,
+    "base_latency_s": 8.6
   },
   "drv_0117": {
     "base_accept_propensity": 0.8209,
-    "distance_aversion": 0.0899,
-    "fatigue_sensitivity": 0.2267,
-    "base_latency_s": 10.08
+    "distance_aversion": 1.4823,
+    "fatigue_sensitivity": 0.5413,
+    "base_latency_s": 8.29
   },
   "drv_0118": {
     "base_accept_propensity": 0.6268,
-    "distance_aversion": 0.4883,
-    "fatigue_sensitivity": 0.1512,
-    "base_latency_s": 8.24
+    "distance_aversion": 0.5802,
+    "fatigue_sensitivity": 0.1568,
+    "base_latency_s": 7.35
   },
   "drv_0119": {
     "base_accept_propensity": 0.5989,
-    "distance_aversion": 0.3584,
-    "fatigue_sensitivity": 0.1982,
-    "base_latency_s": 9.31
+    "distance_aversion": 1.5274,
+    "fatigue_sensitivity": 0.2875,
+    "base_latency_s": 7.79
   },
   "drv_0120": {
     "base_accept_propensity": 0.8416,
-    "distance_aversion": 1.1585,
-    "fatigue_sensitivity": 0.2474,
-    "base_latency_s": 5.64
+    "distance_aversion": 0.2261,
+    "fatigue_sensitivity": 0.5006,
+    "base_latency_s": 8.12
   },
   "drv_0121": {
     "base_accept_propensity": 0.6543,
-    "distance_aversion": 0.511,
-    "fatigue_sensitivity": 0.1329,
-    "base_latency_s": 2.66
+    "distance_aversion": 0.339,
+    "fatigue_sensitivity": 0.2109,
+    "base_latency_s": 12.61
   },
   "drv_0122": {
     "base_accept_propensity": 0.575,
-    "distance_aversion": 0.2604,
-    "fatigue_sensitivity": 0.1118,
-    "base_latency_s": 10.28
+    "distance_aversion": 0.7942,
+    "fatigue_sensitivity": 0.1754,
+    "base_latency_s": 15.06
   },
   "drv_0123": {
     "base_accept_propensity": 0.7511,
-    "distance_aversion": 0.5116,
-    "fatigue_sensitivity": 0.0893,
-    "base_latency_s": 9.78
+    "distance_aversion": 0.2167,
+    "fatigue_sensitivity": 0.5354,
+    "base_latency_s": 4.53
   },
   "drv_0124": {
     "base_accept_propensity": 0.8491,
-    "distance_aversion": 0.3157,
-    "fatigue_sensitivity": 0.1695,
-    "base_latency_s": 7.62
+    "distance_aversion": 0.6764,
+    "fatigue_sensitivity": 0.4488,
+    "base_latency_s": 8.79
   },
   "drv_0125": {
     "base_accept_propensity": 0.7112,
-    "distance_aversion": 0.268,
-    "fatigue_sensitivity": 0.1757,
-    "base_latency_s": 6.69
+    "distance_aversion": 0.8343,
+    "fatigue_sensitivity": 0.4389,
+    "base_latency_s": 10.15
   },
   "drv_0126": {
     "base_accept_propensity": 0.5212,
-    "distance_aversion": 0.5349,
-    "fatigue_sensitivity": 0.0608,
-    "base_latency_s": 7.12
+    "distance_aversion": 1.6573,
+    "fatigue_sensitivity": 0.0815,
+    "base_latency_s": 5.29
   },
   "drv_0127": {
     "base_accept_propensity": 0.4943,
-    "distance_aversion": 0.043,
-    "fatigue_sensitivity": 0.0377,
-    "base_latency_s": 7.54
+    "distance_aversion": 0.6631,
+    "fatigue_sensitivity": 0.1717,
+    "base_latency_s": 6.11
   },
   "drv_0128": {
     "base_accept_propensity": 0.774,
-    "distance_aversion": 0.0425,
-    "fatigue_sensitivity": 0.1887,
-    "base_latency_s": 6.42
+    "distance_aversion": 0.2272,
+    "fatigue_sensitivity": 0.7096,
+    "base_latency_s": 6.64
   },
   "drv_0129": {
     "base_accept_propensity": 0.8355,
-    "distance_aversion": 0.2541,
-    "fatigue_sensitivity": 0.1946,
+    "distance_aversion": 0.5967,
+    "fatigue_sensitivity": 2.0953,
     "base_latency_s": 2.0
   },
   "drv_0130": {
     "base_accept_propensity": 0.8432,
-    "distance_aversion": 0.3058,
-    "fatigue_sensitivity": 0.0552,
-    "base_latency_s": 10.3
+    "distance_aversion": 1.2366,
+    "fatigue_sensitivity": 0.2228,
+    "base_latency_s": 9.98
   },
   "drv_0131": {
     "base_accept_propensity": 0.5993,
-    "distance_aversion": 0.6554,
-    "fatigue_sensitivity": 0.1226,
-    "base_latency_s": 3.46
+    "distance_aversion": 0.1895,
+    "fatigue_sensitivity": 1.0363,
+    "base_latency_s": 7.88
   },
   "drv_0132": {
     "base_accept_propensity": 0.5777,
-    "distance_aversion": 0.2997,
-    "fatigue_sensitivity": 0.1437,
-    "base_latency_s": 6.95
+    "distance_aversion": 0.9048,
+    "fatigue_sensitivity": 0.1065,
+    "base_latency_s": 7.74
   },
   "drv_0133": {
     "base_accept_propensity": 0.7697,
-    "distance_aversion": 0.2404,
-    "fatigue_sensitivity": 0.4062,
-    "base_latency_s": 7.03
+    "distance_aversion": 0.6496,
+    "fatigue_sensitivity": 0.1873,
+    "base_latency_s": 8.27
   },
   "drv_0134": {
     "base_accept_propensity": 0.715,
-    "distance_aversion": 0.5099,
-    "fatigue_sensitivity": 0.4964,
-    "base_latency_s": 8.73
+    "distance_aversion": 1.1109,
+    "fatigue_sensitivity": 0.7778,
+    "base_latency_s": 8.77
   },
   "drv_0135": {
     "base_accept_propensity": 0.5737,
-    "distance_aversion": 0.3674,
-    "fatigue_sensitivity": 0.0989,
-    "base_latency_s": 3.11
+    "distance_aversion": 0.7667,
+    "fatigue_sensitivity": 0.2905,
+    "base_latency_s": 15.0
   },
   "drv_0136": {
     "base_accept_propensity": 0.8138,
-    "distance_aversion": 0.3017,
-    "fatigue_sensitivity": 0.2324,
-    "base_latency_s": 11.57
+    "distance_aversion": 0.8692,
+    "fatigue_sensitivity": 0.3577,
+    "base_latency_s": 8.57
   },
   "drv_0137": {
     "base_accept_propensity": 0.6355,
-    "distance_aversion": 0.9381,
-    "fatigue_sensitivity": 0.3124,
-    "base_latency_s": 9.92
+    "distance_aversion": 1.0595,
+    "fatigue_sensitivity": 0.1817,
+    "base_latency_s": 10.54
   },
   "drv_0138": {
     "base_accept_propensity": 0.7111,
-    "distance_aversion": 0.3046,
-    "fatigue_sensitivity": 0.5054,
-    "base_latency_s": 10.26
+    "distance_aversion": 1.116,
+    "fatigue_sensitivity": 0.1558,
+    "base_latency_s": 6.46
   },
   "drv_0139": {
     "base_accept_propensity": 0.8407,
-    "distance_aversion": 0.3901,
-    "fatigue_sensitivity": 0.0518,
-    "base_latency_s": 11.76
+    "distance_aversion": 0.2203,
+    "fatigue_sensitivity": 1.2845,
+    "base_latency_s": 9.09
   },
   "drv_0140": {
     "base_accept_propensity": 0.7112,
-    "distance_aversion": 0.3443,
-    "fatigue_sensitivity": 0.1215,
-    "base_latency_s": 5.56
+    "distance_aversion": 0.8125,
+    "fatigue_sensitivity": 0.7915,
+    "base_latency_s": 7.08
   },
   "drv_0141": {
     "base_accept_propensity": 0.4737,
-    "distance_aversion": 0.058,
-    "fatigue_sensitivity": 0.2204,
-    "base_latency_s": 2.0
+    "distance_aversion": 0.5713,
+    "fatigue_sensitivity": 0.4094,
+    "base_latency_s": 7.58
   },
   "drv_0142": {
     "base_accept_propensity": 0.6796,
-    "distance_aversion": 0.0802,
-    "fatigue_sensitivity": 0.1254,
-    "base_latency_s": 8.96
+    "distance_aversion": 0.7686,
+    "fatigue_sensitivity": 0.1065,
+    "base_latency_s": 5.31
   },
   "drv_0143": {
     "base_accept_propensity": 0.3539,
-    "distance_aversion": 0.0849,
-    "fatigue_sensitivity": 0.1327,
-    "base_latency_s": 11.9
+    "distance_aversion": 1.4947,
+    "fatigue_sensitivity": 0.2254,
+    "base_latency_s": 5.57
   },
   "drv_0144": {
     "base_accept_propensity": 0.8834,
-    "distance_aversion": 0.2408,
-    "fatigue_sensitivity": 0.0269,
-    "base_latency_s": 11.45
+    "distance_aversion": 0.5898,
+    "fatigue_sensitivity": 0.0943,
+    "base_latency_s": 9.4
   },
   "drv_0145": {
     "base_accept_propensity": 0.7531,
-    "distance_aversion": 0.3825,
-    "fatigue_sensitivity": 0.0404,
-    "base_latency_s": 6.36
+    "distance_aversion": 0.145,
+    "fatigue_sensitivity": 0.7149,
+    "base_latency_s": 10.28
   },
   "drv_0146": {
     "base_accept_propensity": 0.6322,
-    "distance_aversion": 0.6367,
-    "fatigue_sensitivity": 0.0974,
-    "base_latency_s": 7.7
+    "distance_aversion": 0.1694,
+    "fatigue_sensitivity": 0.1875,
+    "base_latency_s": 9.42
   },
   "drv_0147": {
     "base_accept_propensity": 0.855,
-    "distance_aversion": 0.0248,
-    "fatigue_sensitivity": 0.0647,
-    "base_latency_s": 8.83
+    "distance_aversion": 1.0287,
+    "fatigue_sensitivity": 0.9509,
+    "base_latency_s": 6.01
   },
   "drv_0148": {
     "base_accept_propensity": 0.7894,
-    "distance_aversion": 0.2021,
-    "fatigue_sensitivity": 0.1383,
-    "base_latency_s": 2.55
+    "distance_aversion": 0.3375,
+    "fatigue_sensitivity": 0.5104,
+    "base_latency_s": 8.99
   },
   "drv_0149": {
     "base_accept_propensity": 0.7866,
-    "distance_aversion": 0.9414,
-    "fatigue_sensitivity": 0.727,
+    "distance_aversion": 0.556,
+    "fatigue_sensitivity": 0.1505,
+    "base_latency_s": 2.0
+  },
+  "drv_0150": {
+    "base_accept_propensity": 0.6094,
+    "distance_aversion": 0.6876,
+    "fatigue_sensitivity": 0.3903,
+    "base_latency_s": 10.88
+  },
+  "drv_0151": {
+    "base_accept_propensity": 0.495,
+    "distance_aversion": 0.6483,
+    "fatigue_sensitivity": 0.5348,
+    "base_latency_s": 7.93
+  },
+  "drv_0152": {
+    "base_accept_propensity": 0.8823,
+    "distance_aversion": 0.5141,
+    "fatigue_sensitivity": 0.4349,
+    "base_latency_s": 8.86
+  },
+  "drv_0153": {
+    "base_accept_propensity": 0.4936,
+    "distance_aversion": 1.5408,
+    "fatigue_sensitivity": 0.5811,
+    "base_latency_s": 11.55
+  },
+  "drv_0154": {
+    "base_accept_propensity": 0.5464,
+    "distance_aversion": 0.8784,
+    "fatigue_sensitivity": 0.4937,
+    "base_latency_s": 6.78
+  },
+  "drv_0155": {
+    "base_accept_propensity": 0.3724,
+    "distance_aversion": 0.343,
+    "fatigue_sensitivity": 0.7621,
+    "base_latency_s": 10.93
+  },
+  "drv_0156": {
+    "base_accept_propensity": 0.7171,
+    "distance_aversion": 0.2448,
+    "fatigue_sensitivity": 1.0485,
+    "base_latency_s": 6.73
+  },
+  "drv_0157": {
+    "base_accept_propensity": 0.8094,
+    "distance_aversion": 0.3004,
+    "fatigue_sensitivity": 0.2712,
+    "base_latency_s": 9.69
+  },
+  "drv_0158": {
+    "base_accept_propensity": 0.776,
+    "distance_aversion": 1.1359,
+    "fatigue_sensitivity": 0.6098,
+    "base_latency_s": 6.83
+  },
+  "drv_0159": {
+    "base_accept_propensity": 0.7802,
+    "distance_aversion": 1.0835,
+    "fatigue_sensitivity": 0.9094,
+    "base_latency_s": 8.97
+  },
+  "drv_0160": {
+    "base_accept_propensity": 0.6583,
+    "distance_aversion": 0.9128,
+    "fatigue_sensitivity": 0.4937,
+    "base_latency_s": 12.43
+  },
+  "drv_0161": {
+    "base_accept_propensity": 0.4017,
+    "distance_aversion": 0.5584,
+    "fatigue_sensitivity": 0.312,
+    "base_latency_s": 6.1
+  },
+  "drv_0162": {
+    "base_accept_propensity": 0.9266,
+    "distance_aversion": 0.8924,
+    "fatigue_sensitivity": 0.7872,
+    "base_latency_s": 6.22
+  },
+  "drv_0163": {
+    "base_accept_propensity": 0.268,
+    "distance_aversion": 0.5945,
+    "fatigue_sensitivity": 0.3158,
+    "base_latency_s": 7.08
+  },
+  "drv_0164": {
+    "base_accept_propensity": 0.5894,
+    "distance_aversion": 0.1707,
+    "fatigue_sensitivity": 0.2759,
+    "base_latency_s": 8.97
+  },
+  "drv_0165": {
+    "base_accept_propensity": 0.3701,
+    "distance_aversion": 0.6828,
+    "fatigue_sensitivity": 0.0358,
+    "base_latency_s": 16.34
+  },
+  "drv_0166": {
+    "base_accept_propensity": 0.6376,
+    "distance_aversion": 0.3556,
+    "fatigue_sensitivity": 0.3318,
+    "base_latency_s": 6.33
+  },
+  "drv_0167": {
+    "base_accept_propensity": 0.4842,
+    "distance_aversion": 0.3704,
+    "fatigue_sensitivity": 0.5579,
+    "base_latency_s": 2.0
+  },
+  "drv_0168": {
+    "base_accept_propensity": 0.6543,
+    "distance_aversion": 0.1628,
+    "fatigue_sensitivity": 1.8024,
+    "base_latency_s": 6.11
+  },
+  "drv_0169": {
+    "base_accept_propensity": 0.6045,
+    "distance_aversion": 0.4655,
+    "fatigue_sensitivity": 0.4953,
+    "base_latency_s": 3.31
+  },
+  "drv_0170": {
+    "base_accept_propensity": 0.5613,
+    "distance_aversion": 0.2064,
+    "fatigue_sensitivity": 0.6823,
+    "base_latency_s": 6.4
+  },
+  "drv_0171": {
+    "base_accept_propensity": 0.8995,
+    "distance_aversion": 0.1905,
+    "fatigue_sensitivity": 0.335,
+    "base_latency_s": 8.13
+  },
+  "drv_0172": {
+    "base_accept_propensity": 0.8791,
+    "distance_aversion": 0.3419,
+    "fatigue_sensitivity": 1.045,
+    "base_latency_s": 5.2
+  },
+  "drv_0173": {
+    "base_accept_propensity": 0.4062,
+    "distance_aversion": 0.1983,
+    "fatigue_sensitivity": 0.2119,
+    "base_latency_s": 6.03
+  },
+  "drv_0174": {
+    "base_accept_propensity": 0.7006,
+    "distance_aversion": 0.7162,
+    "fatigue_sensitivity": 0.5597,
+    "base_latency_s": 2.46
+  },
+  "drv_0175": {
+    "base_accept_propensity": 0.7385,
+    "distance_aversion": 0.3342,
+    "fatigue_sensitivity": 1.8075,
+    "base_latency_s": 8.63
+  },
+  "drv_0176": {
+    "base_accept_propensity": 0.4694,
+    "distance_aversion": 0.5663,
+    "fatigue_sensitivity": 0.408,
+    "base_latency_s": 5.83
+  },
+  "drv_0177": {
+    "base_accept_propensity": 0.7031,
+    "distance_aversion": 1.3874,
+    "fatigue_sensitivity": 0.3398,
+    "base_latency_s": 11.36
+  },
+  "drv_0178": {
+    "base_accept_propensity": 0.8016,
+    "distance_aversion": 0.6679,
+    "fatigue_sensitivity": 0.5194,
+    "base_latency_s": 11.25
+  },
+  "drv_0179": {
+    "base_accept_propensity": 0.7253,
+    "distance_aversion": 0.405,
+    "fatigue_sensitivity": 0.3803,
+    "base_latency_s": 5.48
+  },
+  "drv_0180": {
+    "base_accept_propensity": 0.6706,
+    "distance_aversion": 0.802,
+    "fatigue_sensitivity": 0.6091,
+    "base_latency_s": 6.98
+  },
+  "drv_0181": {
+    "base_accept_propensity": 0.6043,
+    "distance_aversion": 0.5068,
+    "fatigue_sensitivity": 0.7907,
+    "base_latency_s": 8.26
+  },
+  "drv_0182": {
+    "base_accept_propensity": 0.6167,
+    "distance_aversion": 0.4949,
+    "fatigue_sensitivity": 0.664,
+    "base_latency_s": 10.38
+  },
+  "drv_0183": {
+    "base_accept_propensity": 0.5423,
+    "distance_aversion": 0.6056,
+    "fatigue_sensitivity": 0.3772,
+    "base_latency_s": 3.07
+  },
+  "drv_0184": {
+    "base_accept_propensity": 0.5169,
+    "distance_aversion": 0.4751,
+    "fatigue_sensitivity": 0.0595,
+    "base_latency_s": 7.88
+  },
+  "drv_0185": {
+    "base_accept_propensity": 0.7106,
+    "distance_aversion": 0.3624,
+    "fatigue_sensitivity": 2.6269,
+    "base_latency_s": 13.71
+  },
+  "drv_0186": {
+    "base_accept_propensity": 0.6701,
+    "distance_aversion": 0.3914,
+    "fatigue_sensitivity": 1.1845,
+    "base_latency_s": 7.84
+  },
+  "drv_0187": {
+    "base_accept_propensity": 0.5164,
+    "distance_aversion": 0.7035,
+    "fatigue_sensitivity": 0.5855,
+    "base_latency_s": 8.77
+  },
+  "drv_0188": {
+    "base_accept_propensity": 0.681,
+    "distance_aversion": 0.3432,
+    "fatigue_sensitivity": 1.1616,
+    "base_latency_s": 8.11
+  },
+  "drv_0189": {
+    "base_accept_propensity": 0.7338,
+    "distance_aversion": 1.3066,
+    "fatigue_sensitivity": 0.134,
+    "base_latency_s": 4.53
+  },
+  "drv_0190": {
+    "base_accept_propensity": 0.4975,
+    "distance_aversion": 0.6852,
+    "fatigue_sensitivity": 0.7265,
+    "base_latency_s": 10.97
+  },
+  "drv_0191": {
+    "base_accept_propensity": 0.5919,
+    "distance_aversion": 0.7526,
+    "fatigue_sensitivity": 0.4397,
+    "base_latency_s": 8.92
+  },
+  "drv_0192": {
+    "base_accept_propensity": 0.5956,
+    "distance_aversion": 0.6829,
+    "fatigue_sensitivity": 0.587,
+    "base_latency_s": 8.61
+  },
+  "drv_0193": {
+    "base_accept_propensity": 0.7566,
+    "distance_aversion": 1.6521,
+    "fatigue_sensitivity": 0.4766,
+    "base_latency_s": 10.3
+  },
+  "drv_0194": {
+    "base_accept_propensity": 0.6372,
+    "distance_aversion": 1.0996,
+    "fatigue_sensitivity": 0.4913,
+    "base_latency_s": 10.49
+  },
+  "drv_0195": {
+    "base_accept_propensity": 0.7561,
+    "distance_aversion": 0.0729,
+    "fatigue_sensitivity": 0.2616,
+    "base_latency_s": 2.42
+  },
+  "drv_0196": {
+    "base_accept_propensity": 0.6276,
+    "distance_aversion": 0.086,
+    "fatigue_sensitivity": 0.2806,
+    "base_latency_s": 9.57
+  },
+  "drv_0197": {
+    "base_accept_propensity": 0.9267,
+    "distance_aversion": 0.158,
+    "fatigue_sensitivity": 0.4233,
+    "base_latency_s": 6.37
+  },
+  "drv_0198": {
+    "base_accept_propensity": 0.9073,
+    "distance_aversion": 0.2739,
+    "fatigue_sensitivity": 0.1601,
+    "base_latency_s": 8.61
+  },
+  "drv_0199": {
+    "base_accept_propensity": 0.8501,
+    "distance_aversion": 0.5279,
+    "fatigue_sensitivity": 0.2654,
     "base_latency_s": 5.98
+  },
+  "drv_0200": {
+    "base_accept_propensity": 0.8124,
+    "distance_aversion": 0.3612,
+    "fatigue_sensitivity": 0.3808,
+    "base_latency_s": 5.53
+  },
+  "drv_0201": {
+    "base_accept_propensity": 0.7346,
+    "distance_aversion": 0.7844,
+    "fatigue_sensitivity": 0.5895,
+    "base_latency_s": 11.0
+  },
+  "drv_0202": {
+    "base_accept_propensity": 0.7014,
+    "distance_aversion": 1.2641,
+    "fatigue_sensitivity": 0.1911,
+    "base_latency_s": 8.11
+  },
+  "drv_0203": {
+    "base_accept_propensity": 0.5892,
+    "distance_aversion": 0.3791,
+    "fatigue_sensitivity": 1.0906,
+    "base_latency_s": 7.29
+  },
+  "drv_0204": {
+    "base_accept_propensity": 0.8425,
+    "distance_aversion": 1.4468,
+    "fatigue_sensitivity": 0.2056,
+    "base_latency_s": 7.28
+  },
+  "drv_0205": {
+    "base_accept_propensity": 0.7899,
+    "distance_aversion": 0.5906,
+    "fatigue_sensitivity": 0.0809,
+    "base_latency_s": 8.39
+  },
+  "drv_0206": {
+    "base_accept_propensity": 0.4664,
+    "distance_aversion": 0.7489,
+    "fatigue_sensitivity": 0.6822,
+    "base_latency_s": 8.1
+  },
+  "drv_0207": {
+    "base_accept_propensity": 0.5933,
+    "distance_aversion": 0.9795,
+    "fatigue_sensitivity": 0.5705,
+    "base_latency_s": 2.0
+  },
+  "drv_0208": {
+    "base_accept_propensity": 0.6009,
+    "distance_aversion": 0.7527,
+    "fatigue_sensitivity": 0.6924,
+    "base_latency_s": 5.53
+  },
+  "drv_0209": {
+    "base_accept_propensity": 0.4259,
+    "distance_aversion": 0.4649,
+    "fatigue_sensitivity": 0.2378,
+    "base_latency_s": 7.45
+  },
+  "drv_0210": {
+    "base_accept_propensity": 0.4216,
+    "distance_aversion": 0.0521,
+    "fatigue_sensitivity": 0.3191,
+    "base_latency_s": 10.41
+  },
+  "drv_0211": {
+    "base_accept_propensity": 0.7559,
+    "distance_aversion": 1.2466,
+    "fatigue_sensitivity": 0.5618,
+    "base_latency_s": 12.26
+  },
+  "drv_0212": {
+    "base_accept_propensity": 0.7266,
+    "distance_aversion": 0.2726,
+    "fatigue_sensitivity": 1.1152,
+    "base_latency_s": 5.36
+  },
+  "drv_0213": {
+    "base_accept_propensity": 0.5437,
+    "distance_aversion": 1.0094,
+    "fatigue_sensitivity": 0.397,
+    "base_latency_s": 14.0
+  },
+  "drv_0214": {
+    "base_accept_propensity": 0.7741,
+    "distance_aversion": 0.8249,
+    "fatigue_sensitivity": 0.5988,
+    "base_latency_s": 8.47
+  },
+  "drv_0215": {
+    "base_accept_propensity": 0.5417,
+    "distance_aversion": 0.4343,
+    "fatigue_sensitivity": 0.4367,
+    "base_latency_s": 9.66
+  },
+  "drv_0216": {
+    "base_accept_propensity": 0.5197,
+    "distance_aversion": 1.0252,
+    "fatigue_sensitivity": 0.5298,
+    "base_latency_s": 6.59
+  },
+  "drv_0217": {
+    "base_accept_propensity": 0.7077,
+    "distance_aversion": 0.3509,
+    "fatigue_sensitivity": 0.3412,
+    "base_latency_s": 6.38
+  },
+  "drv_0218": {
+    "base_accept_propensity": 0.7012,
+    "distance_aversion": 0.1496,
+    "fatigue_sensitivity": 0.4571,
+    "base_latency_s": 12.52
+  },
+  "drv_0219": {
+    "base_accept_propensity": 0.4422,
+    "distance_aversion": 0.7223,
+    "fatigue_sensitivity": 0.6567,
+    "base_latency_s": 7.55
+  },
+  "drv_0220": {
+    "base_accept_propensity": 0.6238,
+    "distance_aversion": 0.4228,
+    "fatigue_sensitivity": 1.4057,
+    "base_latency_s": 7.91
+  },
+  "drv_0221": {
+    "base_accept_propensity": 0.8831,
+    "distance_aversion": 0.1966,
+    "fatigue_sensitivity": 0.2364,
+    "base_latency_s": 11.7
+  },
+  "drv_0222": {
+    "base_accept_propensity": 0.733,
+    "distance_aversion": 0.1942,
+    "fatigue_sensitivity": 0.119,
+    "base_latency_s": 13.4
+  },
+  "drv_0223": {
+    "base_accept_propensity": 0.5968,
+    "distance_aversion": 0.1172,
+    "fatigue_sensitivity": 0.5591,
+    "base_latency_s": 3.72
+  },
+  "drv_0224": {
+    "base_accept_propensity": 0.9504,
+    "distance_aversion": 1.3075,
+    "fatigue_sensitivity": 0.3963,
+    "base_latency_s": 7.66
+  },
+  "drv_0225": {
+    "base_accept_propensity": 0.3888,
+    "distance_aversion": 0.7354,
+    "fatigue_sensitivity": 0.2526,
+    "base_latency_s": 8.2
+  },
+  "drv_0226": {
+    "base_accept_propensity": 0.7632,
+    "distance_aversion": 1.5299,
+    "fatigue_sensitivity": 2.4808,
+    "base_latency_s": 13.69
+  },
+  "drv_0227": {
+    "base_accept_propensity": 0.8734,
+    "distance_aversion": 0.1446,
+    "fatigue_sensitivity": 0.882,
+    "base_latency_s": 15.66
+  },
+  "drv_0228": {
+    "base_accept_propensity": 0.5453,
+    "distance_aversion": 0.3504,
+    "fatigue_sensitivity": 0.3251,
+    "base_latency_s": 8.1
+  },
+  "drv_0229": {
+    "base_accept_propensity": 0.5464,
+    "distance_aversion": 0.5299,
+    "fatigue_sensitivity": 0.3208,
+    "base_latency_s": 9.38
+  },
+  "drv_0230": {
+    "base_accept_propensity": 0.7075,
+    "distance_aversion": 0.5289,
+    "fatigue_sensitivity": 0.3056,
+    "base_latency_s": 10.86
+  },
+  "drv_0231": {
+    "base_accept_propensity": 0.9263,
+    "distance_aversion": 0.1057,
+    "fatigue_sensitivity": 0.6564,
+    "base_latency_s": 11.72
+  },
+  "drv_0232": {
+    "base_accept_propensity": 0.8635,
+    "distance_aversion": 0.4268,
+    "fatigue_sensitivity": 0.6575,
+    "base_latency_s": 7.31
+  },
+  "drv_0233": {
+    "base_accept_propensity": 0.6845,
+    "distance_aversion": 0.3222,
+    "fatigue_sensitivity": 0.3982,
+    "base_latency_s": 10.85
+  },
+  "drv_0234": {
+    "base_accept_propensity": 0.6606,
+    "distance_aversion": 0.1397,
+    "fatigue_sensitivity": 0.1717,
+    "base_latency_s": 6.17
+  },
+  "drv_0235": {
+    "base_accept_propensity": 0.8596,
+    "distance_aversion": 0.2379,
+    "fatigue_sensitivity": 1.0595,
+    "base_latency_s": 2.0
+  },
+  "drv_0236": {
+    "base_accept_propensity": 0.5068,
+    "distance_aversion": 0.1105,
+    "fatigue_sensitivity": 0.8881,
+    "base_latency_s": 4.14
+  },
+  "drv_0237": {
+    "base_accept_propensity": 0.6639,
+    "distance_aversion": 0.349,
+    "fatigue_sensitivity": 0.4802,
+    "base_latency_s": 8.94
+  },
+  "drv_0238": {
+    "base_accept_propensity": 0.7491,
+    "distance_aversion": 0.448,
+    "fatigue_sensitivity": 0.1152,
+    "base_latency_s": 10.65
+  },
+  "drv_0239": {
+    "base_accept_propensity": 0.5522,
+    "distance_aversion": 0.2907,
+    "fatigue_sensitivity": 0.9507,
+    "base_latency_s": 2.0
+  },
+  "drv_0240": {
+    "base_accept_propensity": 0.5904,
+    "distance_aversion": 0.6059,
+    "fatigue_sensitivity": 0.1583,
+    "base_latency_s": 2.87
+  },
+  "drv_0241": {
+    "base_accept_propensity": 0.8549,
+    "distance_aversion": 1.4701,
+    "fatigue_sensitivity": 0.3892,
+    "base_latency_s": 8.22
+  },
+  "drv_0242": {
+    "base_accept_propensity": 0.8529,
+    "distance_aversion": 0.5371,
+    "fatigue_sensitivity": 1.6886,
+    "base_latency_s": 2.0
+  },
+  "drv_0243": {
+    "base_accept_propensity": 0.8587,
+    "distance_aversion": 0.9709,
+    "fatigue_sensitivity": 0.3209,
+    "base_latency_s": 10.0
+  },
+  "drv_0244": {
+    "base_accept_propensity": 0.5195,
+    "distance_aversion": 0.0899,
+    "fatigue_sensitivity": 1.7415,
+    "base_latency_s": 11.43
+  },
+  "drv_0245": {
+    "base_accept_propensity": 0.699,
+    "distance_aversion": 0.7446,
+    "fatigue_sensitivity": 0.2865,
+    "base_latency_s": 2.0
+  },
+  "drv_0246": {
+    "base_accept_propensity": 0.8755,
+    "distance_aversion": 1.1397,
+    "fatigue_sensitivity": 0.9912,
+    "base_latency_s": 10.65
+  },
+  "drv_0247": {
+    "base_accept_propensity": 0.5109,
+    "distance_aversion": 0.1029,
+    "fatigue_sensitivity": 0.2617,
+    "base_latency_s": 7.77
+  },
+  "drv_0248": {
+    "base_accept_propensity": 0.7053,
+    "distance_aversion": 1.5,
+    "fatigue_sensitivity": 0.2369,
+    "base_latency_s": 12.62
+  },
+  "drv_0249": {
+    "base_accept_propensity": 0.7813,
+    "distance_aversion": 0.1332,
+    "fatigue_sensitivity": 0.119,
+    "base_latency_s": 9.2
+  },
+  "drv_0250": {
+    "base_accept_propensity": 0.4117,
+    "distance_aversion": 1.1471,
+    "fatigue_sensitivity": 0.6931,
+    "base_latency_s": 7.65
+  },
+  "drv_0251": {
+    "base_accept_propensity": 0.7372,
+    "distance_aversion": 0.3606,
+    "fatigue_sensitivity": 0.1242,
+    "base_latency_s": 8.73
+  },
+  "drv_0252": {
+    "base_accept_propensity": 0.6793,
+    "distance_aversion": 0.6047,
+    "fatigue_sensitivity": 1.3111,
+    "base_latency_s": 11.2
+  },
+  "drv_0253": {
+    "base_accept_propensity": 0.2104,
+    "distance_aversion": 1.813,
+    "fatigue_sensitivity": 0.2649,
+    "base_latency_s": 8.95
+  },
+  "drv_0254": {
+    "base_accept_propensity": 0.8368,
+    "distance_aversion": 1.1421,
+    "fatigue_sensitivity": 0.585,
+    "base_latency_s": 8.51
+  },
+  "drv_0255": {
+    "base_accept_propensity": 0.2278,
+    "distance_aversion": 0.7284,
+    "fatigue_sensitivity": 0.064,
+    "base_latency_s": 4.05
+  },
+  "drv_0256": {
+    "base_accept_propensity": 0.4655,
+    "distance_aversion": 0.2412,
+    "fatigue_sensitivity": 0.3555,
+    "base_latency_s": 9.85
+  },
+  "drv_0257": {
+    "base_accept_propensity": 0.3431,
+    "distance_aversion": 0.2109,
+    "fatigue_sensitivity": 0.1156,
+    "base_latency_s": 8.49
+  },
+  "drv_0258": {
+    "base_accept_propensity": 0.8804,
+    "distance_aversion": 0.2956,
+    "fatigue_sensitivity": 0.2784,
+    "base_latency_s": 13.94
+  },
+  "drv_0259": {
+    "base_accept_propensity": 0.8363,
+    "distance_aversion": 0.4423,
+    "fatigue_sensitivity": 1.0208,
+    "base_latency_s": 8.37
+  },
+  "drv_0260": {
+    "base_accept_propensity": 0.4701,
+    "distance_aversion": 0.5233,
+    "fatigue_sensitivity": 0.5533,
+    "base_latency_s": 8.15
+  },
+  "drv_0261": {
+    "base_accept_propensity": 0.5176,
+    "distance_aversion": 0.5938,
+    "fatigue_sensitivity": 0.8855,
+    "base_latency_s": 6.53
+  },
+  "drv_0262": {
+    "base_accept_propensity": 0.5989,
+    "distance_aversion": 0.2073,
+    "fatigue_sensitivity": 0.8968,
+    "base_latency_s": 10.59
+  },
+  "drv_0263": {
+    "base_accept_propensity": 0.6488,
+    "distance_aversion": 0.2149,
+    "fatigue_sensitivity": 0.4859,
+    "base_latency_s": 7.81
+  },
+  "drv_0264": {
+    "base_accept_propensity": 0.4667,
+    "distance_aversion": 1.1026,
+    "fatigue_sensitivity": 0.5877,
+    "base_latency_s": 6.3
+  },
+  "drv_0265": {
+    "base_accept_propensity": 0.636,
+    "distance_aversion": 0.5713,
+    "fatigue_sensitivity": 0.1053,
+    "base_latency_s": 13.24
+  },
+  "drv_0266": {
+    "base_accept_propensity": 0.4018,
+    "distance_aversion": 0.198,
+    "fatigue_sensitivity": 0.1458,
+    "base_latency_s": 13.78
+  },
+  "drv_0267": {
+    "base_accept_propensity": 0.5945,
+    "distance_aversion": 0.6165,
+    "fatigue_sensitivity": 0.3525,
+    "base_latency_s": 7.07
+  },
+  "drv_0268": {
+    "base_accept_propensity": 0.7076,
+    "distance_aversion": 1.0845,
+    "fatigue_sensitivity": 1.021,
+    "base_latency_s": 5.35
+  },
+  "drv_0269": {
+    "base_accept_propensity": 0.6281,
+    "distance_aversion": 0.7556,
+    "fatigue_sensitivity": 0.2584,
+    "base_latency_s": 11.83
+  },
+  "drv_0270": {
+    "base_accept_propensity": 0.7928,
+    "distance_aversion": 0.178,
+    "fatigue_sensitivity": 0.7799,
+    "base_latency_s": 5.92
+  },
+  "drv_0271": {
+    "base_accept_propensity": 0.5088,
+    "distance_aversion": 0.3541,
+    "fatigue_sensitivity": 0.0243,
+    "base_latency_s": 16.93
+  },
+  "drv_0272": {
+    "base_accept_propensity": 0.6725,
+    "distance_aversion": 0.1056,
+    "fatigue_sensitivity": 0.4696,
+    "base_latency_s": 8.03
+  },
+  "drv_0273": {
+    "base_accept_propensity": 0.5564,
+    "distance_aversion": 0.3223,
+    "fatigue_sensitivity": 1.4571,
+    "base_latency_s": 11.34
+  },
+  "drv_0274": {
+    "base_accept_propensity": 0.5422,
+    "distance_aversion": 0.1662,
+    "fatigue_sensitivity": 0.5148,
+    "base_latency_s": 4.54
+  },
+  "drv_0275": {
+    "base_accept_propensity": 0.6605,
+    "distance_aversion": 0.0735,
+    "fatigue_sensitivity": 0.1602,
+    "base_latency_s": 8.34
+  },
+  "drv_0276": {
+    "base_accept_propensity": 0.5169,
+    "distance_aversion": 0.423,
+    "fatigue_sensitivity": 0.2434,
+    "base_latency_s": 11.74
+  },
+  "drv_0277": {
+    "base_accept_propensity": 0.6773,
+    "distance_aversion": 0.2551,
+    "fatigue_sensitivity": 0.5494,
+    "base_latency_s": 9.77
+  },
+  "drv_0278": {
+    "base_accept_propensity": 0.4555,
+    "distance_aversion": 0.0981,
+    "fatigue_sensitivity": 0.8341,
+    "base_latency_s": 6.83
+  },
+  "drv_0279": {
+    "base_accept_propensity": 0.5665,
+    "distance_aversion": 0.5538,
+    "fatigue_sensitivity": 0.4878,
+    "base_latency_s": 15.84
+  },
+  "drv_0280": {
+    "base_accept_propensity": 0.8835,
+    "distance_aversion": 0.889,
+    "fatigue_sensitivity": 1.1759,
+    "base_latency_s": 10.68
+  },
+  "drv_0281": {
+    "base_accept_propensity": 0.6671,
+    "distance_aversion": 0.2446,
+    "fatigue_sensitivity": 0.5308,
+    "base_latency_s": 7.77
+  },
+  "drv_0282": {
+    "base_accept_propensity": 0.5107,
+    "distance_aversion": 1.0544,
+    "fatigue_sensitivity": 0.5689,
+    "base_latency_s": 6.63
+  },
+  "drv_0283": {
+    "base_accept_propensity": 0.2355,
+    "distance_aversion": 0.1938,
+    "fatigue_sensitivity": 0.2427,
+    "base_latency_s": 7.64
+  },
+  "drv_0284": {
+    "base_accept_propensity": 0.5678,
+    "distance_aversion": 0.9305,
+    "fatigue_sensitivity": 0.4051,
+    "base_latency_s": 12.53
+  },
+  "drv_0285": {
+    "base_accept_propensity": 0.6564,
+    "distance_aversion": 0.0229,
+    "fatigue_sensitivity": 0.1424,
+    "base_latency_s": 6.13
+  },
+  "drv_0286": {
+    "base_accept_propensity": 0.5692,
+    "distance_aversion": 0.7475,
+    "fatigue_sensitivity": 0.3164,
+    "base_latency_s": 8.56
+  },
+  "drv_0287": {
+    "base_accept_propensity": 0.6373,
+    "distance_aversion": 0.6329,
+    "fatigue_sensitivity": 1.0955,
+    "base_latency_s": 5.99
+  },
+  "drv_0288": {
+    "base_accept_propensity": 0.7599,
+    "distance_aversion": 0.7863,
+    "fatigue_sensitivity": 0.2431,
+    "base_latency_s": 12.24
+  },
+  "drv_0289": {
+    "base_accept_propensity": 0.7361,
+    "distance_aversion": 0.6364,
+    "fatigue_sensitivity": 0.6563,
+    "base_latency_s": 7.97
+  },
+  "drv_0290": {
+    "base_accept_propensity": 0.6728,
+    "distance_aversion": 0.7256,
+    "fatigue_sensitivity": 0.2925,
+    "base_latency_s": 11.06
+  },
+  "drv_0291": {
+    "base_accept_propensity": 0.7952,
+    "distance_aversion": 0.3536,
+    "fatigue_sensitivity": 0.7371,
+    "base_latency_s": 10.17
+  },
+  "drv_0292": {
+    "base_accept_propensity": 0.6679,
+    "distance_aversion": 0.1135,
+    "fatigue_sensitivity": 0.2002,
+    "base_latency_s": 6.71
+  },
+  "drv_0293": {
+    "base_accept_propensity": 0.6094,
+    "distance_aversion": 1.0044,
+    "fatigue_sensitivity": 0.5246,
+    "base_latency_s": 10.57
+  },
+  "drv_0294": {
+    "base_accept_propensity": 0.4873,
+    "distance_aversion": 0.2597,
+    "fatigue_sensitivity": 0.8316,
+    "base_latency_s": 11.3
+  },
+  "drv_0295": {
+    "base_accept_propensity": 0.8581,
+    "distance_aversion": 1.3915,
+    "fatigue_sensitivity": 0.7268,
+    "base_latency_s": 5.01
+  },
+  "drv_0296": {
+    "base_accept_propensity": 0.77,
+    "distance_aversion": 0.2156,
+    "fatigue_sensitivity": 0.5455,
+    "base_latency_s": 10.58
+  },
+  "drv_0297": {
+    "base_accept_propensity": 0.5504,
+    "distance_aversion": 0.5185,
+    "fatigue_sensitivity": 0.5498,
+    "base_latency_s": 19.19
+  },
+  "drv_0298": {
+    "base_accept_propensity": 0.6043,
+    "distance_aversion": 0.1963,
+    "fatigue_sensitivity": 0.4715,
+    "base_latency_s": 7.57
+  },
+  "drv_0299": {
+    "base_accept_propensity": 0.7561,
+    "distance_aversion": 0.7182,
+    "fatigue_sensitivity": 0.3955,
+    "base_latency_s": 10.39
   }
 }

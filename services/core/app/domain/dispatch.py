@@ -15,9 +15,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.repos import ambulances as ambulances_repo
 from app.db.repos import dispatch as dispatch_repo
 from app.db.repos import emergencies as emergencies_repo
+from app.db.repos import identity as identity_repo
 from app.db.session import get_session
 from app.domain import audit, escalation
 from app.integrations.ml import dispatch as ml_dispatch
+from app.integrations.push.sender import send_push
 from app.realtime import outbox
 
 logger = logging.getLogger("dispatch")
@@ -99,6 +101,19 @@ async def run_dispatch_round(
             "acuity": emergency.get("ai_acuity"), "eta_sec": r["expected_arrival_sec"],
             "expires_at": offer["expires_at"].isoformat(),
         })
+        # technical.md Section12.3: push wakes a backgrounded tab; WS stays
+        # primary. send_push() itself was already real (Firebase Admin SDK),
+        # but nothing in the whole codebase ever called it for a new offer --
+        # found by searching for callers and finding none. Best-effort: a
+        # failed push must never fail the dispatch round itself.
+        for paramedic_user_id in await identity_repo.get_user_ids_by_ambulance_id(session, r["ambulance_id"]):
+            try:
+                await send_push(paramedic_user_id, "New emergency offer",
+                                 f"ETA {r['expected_arrival_sec'] // 60} min away", data={
+                                     "offer_id": str(offer["id"]), "emergency_id": emergency_id,
+                                 })
+            except Exception:
+                logger.exception("send_push failed for paramedic user %s (offer %s)", paramedic_user_id, offer["id"])
 
     await audit.write(
         session, actor_type="system", actor_id="dispatch", entity="emergencies", entity_id=emergency_id,

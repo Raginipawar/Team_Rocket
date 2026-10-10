@@ -1,0 +1,18 @@
+{
+  "auc": 0.9953,
+  "brier": 0.0071,
+  "mae_free_beds": 0.542,
+  "n_train": 85680,
+  "n_test": 15120,
+  "features": [
+    "last_reported_free",
+    "minutes_since_report",
+    "eta_min",
+    "hour",
+    "weekday",
+    "arrival_rate_1h",
+    "discharge_rate_1h",
+    "incoming_reserved",
+    "room_type_enc"
+  ]
+}

@@ -12,7 +12,7 @@ trauma,urgent,none,False,56,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,none,False,47,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
 burns,stable,none,False,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 burns,urgent,mild,False,43,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,25,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+trauma,critical,none,False,25,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,41,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1
 stroke,urgent,none,False,9,1,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0
 trauma,urgent,none,False,4,1,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0
@@ -48,7 +48,7 @@ respiratory,urgent,none,False,49,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,stable,mild,False,28,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 trauma,stable,none,False,25,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,52,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-stroke,critical,none,False,71,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0
+stroke,critical,none,False,71,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0
 cardiac,stable,mild,False,23,1,1,0,0,0,0,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,mild,False,7,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
@@ -155,7 +155,7 @@ cardiac,critical,none,False,38,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0
 respiratory,urgent,severe,False,21,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,1,1,0
 poisoning,urgent,none,False,22,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,71,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0
-stroke,urgent,none,False,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,5,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 pediatric,urgent,severe,False,72,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1
 general,urgent,none,False,31,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 poisoning,critical,none,False,22,1,0,0,1,0,0,0,0,1,0,1,0,0,0,0,1,0,0,0,0,0,1
@@ -243,7 +243,7 @@ pediatric,urgent,severe,False,43,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 cardiac,urgent,none,False,19,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,mild,False,37,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,mild,False,83,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0
-trauma,critical,none,False,33,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,1,0,0,0,0,0
+trauma,critical,none,False,33,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,1,0,0,0,0,0
 cardiac,urgent,mild,False,38,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,none,False,30,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,35,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -296,7 +296,7 @@ trauma,urgent,none,False,57,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 trauma,urgent,severe,False,46,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1
 trauma,critical,none,False,45,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0
 respiratory,critical,none,False,55,1,0,0,0,0,0,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,32,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,32,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 burns,urgent,none,False,26,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,mild,False,53,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0
 poisoning,critical,severe,False,43,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,0,0,0
@@ -443,14 +443,14 @@ general,urgent,none,False,24,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,severe,False,45,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1
 obstetric,stable,none,True,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 stroke,urgent,none,False,73,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,mild,False,31,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+trauma,critical,mild,False,31,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0
 burns,stable,none,False,30,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,19,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,severe,False,29,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0
 burns,stable,none,False,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,severe,False,48,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,0,0
 cardiac,urgent,mild,False,44,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,mild,False,15,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0
+stroke,urgent,mild,False,15,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0
 respiratory,urgent,none,False,38,1,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,0,0,1,0
 obstetric,critical,mild,False,34,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,1
 obstetric,urgent,none,False,55,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -524,12 +524,12 @@ cardiac,stable,severe,False,39,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 trauma,urgent,none,False,64,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,none,False,13,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 pediatric,urgent,none,False,30,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,severe,False,36,1,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,0,1
+stroke,critical,severe,False,36,1,0,1,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1
 cardiac,stable,severe,False,33,1,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1
 respiratory,stable,none,False,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,18,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,1,0,1,0,1,1
 pediatric,critical,mild,False,43,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1
-stroke,urgent,mild,False,20,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,mild,False,20,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,none,False,40,1,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,49,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -565,7 +565,7 @@ obstetric,urgent,none,False,64,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0
 pediatric,urgent,mild,False,42,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0
 general,stable,none,False,18,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,none,False,26,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,3,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,1,0,0
+trauma,critical,none,False,3,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,1,0,0
 respiratory,critical,mild,False,37,1,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,critical,severe,False,43,1,0,1,0,1,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0
 stroke,stable,mild,False,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -581,7 +581,7 @@ burns,critical,none,False,29,1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,mild,False,29,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,mild,False,82,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,17,1,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0
-trauma,critical,severe,False,41,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,0,1
+trauma,critical,severe,False,41,1,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,1,0,0,1,0,1
 respiratory,urgent,none,False,62,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 cardiac,urgent,none,False,22,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,28,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
@@ -681,7 +681,7 @@ pediatric,stable,none,False,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,mild,False,15,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,stable,severe,False,20,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,27,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,46,1,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,1,0
+trauma,critical,none,False,46,1,0,1,1,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,1,0
 trauma,urgent,none,False,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,stable,severe,False,10,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1
 cardiac,stable,none,False,70,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
@@ -721,7 +721,7 @@ respiratory,urgent,severe,False,40,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,1,1
 respiratory,urgent,none,False,23,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 general,stable,none,False,56,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,mild,False,37,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,28,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,28,1,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 stroke,stable,mild,False,21,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,42,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,severe,False,61,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0
@@ -780,7 +780,7 @@ burns,critical,severe,False,24,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,1,1
 stroke,stable,none,False,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
 poisoning,urgent,none,False,38,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,34,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,severe,False,70,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,1,1,1,0,1
+stroke,critical,severe,False,70,1,0,1,0,1,0,1,0,0,1,0,0,0,1,0,0,0,1,1,1,0,1
 cardiac,urgent,none,False,17,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,0,0
 burns,critical,severe,False,48,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,1,1,1,1
 general,urgent,severe,False,75,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,0
@@ -847,7 +847,7 @@ pediatric,urgent,none,False,26,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,31,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,32,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0
-stroke,critical,none,False,8,1,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,8,1,0,1,0,0,0,1,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 poisoning,urgent,severe,False,36,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,mild,False,40,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -876,7 +876,7 @@ poisoning,urgent,mild,False,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 pediatric,stable,severe,False,50,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1
 pediatric,critical,none,False,61,1,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,mild,False,59,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,0
-stroke,critical,none,False,67,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,67,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,46,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,67,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0
 cardiac,urgent,none,False,41,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -917,7 +917,7 @@ respiratory,stable,mild,False,47,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 poisoning,stable,none,False,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,59,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
 pediatric,stable,none,False,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,25,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,25,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 trauma,stable,none,False,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 pediatric,stable,none,False,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,43,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
@@ -967,7 +967,7 @@ trauma,stable,none,False,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,none,False,49,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,none,False,30,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,23,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,23,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 poisoning,stable,mild,False,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
 burns,stable,none,False,55,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,none,False,41,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -1005,7 +1005,7 @@ stroke,stable,none,False,34,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,27,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,42,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,none,False,25,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0
-trauma,critical,none,False,62,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0
+trauma,critical,none,False,62,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1,0,0,0
 cardiac,urgent,none,False,71,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1
 obstetric,critical,none,False,11,1,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0
 respiratory,critical,none,False,12,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -1030,7 +1030,7 @@ respiratory,stable,mild,False,19,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0
 burns,urgent,none,False,53,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,58,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,57,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0
-stroke,critical,mild,False,29,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,29,1,0,0,1,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 trauma,stable,none,False,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,severe,False,60,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,none,False,49,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -1057,7 +1057,7 @@ burns,urgent,none,False,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,severe,False,34,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,mild,True,48,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0
-trauma,critical,none,False,15,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0
+trauma,critical,none,False,15,1,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,0
 cardiac,stable,none,False,28,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,none,False,71,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,18,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,1
@@ -1071,8 +1071,8 @@ respiratory,urgent,severe,True,26,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,1
 trauma,urgent,mild,False,17,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,60,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,True,37,0,0,0,1,0,1,1,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0
-trauma,critical,none,False,47,1,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0
+trauma,critical,none,True,37,0,0,0,1,0,1,1,0,1,0,0,0,0,1,0,0,1,1,0,0,0,0
+trauma,critical,none,False,47,1,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0
 cardiac,urgent,none,False,36,1,1,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0
 stroke,stable,mild,False,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 stroke,critical,none,False,55,1,0,1,0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0
@@ -1084,7 +1084,7 @@ stroke,critical,none,False,36,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,36,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0
 trauma,urgent,mild,False,27,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 obstetric,urgent,none,False,37,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,34,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,34,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 pediatric,stable,none,False,25,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 poisoning,critical,severe,False,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0
 cardiac,critical,none,False,36,1,1,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
@@ -1096,7 +1096,7 @@ pediatric,urgent,mild,False,47,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,24,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,0
 obstetric,stable,none,False,47,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0
 burns,urgent,none,False,43,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,43,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,43,1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 poisoning,urgent,mild,False,13,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 obstetric,critical,none,False,30,1,0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0
 stroke,stable,none,False,27,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -1112,7 +1112,7 @@ poisoning,stable,none,False,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,severe,False,53,1,0,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,1,0,0
 poisoning,stable,mild,False,33,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,mild,False,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-stroke,urgent,none,False,45,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,45,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 respiratory,critical,none,False,64,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,53,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,severe,False,35,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,0,1,1
@@ -1196,7 +1196,7 @@ trauma,urgent,mild,False,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
 general,urgent,severe,False,38,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,1
 cardiac,critical,none,False,77,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,1
 pediatric,stable,none,False,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,32,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0
+stroke,critical,mild,False,32,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0
 burns,critical,none,False,74,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,62,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 obstetric,critical,none,False,9,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0
@@ -1406,7 +1406,7 @@ general,urgent,none,False,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,20,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,42,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,39,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,70,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0
+stroke,critical,none,False,70,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,1,0,0,0
 trauma,critical,mild,False,3,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0
 burns,urgent,none,False,63,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0
 general,critical,severe,False,12,1,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0
@@ -1463,7 +1463,7 @@ burns,urgent,none,False,57,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,73,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1
 pediatric,urgent,none,False,26,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 stroke,critical,none,False,28,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,36,1,0,1,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0
+stroke,critical,none,False,36,1,0,1,0,1,0,0,0,0,1,0,0,1,1,0,1,0,0,0,0,0,0
 burns,urgent,severe,False,18,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1
 trauma,stable,severe,False,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0
 poisoning,critical,none,False,42,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
@@ -1529,7 +1529,7 @@ poisoning,urgent,none,False,21,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,stable,none,False,32,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,none,False,21,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0
 poisoning,stable,mild,False,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,5,1,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,5,1,0,1,0,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,41,1,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,35,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1
 burns,critical,severe,False,39,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0
@@ -1591,7 +1591,7 @@ poisoning,urgent,mild,False,90,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,mild,False,16,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0
 cardiac,urgent,none,False,2,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,critical,none,False,4,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
-trauma,critical,mild,False,59,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+trauma,critical,mild,False,59,1,0,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0
 pediatric,stable,none,False,12,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,none,False,16,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,14,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
@@ -1719,7 +1719,7 @@ respiratory,stable,none,False,21,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 trauma,critical,mild,False,62,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,0,0,0
 pediatric,stable,mild,False,50,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,42,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,43,1,0,1,0,0,0,0,0,1,1,0,0,1,0,0,0,0,1,0,0,0,0
+stroke,critical,none,False,43,1,0,1,0,0,0,0,0,1,1,0,0,1,1,0,0,0,1,0,0,0,0
 respiratory,stable,none,False,72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,44,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,56,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0
@@ -1920,7 +1920,7 @@ stroke,urgent,mild,False,48,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,0
 poisoning,stable,none,False,29,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,none,False,21,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 stroke,stable,none,False,26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,52,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+trauma,critical,none,False,52,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0
 general,stable,none,False,51,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 stroke,stable,mild,False,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 stroke,urgent,mild,False,15,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1
@@ -1936,7 +1936,7 @@ burns,critical,none,False,19,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0
 pediatric,stable,none,False,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 respiratory,urgent,none,False,43,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0
 stroke,urgent,none,False,51,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,46,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+stroke,urgent,none,False,46,1,0,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1
 cardiac,critical,none,False,38,0,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0
 trauma,stable,severe,False,27,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0
 pediatric,stable,severe,False,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1
@@ -1985,7 +1985,7 @@ pediatric,urgent,none,False,43,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,True,55,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0
 stroke,critical,severe,False,53,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,1
 burns,stable,none,False,38,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-stroke,critical,mild,False,45,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0
+stroke,critical,mild,False,45,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0
 cardiac,stable,none,False,29,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,severe,False,24,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1,0
 respiratory,urgent,none,False,9,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -2057,7 +2057,7 @@ obstetric,critical,mild,False,49,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,1
 pediatric,critical,none,False,13,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,49,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,none,False,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,58,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,58,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,50,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0
 pediatric,stable,none,False,53,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,76,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
@@ -2075,7 +2075,7 @@ general,urgent,severe,False,33,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,1
 respiratory,critical,none,False,46,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,mild,False,23,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1
 obstetric,urgent,mild,True,46,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,17,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,17,1,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,62,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 poisoning,stable,none,False,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 burns,critical,severe,False,29,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,0
@@ -2162,15 +2162,15 @@ obstetric,urgent,none,False,49,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,0,0
 trauma,stable,severe,False,58,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,1,1,0,0,1
 pediatric,stable,mild,False,24,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0
 pediatric,stable,severe,False,27,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1
-trauma,critical,mild,False,34,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0
-stroke,critical,none,False,69,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,1
+trauma,critical,mild,False,34,1,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,0,0
+stroke,critical,none,False,69,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,1,1
 pediatric,critical,none,False,27,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,none,True,13,1,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 general,critical,none,False,19,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,mild,False,50,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1
 respiratory,stable,none,False,21,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0
 cardiac,critical,severe,False,15,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,1,0,0
-stroke,critical,mild,False,25,1,0,1,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,25,1,0,1,0,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,34,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,none,False,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,severe,False,48,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0
@@ -2224,7 +2224,7 @@ poisoning,urgent,none,False,13,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,56,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,severe,True,26,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 poisoning,stable,none,False,13,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,23,0,0,0,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0
+trauma,critical,none,False,23,0,0,0,1,0,0,0,0,1,1,1,1,0,1,0,0,0,0,0,0,0,0
 obstetric,stable,none,False,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,mild,False,67,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 pediatric,critical,none,False,26,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
@@ -2255,13 +2255,13 @@ poisoning,urgent,severe,False,49,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0
 cardiac,urgent,mild,False,42,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,0,0
 general,urgent,none,False,20,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,none,False,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-stroke,urgent,mild,True,57,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,mild,True,57,1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 obstetric,stable,none,False,10,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,stable,severe,False,32,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0
 stroke,urgent,none,False,49,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,mild,False,59,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 obstetric,critical,none,False,45,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0
-stroke,critical,severe,False,29,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0
+stroke,critical,severe,False,29,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,1,0
 pediatric,stable,none,False,66,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
 stroke,critical,none,False,32,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
 respiratory,urgent,mild,False,48,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -2340,7 +2340,7 @@ stroke,urgent,none,False,54,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,50,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,51,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,mild,False,27,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-stroke,urgent,none,True,0,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,True,0,1,0,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,90,1,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,1
 pediatric,critical,none,False,14,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0
 trauma,urgent,mild,True,49,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -2521,9 +2521,9 @@ burns,urgent,none,False,7,1,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,27,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,none,False,33,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 poisoning,urgent,mild,False,10,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,34,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,34,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-stroke,critical,mild,False,30,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0
+stroke,critical,mild,False,30,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0
 respiratory,urgent,severe,False,43,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1
 pediatric,urgent,severe,False,25,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1
 cardiac,stable,mild,False,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -2557,13 +2557,13 @@ burns,urgent,mild,False,15,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,none,False,22,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,mild,False,54,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0,0
 obstetric,stable,none,False,28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,severe,True,16,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0
+trauma,critical,severe,True,16,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0
 poisoning,critical,none,False,20,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,severe,False,45,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,0,1,1
 cardiac,critical,none,False,43,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,0
 obstetric,urgent,none,False,58,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,48,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0
-stroke,critical,mild,False,29,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,29,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 respiratory,critical,none,False,48,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,59,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,critical,mild,False,50,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
@@ -2578,7 +2578,7 @@ respiratory,critical,mild,False,40,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,1,0,1,0
 obstetric,stable,none,True,74,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 general,urgent,severe,False,34,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1
 burns,urgent,none,False,29,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,40,1,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0
+trauma,critical,none,False,40,1,0,1,1,0,0,0,0,0,1,0,0,0,1,0,0,1,1,0,0,0,0
 poisoning,stable,none,False,39,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,15,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1
 pediatric,critical,mild,False,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1
@@ -2673,9 +2673,9 @@ poisoning,urgent,mild,False,69,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0
 general,critical,none,False,34,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,True,44,1,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 burns,urgent,none,False,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,15,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,15,1,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,12,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0
-stroke,critical,none,False,39,0,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,39,0,0,1,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,4,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,33,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,none,False,32,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0
@@ -2688,7 +2688,7 @@ cardiac,urgent,severe,False,34,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,1
 pediatric,urgent,severe,False,22,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0
 cardiac,critical,none,False,35,1,1,0,0,0,0,0,0,0,1,0,1,1,0,1,0,0,0,0,0,0,0
 stroke,stable,none,False,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,75,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,75,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 general,urgent,mild,False,40,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,mild,False,23,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1
 respiratory,stable,none,False,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -2767,7 +2767,7 @@ obstetric,urgent,none,False,40,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,mild,False,3,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0,1
 obstetric,urgent,mild,False,19,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,37,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,12,1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0
+stroke,critical,mild,False,12,1,0,0,0,0,0,1,0,0,1,0,0,1,1,0,0,0,0,0,1,0,0
 burns,urgent,severe,False,44,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1
 obstetric,urgent,none,False,74,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1
 stroke,urgent,severe,False,48,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
@@ -2817,7 +2817,7 @@ cardiac,urgent,none,False,45,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,51,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,mild,False,7,1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0
-stroke,critical,severe,False,32,1,0,1,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,1,0
+stroke,critical,severe,False,32,1,0,1,1,0,0,0,0,0,1,0,0,1,1,0,0,0,0,1,0,1,0
 general,critical,mild,False,32,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0
 poisoning,stable,none,False,55,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,mild,False,17,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0
@@ -2860,7 +2860,7 @@ stroke,stable,mild,False,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,mild,False,49,1,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,1
 burns,critical,severe,False,33,1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,1,0,0,1
 pediatric,stable,none,False,90,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-trauma,critical,none,False,44,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0
+trauma,critical,none,False,44,1,0,0,1,0,0,0,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0
 stroke,urgent,severe,False,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 poisoning,urgent,mild,False,17,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,30,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -2917,7 +2917,7 @@ cardiac,stable,none,False,24,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,50,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,severe,False,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1
 obstetric,stable,none,False,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,10,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0
+stroke,critical,mild,False,10,0,0,1,0,0,0,1,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0
 cardiac,urgent,severe,False,44,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0
 pediatric,critical,none,False,42,1,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,mild,False,61,1,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
@@ -2951,7 +2951,7 @@ respiratory,stable,mild,False,31,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0
 trauma,stable,none,False,14,0,1,0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0
 stroke,stable,none,False,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,52,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0
-trauma,critical,none,False,35,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,1,0,0,0,0,0
+trauma,critical,none,False,35,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,1,0,0,0,0,0
 trauma,stable,none,False,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 stroke,stable,none,False,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,33,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
@@ -2960,7 +2960,7 @@ pediatric,stable,mild,False,40,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,none,False,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,mild,False,32,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1
-trauma,critical,none,False,32,1,1,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0
+trauma,critical,none,False,32,1,1,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0
 respiratory,urgent,none,False,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 obstetric,urgent,mild,False,24,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,25,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3183,10 +3183,10 @@ burns,critical,severe,False,35,1,1,1,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1
 obstetric,critical,none,False,28,1,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,stable,none,False,58,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0
 stroke,stable,none,False,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,47,1,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,47,1,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0
 burns,stable,mild,False,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 trauma,critical,severe,False,28,1,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,0,1,0,1,0,0
-stroke,critical,none,False,7,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,7,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 general,urgent,none,False,18,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0
 pediatric,urgent,severe,False,11,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 general,urgent,severe,False,46,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,1,1
@@ -3203,7 +3203,7 @@ cardiac,stable,mild,False,15,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,26,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 general,stable,none,False,30,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,72,1,0,0,1,0,0,1,0,1,1,0,0,0,0,1,0,1,1,1,0,0,0
+trauma,critical,none,False,72,1,0,0,1,0,0,1,0,1,1,0,0,0,1,1,0,1,1,1,0,0,0
 trauma,stable,none,False,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,33,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,32,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0
@@ -3343,7 +3343,7 @@ cardiac,stable,mild,False,62,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 cardiac,critical,none,False,12,1,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0
 general,critical,none,False,62,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,severe,False,17,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1
-trauma,critical,mild,False,13,1,0,0,1,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0
+trauma,critical,mild,False,13,1,0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0,0
 trauma,critical,none,False,34,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0
 trauma,critical,none,False,21,1,0,0,1,0,0,0,0,1,1,0,1,0,0,1,0,1,0,0,0,0,0
 general,urgent,severe,False,25,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0
@@ -3386,7 +3386,7 @@ burns,stable,none,False,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 respiratory,stable,severe,False,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0
 trauma,urgent,none,False,44,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,severe,False,1,0,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0
-stroke,critical,none,False,32,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,32,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 general,stable,none,False,4,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,20,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,none,False,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3401,7 +3401,7 @@ trauma,urgent,none,False,24,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0
 obstetric,critical,none,False,42,1,0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,1,0,1,0,0,0
 cardiac,stable,mild,False,24,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0
 trauma,urgent,none,False,56,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,severe,False,33,1,0,1,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,severe,False,33,1,0,1,0,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 trauma,stable,none,False,72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,66,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,26,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3418,7 +3418,7 @@ obstetric,urgent,mild,False,33,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0
 pediatric,critical,mild,False,17,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,severe,False,38,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1
 stroke,stable,mild,False,75,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-stroke,urgent,none,False,35,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,35,1,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
 trauma,urgent,none,False,54,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,26,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0
 pediatric,critical,none,False,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3458,7 +3458,7 @@ burns,stable,none,False,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 stroke,urgent,none,False,38,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 trauma,stable,none,False,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 trauma,stable,mild,False,34,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1
-stroke,critical,none,False,32,1,0,1,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,32,1,0,1,0,0,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0
 general,urgent,severe,False,51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1
 poisoning,critical,none,False,34,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,mild,False,74,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0
@@ -3580,7 +3580,7 @@ trauma,urgent,none,False,49,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,mild,False,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 stroke,stable,none,False,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,34,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1
-stroke,urgent,severe,False,59,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,0
+stroke,urgent,severe,False,59,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,0
 respiratory,stable,mild,False,53,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0
 respiratory,critical,mild,False,64,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0
 pediatric,urgent,none,False,40,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3607,7 +3607,7 @@ respiratory,critical,mild,False,46,1,0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,1,0
 pediatric,critical,none,False,37,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,severe,False,6,1,0,0,1,0,0,0,0,1,1,0,0,1,1,0,0,1,1,1,1,1,1
 cardiac,urgent,none,False,47,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,34,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,34,1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 burns,urgent,none,False,23,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,46,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,none,False,4,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3656,14 +3656,14 @@ burns,critical,none,False,28,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0
 pediatric,stable,mild,False,29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,mild,False,38,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0
-trauma,critical,none,False,43,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
+trauma,critical,none,False,43,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0
 respiratory,urgent,none,False,66,1,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,1,0,0,0,0,0
 general,stable,mild,False,44,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 burns,urgent,none,False,35,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 burns,urgent,none,False,48,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0
 pediatric,urgent,severe,False,34,1,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,1,1,0,1
-stroke,critical,none,False,53,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,53,1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 general,urgent,none,False,10,1,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0
 poisoning,urgent,none,False,37,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,stable,severe,False,49,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0
@@ -3677,7 +3677,7 @@ trauma,urgent,none,False,31,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 poisoning,critical,mild,False,17,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
 general,urgent,none,False,26,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,mild,False,39,1,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,18,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,18,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 pediatric,urgent,severe,False,50,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,1,1
 obstetric,critical,none,False,42,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,severe,False,24,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1
@@ -3687,7 +3687,7 @@ cardiac,urgent,none,False,63,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,mild,False,12,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1
 respiratory,urgent,none,False,11,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 respiratory,urgent,none,False,44,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0
-stroke,critical,mild,False,27,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,27,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 pediatric,urgent,severe,False,77,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1
 poisoning,urgent,mild,False,18,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0
 respiratory,stable,mild,False,51,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0
@@ -3773,7 +3773,7 @@ pediatric,stable,mild,False,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 poisoning,stable,none,False,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,54,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,severe,False,34,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,1,1,0,1
-stroke,urgent,severe,False,45,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,0
+stroke,urgent,severe,False,45,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,0
 burns,urgent,mild,False,39,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,16,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,10,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
@@ -3942,7 +3942,7 @@ cardiac,urgent,none,False,50,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 cardiac,critical,severe,False,42,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0
 obstetric,stable,mild,False,72,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,none,False,42,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,0,1,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,0,1,0,1,0,0,0,1,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 poisoning,stable,none,False,67,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0
 respiratory,critical,none,False,45,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,mild,False,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
@@ -3983,7 +3983,7 @@ general,stable,mild,False,47,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,mild,False,67,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,mild,False,15,1,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,0,1,0,0,0,0
 pediatric,critical,none,False,27,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1
-stroke,critical,none,False,25,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,25,1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 obstetric,critical,mild,True,21,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,14,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,47,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -3997,7 +3997,7 @@ stroke,urgent,none,False,24,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 pediatric,stable,none,False,46,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,mild,False,90,0,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,1,0,0,0,1,0
 cardiac,stable,none,False,7,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,severe,False,3,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,1,1
+stroke,critical,severe,False,3,0,0,1,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,0,1,1,1
 obstetric,critical,none,False,46,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0
 respiratory,urgent,none,False,59,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
@@ -4063,11 +4063,11 @@ poisoning,urgent,none,False,11,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,severe,False,40,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0,1
 stroke,critical,severe,False,38,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,1,1
 general,stable,none,False,13,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,87,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0,1
+stroke,critical,mild,False,87,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,1,0,1
 cardiac,stable,none,False,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,severe,False,31,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,1,0,1
 burns,urgent,none,False,61,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
-stroke,critical,none,False,59,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0
+stroke,critical,none,False,59,1,0,1,0,0,1,0,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0
 cardiac,urgent,severe,False,45,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1
 stroke,stable,mild,False,22,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
@@ -4148,10 +4148,10 @@ pediatric,critical,none,False,29,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,severe,False,44,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1
 poisoning,critical,none,False,49,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0
 respiratory,stable,none,False,12,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
-stroke,critical,severe,False,28,1,0,1,1,0,0,0,0,1,1,0,0,1,0,0,0,0,0,1,1,1,0
+stroke,critical,severe,False,28,1,0,1,1,0,0,0,0,1,1,0,0,1,1,0,0,0,0,1,1,1,0
 cardiac,urgent,mild,False,36,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1
 general,critical,none,False,17,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,59,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,59,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
 general,urgent,mild,False,37,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,severe,False,28,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,1
 burns,urgent,none,True,46,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
@@ -4187,7 +4187,7 @@ cardiac,stable,none,False,48,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 respiratory,critical,severe,False,51,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1,1,0
 respiratory,critical,mild,False,36,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,34,1,1,0,1,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1
-trauma,critical,severe,False,5,1,0,0,0,0,0,1,0,1,1,0,0,1,0,1,0,0,1,1,0,1,0
+trauma,critical,severe,False,5,1,0,0,0,0,0,1,0,1,1,0,0,1,1,1,0,0,1,1,0,1,0
 trauma,urgent,none,False,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,none,False,34,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,none,False,31,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0
@@ -4205,7 +4205,7 @@ respiratory,urgent,none,False,36,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 cardiac,urgent,none,False,25,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,6,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,32,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,32,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 obstetric,stable,mild,False,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 stroke,urgent,none,False,22,1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,36,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1
@@ -4230,7 +4230,7 @@ trauma,stable,mild,False,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,none,False,31,1,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,1,1,0,0,0,0
 general,critical,severe,False,47,1,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,1,1
 burns,stable,none,False,45,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,36,1,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0
+trauma,critical,none,False,36,1,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0
 poisoning,critical,none,False,41,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
 burns,urgent,severe,False,50,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0
 obstetric,urgent,none,False,42,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0
@@ -4268,8 +4268,8 @@ cardiac,stable,none,False,39,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,none,False,49,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 cardiac,critical,none,False,14,1,1,0,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0,0,0,0,0
 burns,stable,none,False,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,16,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-trauma,critical,severe,False,16,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1
+stroke,urgent,none,False,16,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
+trauma,critical,severe,False,16,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,1
 general,stable,none,False,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,severe,False,55,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0,1
 trauma,critical,none,False,25,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1
@@ -4336,7 +4336,7 @@ burns,critical,none,False,90,1,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0
 general,stable,mild,False,40,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,52,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0
 trauma,stable,mild,False,28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-stroke,critical,none,False,31,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0
+stroke,critical,none,False,31,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0
 respiratory,critical,severe,False,30,1,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,1,0,0,1,0
 general,urgent,severe,False,41,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,0
 obstetric,urgent,none,False,66,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4352,7 +4352,7 @@ general,stable,severe,False,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1
 pediatric,urgent,none,False,63,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,51,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,46,1,1,0,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0,1,0,0,0
-stroke,urgent,mild,False,21,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,mild,False,21,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0
 burns,urgent,mild,False,37,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,none,False,72,1,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,none,False,30,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0
@@ -4399,7 +4399,7 @@ trauma,stable,severe,False,29,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,1,1
 poisoning,urgent,mild,False,39,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 general,urgent,none,True,80,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,none,False,49,1,1,1,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,1,0,1,0
-stroke,urgent,mild,False,20,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+stroke,urgent,mild,False,20,1,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0
 cardiac,urgent,mild,False,36,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,67,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0
 poisoning,urgent,none,False,45,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4442,7 +4442,7 @@ general,urgent,none,False,58,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 burns,stable,none,False,45,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0
 pediatric,critical,none,False,14,1,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,severe,False,31,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,1
-trauma,critical,none,False,35,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,1,1,0,0,0,0
+trauma,critical,none,False,35,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,1,1,0,0,0,0
 obstetric,urgent,none,False,37,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,none,False,61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 burns,urgent,none,False,49,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -4477,7 +4477,7 @@ stroke,stable,none,False,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,46,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,59,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,0,1,1,0,0
 trauma,urgent,none,False,16,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,severe,False,47,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0
+stroke,urgent,severe,False,47,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,1,0,0,0,0,0,0
 general,urgent,mild,False,40,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 cardiac,critical,none,False,39,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0
 obstetric,urgent,severe,False,24,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,1,1,0,1,0
@@ -4494,8 +4494,8 @@ cardiac,urgent,none,False,15,1,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,22,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1
 general,critical,none,False,27,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0
 stroke,stable,none,False,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,True,53,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0
-stroke,urgent,mild,False,37,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+stroke,urgent,none,True,53,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0
+stroke,urgent,mild,False,37,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1
 respiratory,urgent,none,False,13,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0
 pediatric,urgent,severe,False,25,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0,1,0,1,0
 respiratory,stable,mild,False,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4515,7 +4515,7 @@ respiratory,stable,none,False,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,stable,mild,False,47,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 general,urgent,none,False,80,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,none,False,26,1,1,0,0,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,0,0,0
-stroke,critical,none,False,71,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,71,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 general,critical,none,False,40,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 general,urgent,severe,False,8,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,1
 pediatric,critical,none,False,72,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4561,7 +4561,7 @@ general,critical,mild,False,83,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,severe,False,22,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0
 burns,stable,none,False,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,severe,False,40,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
-stroke,critical,none,False,38,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,38,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,64,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,severe,False,48,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1
 pediatric,critical,mild,False,12,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4621,7 +4621,7 @@ obstetric,urgent,severe,False,54,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1
 respiratory,urgent,severe,False,68,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0
 cardiac,urgent,none,False,11,0,1,0,0,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,21,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,True,0,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,True,0,1,0,1,0,0,1,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,25,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,1
 pediatric,stable,none,False,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,none,False,24,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4633,7 +4633,7 @@ pediatric,stable,none,False,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1
 pediatric,stable,mild,False,57,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 respiratory,urgent,mild,False,8,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0
 obstetric,urgent,mild,False,37,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,31,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+trauma,critical,none,False,31,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0
 poisoning,critical,mild,False,56,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0
 trauma,stable,none,False,50,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,True,29,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0
@@ -4752,7 +4752,7 @@ respiratory,urgent,mild,False,35,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 stroke,stable,none,False,46,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,7,1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,1,0,0,1,0,0,0
 cardiac,urgent,mild,False,53,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0
-trauma,critical,none,False,26,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+trauma,critical,none,False,26,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0
 pediatric,critical,mild,False,56,1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 general,stable,none,False,36,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1
 cardiac,stable,none,False,46,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4802,7 +4802,7 @@ stroke,stable,none,False,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 burns,critical,none,False,25,1,0,0,0,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0
 general,stable,none,False,12,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,69,1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,1,0
-trauma,critical,severe,False,62,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0
+trauma,critical,severe,False,62,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0
 respiratory,stable,none,False,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,none,False,48,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,19,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -4825,7 +4825,7 @@ pediatric,urgent,mild,False,41,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,mild,False,28,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0
 pediatric,critical,mild,False,32,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
 pediatric,critical,none,False,68,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,36,1,0,1,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0
+stroke,critical,none,False,36,1,0,1,0,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0
 cardiac,urgent,none,False,26,1,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,stable,severe,False,20,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,none,False,59,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,1,1,0
@@ -4909,7 +4909,7 @@ stroke,urgent,none,False,30,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,31,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 pediatric,stable,none,False,85,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
 trauma,stable,none,False,47,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
-stroke,critical,severe,False,28,1,0,0,0,1,1,0,0,0,1,0,0,1,0,0,0,0,0,1,1,1,1
+stroke,critical,severe,False,28,1,0,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,0,1,1,1,1
 poisoning,stable,none,False,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,none,False,61,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0
 pediatric,critical,none,False,54,1,0,0,0,0,0,1,0,1,1,0,0,0,0,0,1,0,1,0,0,0,0
@@ -4960,7 +4960,7 @@ poisoning,critical,none,False,74,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0
 poisoning,critical,none,False,22,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,severe,False,36,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1
 respiratory,urgent,none,False,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,36,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,mild,False,36,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 burns,critical,mild,False,28,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0
 general,urgent,none,False,58,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,20,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5010,7 +5010,7 @@ trauma,stable,mild,False,38,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0
 obstetric,critical,mild,False,57,1,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0
 pediatric,urgent,mild,False,32,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,mild,False,39,1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,14,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,14,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,58,1,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0
 stroke,critical,none,False,49,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
 stroke,stable,none,False,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5106,7 +5106,7 @@ burns,urgent,severe,False,34,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1
 stroke,stable,mild,False,36,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,none,False,37,1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1
 trauma,critical,mild,False,68,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0
-trauma,critical,none,False,39,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0
+trauma,critical,none,False,39,1,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,1,0
 cardiac,critical,none,False,40,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
 pediatric,urgent,severe,False,59,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,1,1,0,1
 cardiac,urgent,none,False,22,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5164,9 +5164,9 @@ burns,critical,mild,False,50,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0
 burns,urgent,none,False,20,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,none,False,45,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 poisoning,critical,none,False,40,1,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0
-stroke,critical,mild,False,19,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0
+stroke,critical,mild,False,19,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,1,0,0
 respiratory,urgent,none,False,36,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,37,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,37,1,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,7,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,mild,False,44,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0
 obstetric,stable,none,True,40,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
@@ -5202,10 +5202,10 @@ poisoning,critical,none,False,22,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,50,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,none,False,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0
 stroke,urgent,none,False,72,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0
-stroke,critical,mild,False,11,1,1,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,1,1
+stroke,critical,mild,False,11,1,1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,1,1,1
 obstetric,stable,none,False,53,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 cardiac,stable,none,False,9,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0
-stroke,critical,none,False,37,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0
+stroke,critical,none,False,37,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0
 trauma,urgent,none,False,65,1,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1
 obstetric,urgent,mild,False,22,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0
 obstetric,critical,none,False,8,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0
@@ -5253,7 +5253,7 @@ trauma,critical,mild,False,23,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,1,0
 respiratory,urgent,none,False,43,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,33,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0
 stroke,urgent,none,False,57,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-stroke,critical,mild,False,65,1,0,1,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,1,0,0,0
+stroke,critical,mild,False,65,1,0,1,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,1,0,0,0
 pediatric,urgent,none,False,24,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 pediatric,stable,none,False,35,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,41,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
@@ -5276,7 +5276,7 @@ pediatric,urgent,none,False,9,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,none,False,5,1,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0
 respiratory,critical,mild,False,43,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,58,1,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0
-stroke,urgent,mild,False,20,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+stroke,urgent,mild,False,20,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0
 pediatric,critical,none,False,19,1,0,0,0,0,0,1,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1
 pediatric,urgent,none,False,36,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,15,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -5313,7 +5313,7 @@ trauma,urgent,none,False,52,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,urgent,severe,False,43,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,1,0
 stroke,urgent,severe,False,18,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,0
 burns,urgent,none,False,40,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,36,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
+trauma,critical,none,False,36,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0
 cardiac,urgent,severe,False,5,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,1,1,0
 poisoning,critical,none,False,42,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 pediatric,critical,mild,False,28,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
@@ -5324,7 +5324,7 @@ stroke,urgent,mild,False,38,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,mild,False,44,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0
 general,critical,none,False,33,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,stable,mild,False,15,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,1
-stroke,critical,none,False,57,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,57,1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 stroke,critical,none,False,37,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0
 burns,stable,severe,False,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0
 general,critical,none,False,65,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5356,8 +5356,8 @@ stroke,critical,mild,False,35,1,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1
 burns,stable,none,False,42,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,34,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,67,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,48,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0
-trauma,critical,mild,False,37,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+stroke,urgent,none,False,48,1,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,1,0
+trauma,critical,mild,False,37,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0
 poisoning,urgent,mild,False,54,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,stable,none,False,17,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,urgent,none,False,66,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0
@@ -5369,7 +5369,7 @@ poisoning,stable,mild,False,35,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 respiratory,critical,none,False,48,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,mild,False,34,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,severe,False,24,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,1
-trauma,critical,none,False,19,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0
+trauma,critical,none,False,19,1,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0,0
 burns,stable,none,False,8,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,none,False,52,1,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0
 general,critical,none,False,27,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5422,10 +5422,10 @@ general,critical,mild,False,76,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 trauma,stable,none,False,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,critical,none,False,23,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
 trauma,urgent,mild,False,37,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,40,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+trauma,critical,none,False,40,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 obstetric,stable,none,False,49,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 trauma,stable,none,False,40,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-trauma,critical,mild,False,64,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1
+trauma,critical,mild,False,64,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1
 trauma,urgent,severe,False,17,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
 general,urgent,none,False,3,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,stable,mild,False,8,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
@@ -5444,7 +5444,7 @@ cardiac,critical,none,False,15,1,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0
 respiratory,urgent,severe,False,39,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 trauma,stable,mild,False,29,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,61,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,64,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0
+trauma,critical,none,False,64,1,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0
 trauma,critical,none,False,42,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0
 burns,urgent,severe,False,59,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
 obstetric,urgent,none,False,42,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5462,12 +5462,12 @@ respiratory,stable,mild,False,70,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,stable,mild,False,23,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0
 respiratory,urgent,severe,False,64,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,0
 stroke,urgent,none,False,8,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0
-trauma,critical,none,False,54,1,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,1,1,0,0,0,0
+trauma,critical,none,False,54,1,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,1,1,0,0,0,0
 general,urgent,mild,False,86,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0
 respiratory,urgent,mild,False,36,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,none,False,20,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,stable,none,False,78,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trauma,critical,none,False,43,1,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,1,0
+trauma,critical,none,False,43,1,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0
 cardiac,critical,none,False,17,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,1,0,0,0,0,0,0
 trauma,stable,none,False,23,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,urgent,none,True,2,1,0,0,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5562,7 +5562,7 @@ burns,stable,none,False,15,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,30,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0
 general,critical,mild,False,3,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,mild,False,48,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0
-trauma,critical,none,False,37,1,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+trauma,critical,none,False,37,1,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 obstetric,stable,none,True,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,stable,mild,False,71,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 trauma,critical,severe,False,14,1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,0,1
@@ -5613,7 +5613,7 @@ pediatric,stable,none,False,51,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
 cardiac,stable,none,False,42,1,1,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
 burns,urgent,mild,False,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 poisoning,stable,none,False,39,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
-stroke,urgent,severe,False,49,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,1,1,1
+stroke,urgent,severe,False,49,1,0,1,0,0,0,1,0,1,0,0,0,1,1,0,0,0,0,0,1,1,1
 cardiac,urgent,mild,False,4,1,0,1,0,0,0,1,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0
 trauma,critical,none,False,43,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0
 cardiac,stable,none,False,15,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -5624,7 +5624,7 @@ trauma,urgent,mild,False,25,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 pediatric,urgent,severe,False,31,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1
 obstetric,critical,none,False,61,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0
 pediatric,urgent,severe,False,63,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0
-stroke,critical,none,False,54,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,1,0,0,0,0,1
+stroke,critical,none,False,54,1,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,1,0,0,0,0,1
 trauma,urgent,none,False,24,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 burns,urgent,severe,False,13,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,0
 general,urgent,none,False,44,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0
@@ -5672,7 +5672,7 @@ trauma,stable,none,False,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 burns,critical,mild,False,76,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,1
 pediatric,urgent,none,False,38,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,none,False,67,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,critical,none,False,20,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+stroke,critical,none,False,20,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0
 stroke,critical,none,False,24,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,none,False,28,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0
 cardiac,urgent,mild,False,30,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0
@@ -5854,7 +5854,7 @@ burns,urgent,mild,False,46,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
 poisoning,critical,none,False,85,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 trauma,critical,severe,False,54,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,1,1
 general,critical,none,False,35,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-stroke,urgent,none,False,66,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,66,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 pediatric,critical,none,False,69,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 respiratory,urgent,none,False,22,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 general,critical,mild,False,35,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0
@@ -5877,7 +5877,7 @@ general,stable,none,False,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 poisoning,critical,none,False,10,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0
 respiratory,critical,severe,False,58,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1,0,0
 cardiac,urgent,mild,False,48,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0
-stroke,urgent,none,False,34,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,34,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,43,1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,1,0,1,0,0,1
 trauma,critical,mild,False,43,1,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,1,0
 pediatric,critical,none,False,45,1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0
@@ -5983,7 +5983,7 @@ burns,stable,none,False,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 stroke,urgent,none,False,12,1,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 general,critical,mild,False,53,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0
 poisoning,urgent,none,False,4,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0
-stroke,critical,none,False,56,1,1,1,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,critical,none,False,56,1,1,1,0,0,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0
 general,critical,none,False,40,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0
 obstetric,urgent,severe,False,30,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,1
 cardiac,stable,none,True,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
@@ -5992,7 +5992,7 @@ pediatric,urgent,severe,False,56,1,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0
 burns,stable,mild,False,30,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1
 respiratory,critical,none,False,42,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 cardiac,critical,severe,False,61,1,1,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,0
-stroke,urgent,none,False,64,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+stroke,urgent,none,False,64,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0
 cardiac,urgent,none,False,17,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
 obstetric,critical,mild,False,0,1,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,0,0,1,1,0,0
 burns,stable,none,False,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0

@@ -2,6 +2,7 @@
 200 in <100ms and processes in the background; dedupe by gateway message_id.
 Auth by shared secret (SMS_WEBHOOK_SECRET)."""
 
+import logging
 import os
 
 from fastapi import APIRouter, BackgroundTasks, Header, HTTPException
@@ -12,9 +13,11 @@ from app.db.repos import identity as identity_repo
 from app.db.session import get_session
 from app.domain import audit, intake
 from app.integrations.sms.parser import FollowupAnswer, NewEmergency, ParamedicCommand, PrankVerification, parse_inbound
+from app.security.rate_limit import hit
 from app.security.tokens import new_token
 
 router = APIRouter()
+logger = logging.getLogger("sms_webhook")
 
 SMS_WEBHOOK_SECRET = os.getenv("SMS_WEBHOOK_SECRET", "dev-insecure-sms-secret")
 
@@ -122,6 +125,18 @@ async def _handle_followup_answer(session, answer: FollowupAnswer, raw_text: str
 
 
 async def _handle_new_emergency(session, phone: str, text_body: str) -> None:
+    # technical.md Section12.1: "5 inbound emergencies / phone / hour" --
+    # was not enforced anywhere; a misbehaving or malicious sender could
+    # flood process_emergency (which fans out to STT/extract/triage/dispatch)
+    # an unlimited number of times per hour from one phone.
+    allowed = await hit(f"sms_new_emergency:{phone}", limit=5, window_sec=3600)
+    if not allowed:
+        # audit_log.entity_id is a real `uuid` column (0001_init.sql) -- a
+        # phone number can't be cast to one, so this can't go through
+        # audit.write the way a real emergency_id-keyed event would.
+        logger.warning("sms_new_emergency_rate_limited phone=%s body=%r", phone, text_body[:200])
+        return
+
     user = await identity_repo.get_or_create_patient_user(session, phone)
     incident_id = await emergencies_repo.create_incident(session, lat=None, lng=None)
     raw_track_token, track_token_hash = new_token()

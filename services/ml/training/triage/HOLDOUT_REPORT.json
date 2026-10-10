@@ -1,0 +1,8 @@
+{
+  "acuity_macro_f1": 0.34649974460539124,
+  "facility_macro_f1": 0.5244422060775422,
+  "critical_recall": 0.12878787878787878,
+  "macro_f1_mean": 0.4354709753414667,
+  "n_holdout": 402,
+  "caveat": "This holdout is LLM-generated (generate_holdout.py, different prompt/seed/temperature than training data), NOT the independently human-written holdout technical.md Section9.3 requires. A stress-test, not a verified safety claim."
+}

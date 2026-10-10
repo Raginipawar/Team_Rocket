@@ -21,7 +21,9 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
-ARTIFACT_PATH = Path(__file__).parent.parent.parent.parent / "artifacts" / "triage" / "muril_v0_heads.pt"
+ARTIFACTS_DIR = Path(__file__).parent.parent.parent.parent / "artifacts" / "triage"
+FULL_ARTIFACT_PATH = ARTIFACTS_DIR / "muril_v0_full.pt"
+HEADS_ARTIFACT_PATH = ARTIFACTS_DIR / "muril_v0_heads.pt"
 MODEL_NAME = "google/muril-base-cased"
 ACUITIES = ["critical", "urgent", "stable"]
 FACILITIES = ["cardiac", "stroke", "trauma", "burns", "respiratory",
@@ -51,10 +53,11 @@ class _TriageModel(nn.Module):
 
 @lru_cache
 def _load():
-    if not ARTIFACT_PATH.exists():
+    if not FULL_ARTIFACT_PATH.exists() and not HEADS_ARTIFACT_PATH.exists():
         raise ModelNotLoaded(
-            f"{ARTIFACT_PATH} missing -- run training/triage/generate_data.py then "
-            "training/triage/train.py, or set ML_MOCK_CAPABILITIES=triage"
+            f"neither {FULL_ARTIFACT_PATH} nor {HEADS_ARTIFACT_PATH} exists -- run "
+            "training/triage/generate_data.py then training/triage/train.py, or set "
+            "ML_MOCK_CAPABILITIES=triage"
         )
     import transformers.modeling_utils as _tf_modeling_utils
     _tf_modeling_utils.check_torch_load_is_safe = lambda: None  # see training/triage/train.py for why
@@ -63,11 +66,17 @@ def _load():
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = _TriageModel(MODEL_NAME).to(device)
-    # Checkpoint holds only the two trained linear heads (~40KB) -- the
-    # encoder stays at its freshly-downloaded pretrained weights, which is
-    # correct since it was frozen throughout training (see train.py).
-    heads_state = torch.load(ARTIFACT_PATH, map_location=device, weights_only=True)
-    model.load_state_dict(heads_state, strict=False)
+    if FULL_ARTIFACT_PATH.exists():
+        # train.py's encoder was unfrozen and fine-tuned this run -- the full
+        # state (encoder + heads) was saved, since the encoder is no longer
+        # identical to the stock pretrained checkpoint.
+        state = torch.load(FULL_ARTIFACT_PATH, map_location=device, weights_only=True)
+        model.load_state_dict(state, strict=True)
+    else:
+        # Older checkpoint from a FREEZE_ENCODER=True run -- heads only, the
+        # encoder stays at its freshly-downloaded pretrained weights.
+        heads_state = torch.load(HEADS_ARTIFACT_PATH, map_location=device, weights_only=True)
+        model.load_state_dict(heads_state, strict=False)
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     return model, tokenizer, device

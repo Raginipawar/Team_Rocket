@@ -6,13 +6,20 @@
 3. Else profile's home_location.
 4. Else: still weak -> the first follow-up question asks for a landmark.
 
-The gazetteer lookup itself needs the `landmarks` table (technical.md §5,
-seeded by B from the OSM gazetteer) -- not available until B's DB models land.
-This module takes it as an injected `GazetteerLookup` protocol so the fallback
-chain, which is pure logic, can be written and tested today."""
+The gazetteer lookup is an injected `GazetteerLookup` protocol so the
+fallback chain, which is pure logic, is independently testable.
+PgTrgmGazetteerLookup below is the real implementation, now that the
+`landmarks` table is actually populated (services/ml/app/geo/
+gazetteer_export.py + data/seed/load_landmarks.py) -- domain/intake.py used
+to always pass a NullGazetteer() stand-in instead."""
 
+import re
+import unicodedata
 from dataclasses import dataclass
 from typing import Protocol
+
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 GPS_ACCURACY_THRESHOLD_M = 100.0
 
@@ -34,6 +41,54 @@ class GazetteerLookup(Protocol):
         Returns (lat, lng) of the best match, or None if nothing crosses the
         similarity threshold."""
         ...
+
+
+def _normalize(name: str) -> str:
+    """Same normalization as gazetteer_export.py's normalize_name, so a
+    query string and the stored name_normalized are comparable by pg_trgm."""
+    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("utf-8")
+    name = name.lower()
+    name = re.sub(r"[^\w\s]", "", name)
+    return " ".join(name.split())
+
+
+class PgTrgmGazetteerLookup:
+    """Real implementation: pg_trgm similarity against the real `landmarks`
+    table, proximity-weighted to `near` (within MAX_DISTANCE_KM) when given."""
+
+    SIMILARITY_THRESHOLD = 0.3
+    MAX_DISTANCE_KM = 15.0
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def match(
+        self, landmark_text: str, *, near: tuple[float, float] | None = None
+    ) -> tuple[float, float] | None:
+        query = _normalize(landmark_text)
+        if not query:
+            return None
+
+        params = {"q": query, "threshold": self.SIMILARITY_THRESHOLD}
+        proximity_clause = ""
+        if near is not None:
+            lat, lng = near
+            proximity_clause = (
+                "AND ST_DWithin(location, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :max_dist_m) "
+            )
+            params.update({"lat": lat, "lng": lng, "max_dist_m": self.MAX_DISTANCE_KM * 1000})
+
+        row = (await self.session.execute(text(
+            "SELECT ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng, "
+            "similarity(name_normalized, :q) AS sim "
+            "FROM landmarks "
+            "WHERE similarity(name_normalized, :q) > :threshold " + proximity_clause +
+            "ORDER BY sim DESC LIMIT 1"
+        ), params)).mappings().first()
+
+        if row is None:
+            return None
+        return (row["lat"], row["lng"])
 
 
 async def resolve_location(

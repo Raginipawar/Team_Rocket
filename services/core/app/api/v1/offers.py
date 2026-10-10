@@ -42,3 +42,21 @@ async def accept_offer(offer_id: str, user: CurrentUser = Depends(require_role("
         await session.commit()
 
     return {"emergency_id": result["emergency_id"], "ambulance_id": result["ambulance_id"]}
+
+
+@router.post("/offers/{offer_id}/decline", status_code=204)
+async def decline_offer(offer_id: str, body: dict | None = None, user: CurrentUser = Depends(require_role("paramedic"))) -> None:
+    if not user.ambulance_id:
+        raise HTTPException(403, "user has no assigned ambulance")
+    async with get_session() as session:
+        try:
+            await dispatch_repo.decline_offer(session, offer_id=offer_id, paramedic_ambulance_id=user.ambulance_id)
+        except dispatch_repo.OfferNotAvailable:
+            await session.rollback()
+            raise HTTPException(409, detail={"error": {"code": "ALREADY_TAKEN", "message": "Offer no longer available", "details": {}}})
+        await audit.write(
+            session, actor_type="user", actor_id=str(user.id), entity="dispatch_offers",
+            entity_id=offer_id, action="offer_declined", before=None,
+            after={"reason": (body or {}).get("reason")},
+        )
+        await session.commit()

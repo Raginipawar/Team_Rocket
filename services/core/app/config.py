@@ -2,7 +2,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql+asyncpg://user:pass@localhost/db"
+    # Was a literal placeholder ("user:pass@localhost/db") that was never
+    # actually the real database -- no .env file exists to override it, so
+    # EVERY router using db/engine.py's get_db (hospital.py, and any other
+    # router built against this config module rather than db/session.py's
+    # separate get_session) silently failed to connect to the database on
+    # every single real request. Found by actually hitting a real endpoint
+    # with a real request and getting a 500, not by reading the code.
+    DATABASE_URL: str = "postgresql+asyncpg://gh:gh@localhost:5432/goldenhour"
     REDIS_URL: str = "redis://localhost:6379/0"
     JWT_SECRET: str = "secret"
     JWT_KID: str = "kid1"

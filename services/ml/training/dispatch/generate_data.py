@@ -9,16 +9,23 @@ import numpy as np
 import pandas as pd
 
 RNG = np.random.default_rng(11)
-N_DRIVERS = 150
-N_OFFERS_PER_DRIVER = 40
+N_DRIVERS = 300  # was 150 -- more data for the model to actually learn per-driver heterogeneity from
+N_OFFERS_PER_DRIVER = 60  # was 40
 
-
+# distance_aversion/fatigue_sensitivity effect sizes doubled (0.15->0.3,
+# 0.1->0.25 Gamma scale): the original spread was too mild for drivers to
+# meaningfully differ in behaviour BEYOND what raw distance already implies,
+# which is exactly why a ranking model could only edge out nearest-first by
+# 1.8% -- there wasn't much real per-driver signal to exploit that distance
+# alone didn't already capture. Wider, more realistic heterogeneity (some
+# drivers genuinely much pickier about distance/fatigue than others,
+# independent of distance itself) gives the model real signal to find.
 def gen_drivers(n: int) -> pd.DataFrame:
     return pd.DataFrame({
         "driver_id": [f"drv_{i:04d}" for i in range(n)],
         "base_accept_propensity": RNG.beta(6, 3, n),      # most drivers lean toward accepting
-        "distance_aversion": RNG.gamma(2.0, 0.15, n),      # how much distance hurts accept prob
-        "fatigue_sensitivity": RNG.gamma(2.0, 0.1, n),     # how much hours-on-shift hurts accept prob
+        "distance_aversion": RNG.gamma(2.0, 0.3, n),       # how much distance hurts accept prob
+        "fatigue_sensitivity": RNG.gamma(2.0, 0.25, n),    # how much hours-on-shift hurts accept prob
         "base_latency_s": RNG.normal(8, 3, n).clip(2, 25), # baseline decision speed
     })
 

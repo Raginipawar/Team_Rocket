@@ -6,13 +6,23 @@ do with a fallback result, this module only knows how to reach ML and what
 
 from .base import MLUnavailable, call_ml
 
-STT_TIMEOUT_S = 8.0
-EXTRACT_TIMEOUT_S = 6.0
-TRIAGE_TIMEOUT_S = 3.0
-PRANK_TIMEOUT_S = 5.0
-DUPLICATE_TIMEOUT_S = 5.0
-RESOURCES_TIMEOUT_S = 5.0
-HANDOVER_TIMEOUT_S = 6.0
+# The spec's timeouts assumed either mock-mode (near-instant) or a GPU-backed
+# real deployment. On this machine's real models (Whisper STT, MuRIL-based
+# extract/triage) running on CPU, with several capabilities firing
+# concurrently in process_emergency's own asyncio.gather and contending for
+# the same CPU, measured solo latency alone was STT ~14.5s and extract
+# ~7.7s -- both well past the old 8s/6s timeouts. Every real SOS was silently
+# hitting MLUnavailable and falling back to the fixed "critical/general/
+# confidence 0.0" default, which is indistinguishable from the AI never
+# having run at all. Raised with real margin for concurrent CPU-bound
+# inference, not just the solo-call numbers.
+STT_TIMEOUT_S = 30.0
+EXTRACT_TIMEOUT_S = 20.0
+TRIAGE_TIMEOUT_S = 15.0
+PRANK_TIMEOUT_S = 10.0
+DUPLICATE_TIMEOUT_S = 10.0
+RESOURCES_TIMEOUT_S = 10.0
+HANDOVER_TIMEOUT_S = 15.0
 
 
 async def stt(audio_bytes: bytes, filename: str, lang_hint: str | None = None) -> dict | None:

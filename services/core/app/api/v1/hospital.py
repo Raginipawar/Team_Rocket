@@ -13,7 +13,7 @@ from ...domain.clinical import handle_unknown_patient_merge
 from ...db.repos.hospitals import get_hospital, update_last_confirmed
 from ...db.repos.rooms import list_rooms, patch_room
 from ...db.repos.resources import get_resources, patch_resource
-from ...db.repos.hospital_requests import list_pending_requests, list_all_requests
+from ...db.repos.hospital_requests import list_pending_requests, list_all_requests, get_hospital_request, list_incoming_ambulances
 from ...db.repos.staff import get_active_staff, list_staff_members, create_staff_member, get_shifts, update_shifts
 from ...db.repos.analytics import get_hospital_analytics
 
@@ -51,7 +51,12 @@ class ShiftsUpdate(BaseModel):
     shifts: List[dict]
 
 def _check_scope(user, target_hospital_id: UUID):
-    if user.hospital_id != target_hospital_id:
+    # user.hospital_id is a plain str (CurrentUser, security/deps.py);
+    # target_hospital_id is a real uuid.UUID (ORM-mapped) -- UUID != str is
+    # ALWAYS true in Python regardless of value, so this rejected every
+    # single caller, including ones accessing their own real hospital.
+    # Same bug class already found and fixed in domain/ops.py's claimer check.
+    if str(user.hospital_id) != str(target_hospital_id):
         raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "Access denied for this hospital"}})
 
 def _calculate_freshness(last_confirmed_at: Optional[datetime]) -> str:
@@ -78,21 +83,31 @@ async def get_dashboard(
     rooms = await list_rooms(db, hospital_id)
     resources = await get_resources(db, hospital_id)
     staff_on_duty = await get_active_staff(db, hospital_id)
+    incoming = await list_incoming_ambulances(db, hospital_id, at_door=False)
+    at_door = await list_incoming_ambulances(db, hospital_id, at_door=True)
     
-    rooms_grouped = {}
+    # get_hospital/list_rooms return real ORM objects (db/repos/hospitals.py),
+    # not dicts -- r.get(...)/hospital.get(...) would raise AttributeError on
+    # every single real call (confirmed: this is exactly what happened the
+    # first time this endpoint was ever hit with a real request).
+    rooms_grouped: dict[str, list] = {}
     for r in rooms:
-        rtype = r.get("type", "unknown")
-        if rtype not in rooms_grouped:
-            rooms_grouped[rtype] = []
-        rooms_grouped[rtype].append(r)
-        
+        rtype = getattr(r, "type", "unknown")
+        rooms_grouped.setdefault(rtype, []).append({
+            "id": str(r.id), "code": r.code, "type": r.type, "status": r.status,
+            "priority_order": r.priority_order, "version": r.version,
+        })
+
     return {
-        "hospital": hospital,
+        "hospital": {"id": str(hospital.id), "name": hospital.name,
+                     "last_confirmed_at": hospital.last_confirmed_at.isoformat() if hospital.last_confirmed_at else None},
         "pending_requests": pending_requests,
         "rooms": rooms_grouped,
         "resources": resources,
         "staff_on_duty": staff_on_duty,
-        "freshness": _calculate_freshness(hospital.get("last_confirmed_at"))
+        "freshness": _calculate_freshness(hospital.last_confirmed_at),
+        "incoming": incoming,
+        "at_door": at_door,
     }
 
 @router.get("/requests")
@@ -112,16 +127,26 @@ async def accept_request(
     user = Depends(require_role('hospital_staff')),
     db: AsyncSession = Depends(get_db)
 ):
+    # accept_hospital_request's real signature has no hospital_id/actor_id
+    # params at all (room_id, staff_ids, responder_id) and does no ownership
+    # check itself -- the previous call would have raised TypeError on the
+    # very first real accept, and _check_scope (defined above, never called
+    # anywhere) meant any hospital_staff user could accept another
+    # hospital's request. Both fixed together.
+    req = await get_hospital_request(db, request_id)
+    if req is None:
+        raise HTTPException(status_code=404, detail={"error": {"code": "NOT_FOUND", "message": "Request not found"}})
+    _check_scope(user, req.hospital_id)
     try:
-        res = await accept_hospital_request(
-            db, 
-            request_id=request_id, 
-            hospital_id=user.hospital_id,
+        await accept_hospital_request(
+            db,
+            request_id=request_id,
             room_id=payload.room_id,
-            staff_ids=payload.staff_ids,
-            actor_id=user.id
+            staff_ids=payload.staff_ids or [],
+            responder_id=user.id,
         )
-        return {"status": "accepted", "reservation": res}
+        await db.commit()
+        return {"status": "accepted"}
     except ValueError as e:
         raise HTTPException(status_code=409, detail={"error": {"code": "RESOURCE_UNAVAILABLE", "message": str(e)}})
 
@@ -132,14 +157,18 @@ async def reject_request(
     user = Depends(require_role('hospital_staff')),
     db: AsyncSession = Depends(get_db)
 ):
+    req = await get_hospital_request(db, request_id)
+    if req is None:
+        raise HTTPException(status_code=404, detail={"error": {"code": "NOT_FOUND", "message": "Request not found"}})
+    _check_scope(user, req.hospital_id)
     await reject_hospital_request(
         db,
         request_id=request_id,
-        hospital_id=user.hospital_id,
         reason_code=payload.reason_code,
         note=payload.note,
-        actor_id=user.id
+        responder_id=user.id,
     )
+    await db.commit()
     return {"status": "rejected"}
 
 @router.patch("/rooms/{room_id}")
@@ -156,6 +185,7 @@ async def update_room(
         await walk_in_override(db, room_id=room_id, hospital_id=user.hospital_id, reason=payload.override_reason, version=payload.version, actor_id=user.id)
     else:
         await patch_room(db, room_id=room_id, status=payload.status, version=payload.version, override_reason=None)
+    await db.commit()
     return {"status": "updated"}
 
 @router.patch("/resources/{resource_id}")
@@ -166,6 +196,7 @@ async def update_resource(
     db: AsyncSession = Depends(get_db)
 ):
     await patch_resource(db, resource_id=resource_id, available=payload.available, total=payload.total, version=payload.version)
+    await db.commit()
     return {"status": "updated"}
 
 @router.post("/availability/confirm")
@@ -174,6 +205,7 @@ async def confirm_availability(
     db: AsyncSession = Depends(get_db)
 ):
     await update_last_confirmed(db, hospital_id=user.hospital_id)
+    await db.commit()
     return {"status": "confirmed"}
 
 @router.post("/handoffs/{emergency_id}/received")
@@ -184,6 +216,7 @@ async def handoff_received(
     db: AsyncSession = Depends(get_db)
 ):
     await record_patient_received(db, emergency_id=emergency_id, hospital_id=user.hospital_id, receiving_staff_ids=payload.receiving_staff_ids, actor_id=user.id)
+    await db.commit()
     return {"status": "recorded"}
 
 @router.get("/staff")
@@ -201,6 +234,7 @@ async def create_staff(
     db: AsyncSession = Depends(get_db)
 ):
     staff = await create_staff_member(db, hospital_id=user.hospital_id, name=payload.name, role=payload.role)
+    await db.commit()
     return staff
 
 @router.get("/staff/{staff_id}/shifts")
@@ -220,6 +254,7 @@ async def update_staff_shifts(
     db: AsyncSession = Depends(get_db)
 ):
     await update_shifts(db, staff_id=staff_id, hospital_id=user.hospital_id, shifts=payload.shifts)
+    await db.commit()
     return {"status": "updated"}
 
 @router.post("/patients/{temp_id}/merge")
@@ -229,8 +264,12 @@ async def merge_patient(
     user = Depends(require_role('hospital_staff')),
     db: AsyncSession = Depends(get_db)
 ):
-    res = await handle_unknown_patient_merge(db, temp_id=temp_id, phone=payload.phone, hospital_id=user.hospital_id)
-    return {"status": "merged", "patient_id": res}
+    # Real signature is handle_unknown_patient_merge(db, temp_id, phone,
+    # merged_by) -- the previous hospital_id=... keyword doesn't match any
+    # real parameter name, would have raised TypeError on the first call.
+    await handle_unknown_patient_merge(db, temp_id=str(temp_id), phone=payload.phone, merged_by=user.id)
+    await db.commit()
+    return {"status": "merged"}
 
 @router.get("/analytics")
 async def hospital_analytics(

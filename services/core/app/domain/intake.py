@@ -26,15 +26,6 @@ logger = logging.getLogger("intake")
 MCI_PATIENT_THRESHOLD = 5
 
 
-class NullGazetteer:
-    """Stand-in until B seeds the `landmarks` table from the OSM gazetteer
-    (technical.md §22). Always misses, so the chain falls through to
-    profile_home / ask-for-landmark -- never silently invents a location."""
-
-    async def match(self, landmark_text: str, *, near=None):
-        return None
-
-
 async def process_emergency(session: AsyncSession, emergency_id: str) -> None:
     emergency = await emergencies_repo.get_emergency(session, emergency_id)
     if emergency is None:
@@ -56,7 +47,7 @@ async def process_emergency(session: AsyncSession, emergency_id: str) -> None:
         accuracy_m=emergency.get("location_accuracy_m"),
         landmark_text=extracted.get("landmark"),
         profile_home=None,  # wired once db/repos/identity.get_health_profile has a real caller_user_id
-        gazetteer=NullGazetteer(),
+        gazetteer=location.PgTrgmGazetteerLookup(session),
     )
     location_source = resolved.source if resolved else "unresolved"
 

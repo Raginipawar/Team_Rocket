@@ -1,5 +1,5 @@
 {
-  "micro_f1": 0.908,
+  "micro_f1": 0.9067,
   "per_label_auc": {
     "emergency_physician": 0.8582,
     "cardiologist": 0.7495,
@@ -14,7 +14,7 @@
     "ventilator": 0.7911,
     "cath_lab": 0.692,
     "ct_scanner": 0.7232,
-    "mri": 0.4214,
+    "mri": 0.617,
     "defibrillator": 0.7115,
     "dialysis": 0.5558,
     "operating_theatre": 0.7031,

@@ -1,0 +1,13 @@
+{
+  "id": "nikhilshah19/goldenhour-triage-train",
+  "title": "goldenhour-triage-train",
+  "code_file": "script.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": ["nikhilshah19/goldenhour-triage-data"],
+  "competition_sources": [],
+  "kernel_sources": []
+}

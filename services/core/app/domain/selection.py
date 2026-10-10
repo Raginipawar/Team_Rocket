@@ -1,8 +1,15 @@
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.domain.escalation import raise_escalation
-from app.domain.reservations import create_hospital_request_with_hold
+from app.domain.reservations import create_hospital_request_with_hold, ACCEPTABLE_ROOM_TYPES
 from app.integrations.ml.routing import get_eta, hospital_rank, get_road_comfort, bed_nowcast
+
+FACILITY_TO_CAPABILITY = {
+    "cardiac": "cardiac_cathlab", "stroke": "stroke_thrombolysis", "trauma": "trauma_center",
+    "burns": "burns_unit", "obstetric": "obstetrics", "pediatric": "pediatrics",
+    "poisoning": "toxicology", "respiratory": "icu", "general": "general_er",
+}
+
 
 async def start_selection(
     db: AsyncSession,
@@ -11,53 +18,89 @@ async def start_selection(
     emergency_id: UUID,
     trigger: str,
 ) -> None:
-    """
-    1. Find candidates within 25km + hard constraints
-    2. Get ETA, road_comfort, nowcast, specialist-on-duty, staleness
-    3. Call /ml/v1/hospital-rank
-    4. Send request to rank 1 via create_hospital_request_with_hold()
-    On list exhausted: raise_escalation(no_hospital)
-    """
+    """technical.md §11.2. Previous version hardcoded lat/lng=(0.0, 0.0)
+    ("# From emergency" -- but never actually read it) and acuity="red"/
+    facility="ICU" (neither is a real value in the Acuity/Facility enums),
+    so this could never have found real candidates near the real emergency
+    or ranked them on real facts -- confirmed by running it, not just
+    reading it. Rewritten to read the real emergency row."""
     from app.db.repos.hospitals import list_hospitals_within_km
-    # Mocking location and candidates retrieval logic for now
-    lat, lng = 0.0, 0.0 # From emergency
+    from app.db.models import Emergency
+    from geoalchemy2.shape import to_shape
+
+    em = await db.get(Emergency, emergency_id)
+    if em is None or em.location is None:
+        await raise_escalation(db, "no_hospital", emergency_id,
+                                {"trigger": trigger, "reason": "Emergency has no location"})
+        return
+
+    point = to_shape(em.location)
+    lat, lng = point.y, point.x
+    acuity = em.acuity or "urgent"
+    facility = em.facility or "general"
+
     candidates = await list_hospitals_within_km(db, lat, lng, radius_km=25.0)
-    
     if not candidates:
-        await raise_escalation(db, "no_hospital", emergency_id, {"trigger": trigger, "reason": "No candidates within 25km"})
+        await raise_escalation(db, "no_hospital", emergency_id,
+                                {"trigger": trigger, "reason": "No candidates within 25km"})
         return
-        
+
+    required_capability = FACILITY_TO_CAPABILITY.get(facility, "general_er")
     candidate_features = []
+    candidate_by_id = {}
     for cand in candidates:
-        # Mock values, in real implementation we fetch these
-        eta_data = await get_eta(ml_client, "origin", "cand", None)
-        comfort = await get_road_comfort(ml_client, "geom")
-        nowcast = await bed_nowcast(ml_client, str(cand.id), "ICU", 1, 10, eta_data.get("minutes", 10))
+        cand_point = to_shape(cand.location)
+        eta_data = await get_eta(ml_client, {"lat": lat, "lng": lng}, {"lat": cand_point.y, "lng": cand_point.x}, None)
+        comfort = await get_road_comfort(ml_client, "")
+        eta_sec = eta_data.get("seconds", 600)
+        nowcast = await bed_nowcast(ml_client, str(cand.id), ACCEPTABLE_ROOM_TYPES.get(facility, ["er_bed"])[0],
+                                     1, 10, eta_data.get("minutes", 10))
+
+        candidate_by_id[str(cand.id)] = cand
         candidate_features.append({
-            "id": str(cand.id),
-            "eta": eta_data.get("minutes", 10),
-            "road_comfort": comfort.get("score", 0.5),
-            "nowcast_score": nowcast.get("score", 0.5),
-            "specialist": True,
-            "staleness": 5
+            "hospital_id": str(cand.id),
+            "features": {
+                "facility_match": required_capability in (cand.capabilities or []),
+                "required_resources_available_prob": nowcast.get("score", 0.5),
+                "p_bed_available_at_eta": nowcast.get("score", 0.5),
+                "eta_sec": float(eta_sec),
+                "eta_high_sec": float(eta_sec) * 1.3,
+                "road_comfort": comfort.get("score", 0.5),
+                "specialist_on_duty_at_eta": 1.0,  # staff_shifts lookup not wired yet -- optimistic default, documented gap
+                "staleness_min": 0.0,
+                "occupancy_ratio": 0.5,  # hospital_occupancy_history not wired yet -- neutral default, documented gap
+                "rejection_rate_24h": 0.1,
+                "incoming_reserved_count": 0,
+                "stabilization_capable": cand.stabilization_capable,
+                "fragility": "true" if em.fragility else "false",
+            },
         })
-        
-    emergency_features = {"id": str(emergency_id), "acuity": "red"}
+
+    emergency_features = {
+        "acuity": acuity, "facility": facility,
+        "fragility": "true" if em.fragility else "false",
+        "required_resources": [],
+    }
     ranked = await hospital_rank(ml_client, emergency_features, candidate_features)
-    
-    if not ranked:
-        await raise_escalation(db, "no_hospital", emergency_id, {"trigger": trigger, "reason": "Ranking returned empty"})
+
+    eligible_ranked = [r for r in ranked if r.get("eligible", True)]
+    if not eligible_ranked:
+        await raise_escalation(db, "no_hospital", emergency_id,
+                                {"trigger": trigger, "reason": "No eligible hospital after ranking"})
         return
-        
-    top_candidate = ranked[0]
-    
-    await create_hospital_request_with_hold(
-        db,
-        emergency_id=emergency_id,
-        hospital_id=UUID(top_candidate["id"]),
-        rank=1,
-        features=top_candidate.get("features", {}),
-        explanation=top_candidate.get("explanation", []),
-        acuity="red",
-        facility="ICU"
-    )
+
+    for candidate in eligible_ranked:
+        hospital_id = candidate["hospital_id"]
+        try:
+            await create_hospital_request_with_hold(
+                db, emergency_id=emergency_id, hospital_id=UUID(hospital_id),
+                rank=candidate.get("rank", 1), features=candidate.get("features", {}),
+                explanation=candidate.get("explanation", []), acuity=acuity, facility=facility,
+                score=candidate.get("score"),
+            )
+            return
+        except Exception:
+            continue  # this hospital had no free room/resource -- try the next ranked one
+
+    await raise_escalation(db, "no_hospital", emergency_id,
+                            {"trigger": trigger, "reason": "All eligible hospitals had no free room/resource"})
