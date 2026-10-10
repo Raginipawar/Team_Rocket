@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...security.deps import require_role
@@ -26,6 +27,12 @@ class AcceptRequest(BaseModel):
 class RejectRequest(BaseModel):
     reason_code: str
     note: Optional[str] = None
+
+class IntegrationUpdate(BaseModel):
+    integration_mode: str  # "manual" | "api"
+    endpoint_url: Optional[str] = None
+    api_key: Optional[str] = None  # omitted/None: leave the stored key unchanged
+
 
 class RoomUpdate(BaseModel):
     status: str
@@ -100,7 +107,14 @@ async def get_dashboard(
 
     return {
         "hospital": {"id": str(hospital.id), "name": hospital.name,
-                     "last_confirmed_at": hospital.last_confirmed_at.isoformat() if hospital.last_confirmed_at else None},
+                     "last_confirmed_at": hospital.last_confirmed_at.isoformat() if hospital.last_confirmed_at else None,
+                     "hospital_code": hospital.hospital_code,
+                     "integration_mode": hospital.integration_mode or "manual",
+                     "integration_endpoint_url": hospital.integration_endpoint_url,
+                     # Masked, never the real key, once one's been set -- the
+                     # settings page shows "a key is saved", not the key itself.
+                     "integration_api_key_set": bool(hospital.integration_api_key),
+                     "integration_last_synced_at": hospital.integration_last_synced_at.isoformat() if hospital.integration_last_synced_at else None},
         "pending_requests": pending_requests,
         "rooms": rooms_grouped,
         "resources": resources,
@@ -109,6 +123,54 @@ async def get_dashboard(
         "incoming": incoming,
         "at_door": at_door,
     }
+
+
+@router.patch("/integration")
+async def update_integration(
+    payload: IntegrationUpdate,
+    user = Depends(require_role('hospital_staff')),
+    db: AsyncSession = Depends(get_db),
+):
+    """The registration form's Manual/API choice previously had nowhere to
+    actually go afterward -- "API integration" was selectable but there was
+    no settings page to enter an endpoint or key. This is deliberately
+    minimal: stores the endpoint/key so the choice means something real, not
+    a full integration gateway (no connection testing, webhooks or
+    field-level permission UI -- those stay out of scope for now)."""
+    if payload.integration_mode not in ("manual", "api"):
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "integration_mode must be manual or api", "details": {}}})
+    if payload.integration_mode == "api" and not payload.endpoint_url and not (await db.execute(
+        text("SELECT integration_endpoint_url FROM hospitals WHERE id = :id"), {"id": user.hospital_id},
+    )).scalar_one_or_none():
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "endpoint_url is required to enable API integration", "details": {}}})
+
+    if payload.api_key:
+        await db.execute(
+            text("UPDATE hospitals SET integration_mode = :mode, integration_endpoint_url = :url, integration_api_key = :key WHERE id = :id"),
+            {"mode": payload.integration_mode, "url": payload.endpoint_url, "key": payload.api_key, "id": user.hospital_id},
+        )
+    else:
+        await db.execute(
+            text("UPDATE hospitals SET integration_mode = :mode, integration_endpoint_url = :url WHERE id = :id"),
+            {"mode": payload.integration_mode, "url": payload.endpoint_url, "id": user.hospital_id},
+        )
+    await db.commit()
+    return {"status": "updated", "integration_mode": payload.integration_mode}
+
+
+@router.post("/integration/disconnect")
+async def disconnect_integration(
+    user = Depends(require_role('hospital_staff')),
+    db: AsyncSession = Depends(get_db),
+):
+    await db.execute(
+        text("UPDATE hospitals SET integration_mode = 'manual', integration_endpoint_url = NULL, "
+             "integration_api_key = NULL, integration_last_synced_at = NULL WHERE id = :id"),
+        {"id": user.hospital_id},
+    )
+    await db.commit()
+    return {"status": "disconnected"}
+
 
 @router.get("/requests")
 async def get_requests(

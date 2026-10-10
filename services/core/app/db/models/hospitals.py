@@ -41,6 +41,11 @@ class Hospital(TimestampMixin, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     last_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_simulated: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    integration_mode: Mapped[str | None] = mapped_column(Text)
+    hospital_code: Mapped[str | None] = mapped_column(Text)
+    integration_endpoint_url: Mapped[str | None] = mapped_column(Text)
+    integration_api_key: Mapped[str | None] = mapped_column(Text)
+    integration_last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     rooms: Mapped[list["Room"]] = relationship("Room", back_populates="hospital", lazy="select")
     resources: Mapped[list["HospitalResource"]] = relationship(

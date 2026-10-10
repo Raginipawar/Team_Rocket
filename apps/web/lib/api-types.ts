@@ -328,6 +328,11 @@ export type HospitalInfo = {
   capabilities?: Capability[];
   last_confirmed_at?: string | null;
   is_simulated?: boolean;
+  hospital_code?: string | null;
+  integration_mode?: "manual" | "api";
+  integration_endpoint_url?: string | null;
+  integration_api_key_set?: boolean;
+  integration_last_synced_at?: string | null;
 };
 
 /** GET /hospital/dashboard (shape implemented in B's hospital.py, plus extras). */
