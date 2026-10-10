@@ -25,6 +25,7 @@ async def start_selection(
     or ranked them on real facts -- confirmed by running it, not just
     reading it. Rewritten to read the real emergency row."""
     from app.db.repos.hospitals import list_hospitals_within_km
+    from app.db.repos.hospital_requests import list_attempted_hospital_ids
     from app.db.models import Emergency
     from geoalchemy2.shape import to_shape
 
@@ -40,6 +41,12 @@ async def start_selection(
     facility = em.facility or "general"
 
     candidates = await list_hospitals_within_km(db, lat, lng, radius_km=25.0)
+    # Exclude hospitals already offered this emergency (any status) -- on
+    # the very first call this is an empty set (no-op); on a re-run after
+    # cancel/reject/timeout it's what stops this from just re-offering the
+    # same hospital with nothing changed.
+    already_tried = {str(h) for h in await list_attempted_hospital_ids(db, emergency_id)}
+    candidates = [c for c in candidates if str(c.id) not in already_tried]
     if not candidates:
         await raise_escalation(db, type="no_hospital", emergency_id=emergency_id,
                                 context={"trigger": trigger, "reason": "No candidates within 25km"})

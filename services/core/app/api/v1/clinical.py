@@ -14,6 +14,7 @@ from ...domain.clinical import (
     record_refused_transport,
     mark_arrived_scene,
     mark_arrived_hospital,
+    cancel_hospital_request_and_retry,
     NotYourEmergency,
 )
 
@@ -54,6 +55,25 @@ async def triage_confirm_endpoint(
         )
         await db.commit()
         return {"status": "confirmed", "triage": res}
+    except NotYourEmergency:
+        raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "not your emergency"}})
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": str(e)}})
+    except Exception as e:
+        raise HTTPException(status_code=409, detail={"error": {"code": "CONFLICT", "message": str(e)}})
+
+@router.post("/{id}/hospital-request/cancel")
+async def cancel_hospital_request_endpoint(
+    id: UUID,
+    user = Depends(require_role('paramedic')),
+    db: AsyncSession = Depends(get_db)
+):
+    if not user.ambulance_id:
+        raise HTTPException(403, "user has no assigned ambulance")
+    try:
+        res = await cancel_hospital_request_and_retry(db, emergency_id=id, actor_id=user.id, ambulance_id=user.ambulance_id)
+        await db.commit()
+        return {"status": "cancelled", **res}
     except NotYourEmergency:
         raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "not your emergency"}})
     except ValueError as e:

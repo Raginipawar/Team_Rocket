@@ -191,6 +191,31 @@ async def confirm_triage(
     return {"acuity": acuity, "facility": facility, "patient_count": patient_count}
 
 
+async def cancel_hospital_request_and_retry(
+    db: AsyncSession, emergency_id: UUID, actor_id: UUID, ambulance_id: UUID,
+) -> dict:
+    """Paramedic-side 'this hospital isn't responding, try another one' --
+    there was previously no way to move off a pending request except waiting
+    for the hospital to actually accept/reject it, which blocked testing
+    (and a real stuck case) completely."""
+    from app.domain.reservations import cancel_hospital_request
+    from app.db.repos.hospital_requests import get_pending_request_for_emergency
+
+    em = await db.get(Emergency, emergency_id)
+    if not em:
+        raise ValueError("Emergency not found")
+    if not em.ambulance_id or str(em.ambulance_id) != str(ambulance_id):
+        raise NotYourEmergency("not your emergency")
+
+    req = await get_pending_request_for_emergency(db, emergency_id)
+    if not req:
+        raise ValueError("No pending hospital request to cancel")
+
+    await cancel_hospital_request(db, req.id, actor_id)
+    await start_selection(db, None, None, emergency_id, trigger="cancelled_by_paramedic")
+    return {"cancelled_request_id": str(req.id)}
+
+
 async def trigger_critical_deterioration(
     db: AsyncSession,
     emergency_id: UUID,

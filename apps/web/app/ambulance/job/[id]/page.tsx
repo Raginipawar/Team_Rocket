@@ -279,12 +279,20 @@ export default function JobPage() {
       )}
 
       {(s === "patient_on_board" || s === "hospital_selecting") && (
-        <Card className="flex items-center gap-4">
-          <span className="h-8 w-8 animate-spin rounded-full border-4 border-blue border-t-transparent" aria-hidden />
-          <div className="flex-1">
-            <p className="text-[19px] font-bold">{job.hospital_selecting ? t("askingHospital", { name: job.hospital_selecting.hospital_name }) : "Choosing the best hospital"}</p>
-            <p className="text-[16px] text-muted">Keep driving on the dashed line. It turns solid once the hospital says yes.</p>
+        <Card className="flex flex-col gap-3">
+          <div className="flex items-center gap-4">
+            <span className="h-8 w-8 animate-spin rounded-full border-4 border-blue border-t-transparent" aria-hidden />
+            <div className="flex-1">
+              <p className="text-[19px] font-bold">{job.hospital_selecting ? t("askingHospital", { name: job.hospital_selecting.hospital_name }) : "Choosing the best hospital"}</p>
+              <p className="text-[16px] text-muted">Keep driving on the dashed line. It turns solid once the hospital says yes.</p>
+            </div>
           </div>
+          {job.hospital_selecting && (
+            <Button size="md" variant="dangerOutline" loading={busy === "cancelReq"}
+              onClick={() => void act("cancelReq", `/emergencies/${id}/hospital-request/cancel`, undefined, "Cancelled. Trying another hospital.")}>
+              Cancel request, try another hospital
+            </Button>
+          )}
         </Card>
       )}
 

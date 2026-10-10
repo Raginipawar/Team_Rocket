@@ -193,6 +193,29 @@ async def reject_hospital_request(
     if req.reservation_id:
         await release_reservation(db, req.reservation_id, "released")
 
+async def cancel_hospital_request(
+    db: AsyncSession, request_id: UUID, canceller_id: UUID
+) -> None:
+    """Paramedic-initiated withdrawal of a still-pending request -- distinct
+    from reject_hospital_request (that's the hospital's own action). Needed
+    because there was previously no way to move a request off a hospital
+    that simply never responds: reject_hospital_request is hospital-only,
+    and nothing ever called timeout_hospital_request, so a pending request
+    could get stuck forever with no way to try a different hospital."""
+    req = await db.get(HospitalRequest, request_id)
+    if not req:
+        return
+    if req.status != "pending":
+        raise ValueError(f"Cannot cancel a request in status '{req.status}'")
+    req.status = "cancelled"
+    req.rejection_reason = "cancelled_by_paramedic"
+    req.responded_at = datetime.utcnow()
+    req.responder_id = canceller_id
+
+    if req.reservation_id:
+        await release_reservation(db, req.reservation_id, "released")
+
+
 async def timeout_hospital_request(db: AsyncSession, request_id: UUID) -> None:
     req = await db.get(HospitalRequest, request_id)
     if not req: return

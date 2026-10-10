@@ -73,6 +73,23 @@ async def get_hospital_request(db: AsyncSession, request_id: UUID) -> Optional[H
     return result.scalar_one_or_none()
 
 
+async def get_pending_request_for_emergency(db: AsyncSession, emergency_id: UUID) -> Optional[HospitalRequest]:
+    result = await db.execute(
+        select(HospitalRequest).where(HospitalRequest.emergency_id == emergency_id, HospitalRequest.status == "pending")
+    )
+    return result.scalar_one_or_none()
+
+
+async def list_attempted_hospital_ids(db: AsyncSession, emergency_id: UUID) -> list[UUID]:
+    """Hospitals already offered this emergency (any status) -- so a re-run of
+    selection (after a cancel/reject/timeout) picks a different candidate
+    instead of immediately re-offering the same one with nothing changed."""
+    result = await db.execute(
+        select(HospitalRequest.hospital_id).where(HospitalRequest.emergency_id == emergency_id)
+    )
+    return [row[0] for row in result.all()]
+
+
 async def list_incoming_ambulances(db: AsyncSession, hospital_id: UUID, *, at_door: bool) -> list[dict]:
     """apps/web's hospital dashboard (app/hospital/page.tsx) reads
     dashboard.incoming/dashboard.at_door (IncomingAmbulance[] in
