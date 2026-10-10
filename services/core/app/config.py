@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     JWT_SECRET: str = "secret"
     JWT_KID: str = "kid1"
+    MIGRATE_KEY: str = ""
     
     ML_BASE_URL: str = "http://localhost:8001"
     ML_MODE: str = "real"

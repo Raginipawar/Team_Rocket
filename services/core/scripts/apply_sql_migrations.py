@@ -23,9 +23,10 @@ MIGRATIONS_DIR = Path(__file__).resolve().parent.parent / "app" / "db" / "migrat
 FILENAME_RE = re.compile(r"^\d{4}_.*\.sql$")
 
 
-async def main() -> None:
-    url = os.environ["DATABASE_URL"].replace("postgresql+asyncpg://", "postgresql://")
-    conn = await asyncpg.connect(url)
+async def apply_all(url: str) -> list[str]:
+    """Runs whatever's pending, returns the list of filenames actually applied."""
+    conn = await asyncpg.connect(url.replace("postgresql+asyncpg://", "postgresql://"))
+    newly_applied: list[str] = []
     try:
         await conn.execute(
             "CREATE TABLE IF NOT EXISTS schema_migrations (filename text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())"
@@ -39,9 +40,15 @@ async def main() -> None:
             async with conn.transaction():
                 await conn.execute(sql)
                 await conn.execute("INSERT INTO schema_migrations (filename) VALUES ($1)", path.name)
-            print(f"applied {path.name}")
+            newly_applied.append(path.name)
     finally:
         await conn.close()
+    return newly_applied
+
+
+async def main() -> None:
+    for name in await apply_all(os.environ["DATABASE_URL"]):
+        print(f"applied {name}")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
 
 import httpx
 import redis.asyncio as redis
-from fastapi import FastAPI
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
@@ -157,3 +157,18 @@ async def readyz() -> dict:
         status["osrm"] = "error"
 
     return {"status": "ok", "dependencies": status}
+
+
+# Temporary: Render's free plan has no Shell tab, and this venue's network
+# blocks direct outbound connections to Render's external Postgres (same
+# TLS-handshake-timeout pattern seen with Tailscale/ngrok here), so there's
+# no other way to run the one-off migration against the deployed DB. Guarded
+# by MIGRATE_KEY (unset by default -- route 403s until someone deliberately
+# sets it as a Render env var). Remove once proper CI/CD migrations exist.
+@app.post("/internal/migrate")
+async def run_migrations(x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    from scripts.apply_sql_migrations import apply_all
+    applied = await apply_all(settings.DATABASE_URL)
+    return {"applied": applied}
