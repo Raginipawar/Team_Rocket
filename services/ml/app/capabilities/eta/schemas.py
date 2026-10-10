@@ -11,6 +11,12 @@ class ETARequest(BaseModel):
     depart_at: Optional[str] = None
     alternatives: bool = False
 
+class Step(BaseModel):
+    instruction: str
+    distance_m: float
+    maneuver_type: str
+    maneuver_modifier: Optional[str] = None
+
 class Route(BaseModel):
     route_id: str
     geometry: str
@@ -20,6 +26,7 @@ class Route(BaseModel):
     eta_high_sec: float
     source: str
     road_comfort: Optional[float] = None
+    steps: List[Step] = []
 
 class ETAResponse(BaseModel):
     routes: List[Route]

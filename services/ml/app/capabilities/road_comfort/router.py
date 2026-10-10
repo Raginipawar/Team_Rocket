@@ -6,7 +6,7 @@ from .mock import get_road_comfort_mock
 from .model import real_road_comfort
 from .schemas import RoadComfortRequest, RoadComfortResponse
 
-router = APIRouter(prefix="/ml/v1")
+router = APIRouter()
 
 
 @router.post("/road-comfort", response_model=RoadComfortResponse)

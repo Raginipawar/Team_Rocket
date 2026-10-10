@@ -9,7 +9,7 @@ import uuid
 from app.geo import osrm_client
 
 from .mock import get_eta_matrix_mock, get_eta_mock
-from .schemas import ETAMatrixRequest, ETAMatrixResponse, ETARequest, ETAResponse, Route
+from .schemas import ETAMatrixRequest, ETAMatrixResponse, ETARequest, ETAResponse, Route, Step
 
 logger = logging.getLogger("eta")
 
@@ -32,12 +32,19 @@ async def get_eta(req: ETARequest) -> ETAResponse:
             eta_sec = r["duration"]
             routes.append(Route(
                 route_id=str(uuid.uuid4()),
-                geometry=_encode_geometry(r.get("geometry")),
+                # OSRM's own polyline6 output -- matches the frontend's
+                # decodePolyline6 (standard Google polyline algorithm,
+                # precision 1e6) exactly, so no custom re-encoding needed.
+                # The previous geojson-based _encode_geometry() produced a
+                # completely different "lng,lat;lng,lat" string that
+                # decodePolyline6 would have silently mis-parsed.
+                geometry=r.get("geometry", ""),
                 distance_m=r["distance"],
                 eta_sec=eta_sec,
                 eta_low_sec=eta_sec * (1 - UNCERTAINTY_PCT),
                 eta_high_sec=eta_sec * (1 + UNCERTAINTY_PCT),
                 source="osrm",
+                steps=_extract_steps(r.get("legs", [])),
             ))
         return ETAResponse(routes=routes)
     except Exception:
@@ -58,11 +65,44 @@ async def get_eta_matrix(req: ETAMatrixRequest) -> ETAMatrixResponse:
         return await get_eta_matrix_mock(req)
 
 
-def _encode_geometry(geojson_geometry: dict | None) -> str:
-    if not geojson_geometry:
-        return ""
-    # GeoJSON LineString coordinates -> "lng,lat;lng,lat;..." -- simple and
-    # sufficient for the frontend to draw a polyline; not Google's encoded
-    # polyline format, documented here so nobody assumes it is.
-    coords = geojson_geometry.get("coordinates", [])
-    return ";".join(f"{lng},{lat}" for lng, lat in coords)
+_MODIFIER_TEXT = {
+    "uturn": "Make a U-turn", "sharp right": "Turn sharp right", "right": "Turn right",
+    "slight right": "Turn slightly right", "straight": "Continue straight",
+    "slight left": "Turn slightly left", "left": "Turn left", "sharp left": "Turn sharp left",
+}
+
+
+def _step_instruction(maneuver: dict, road_name: str | None) -> str:
+    # OSRM's real maneuver.type/modifier (technical.md's own turn-by-turn
+    # requirement) -- not a made-up string. Was previously nothing at all:
+    # the core API's /ambulance/active response hardcoded turns=None, so the
+    # frontend's whole turn-by-turn UI had nothing real to ever show.
+    mtype = maneuver.get("type", "turn")
+    modifier = maneuver.get("modifier")
+    suffix = f" onto {road_name}" if road_name else ""
+    if mtype == "depart":
+        return f"Head out{suffix}" if road_name else "Head out"
+    if mtype == "arrive":
+        return "You have arrived"
+    if mtype in ("turn", "end of road", "fork", "merge", "on ramp", "off ramp", "new name"):
+        base = _MODIFIER_TEXT.get(modifier or "straight", "Continue")
+        return f"{base}{suffix}"
+    if mtype in ("roundabout", "rotary", "roundabout turn", "exit roundabout", "exit rotary"):
+        return f"Take the roundabout{suffix}"
+    return f"Continue{suffix}"
+
+
+def _extract_steps(legs: list[dict]) -> list[Step]:
+    steps: list[Step] = []
+    for leg in legs:
+        for s in leg.get("steps", []):
+            maneuver = s.get("maneuver", {})
+            steps.append(Step(
+                instruction=_step_instruction(maneuver, s.get("name") or None),
+                distance_m=s.get("distance", 0.0),
+                maneuver_type=maneuver.get("type", "turn"),
+                maneuver_modifier=maneuver.get("modifier"),
+            ))
+    return steps
+
+

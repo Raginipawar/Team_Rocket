@@ -6,7 +6,7 @@ from .model import SolverFailed, real_mci_allocate
 from .schemas import Assignment, MCIAllocateRequest, MCIAllocateResponse, Unassigned
 
 logger = logging.getLogger("mci")
-router = APIRouter(prefix="/ml/v1")
+router = APIRouter()
 
 
 def _round_robin_fallback(req: MCIAllocateRequest) -> MCIAllocateResponse:

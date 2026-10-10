@@ -251,7 +251,10 @@ export default function JobPage() {
         <div className="flex items-center gap-3 rounded-[22px] bg-blue px-4 py-3 text-white">
           <Icon name={nextTurn ? turnIcon(nextTurn) : "straight"} size={34} stroke={2.4} />
           <p className="flex-1 text-[19px] font-bold leading-snug">{nextTurn ?? "Follow the blue line"}</p>
-          {eta != null && <div className="text-right"><p className="text-[26px] font-extrabold leading-none">{minutes(eta)}</p><p className="text-[13px] opacity-85">min</p></div>}
+          <div className="text-right">
+            {eta != null && <p className="text-[26px] font-extrabold leading-none">{minutes(eta)}<span className="ml-1 text-[13px] font-semibold opacity-85">min</span></p>}
+            {job.distance_m != null && <p className="text-[13px] opacity-85">{km(job.distance_m)} left</p>}
+          </div>
         </div>
       )}
 
@@ -350,6 +353,7 @@ export default function JobPage() {
           <ol className="mt-2 flex flex-col gap-2">
             {job.turns.map((x, i) => <li key={i} className="flex items-center gap-3 text-[16px]"><Icon name={turnIcon(x)} size={20} />{x}</li>)}
           </ol>
+          {job.route_explanation && <p className="mt-3 border-t border-line pt-3 text-[14px] text-muted leading-relaxed">{job.route_explanation}</p>}
         </details>
       )}
 

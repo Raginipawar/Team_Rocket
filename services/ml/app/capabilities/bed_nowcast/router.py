@@ -5,7 +5,7 @@ from app.config import get_settings
 from .model import real_bed_nowcast
 from .schemas import BedNowcastRequest, BedNowcastResponse
 
-router = APIRouter(prefix="/ml/v1")
+router = APIRouter()
 
 
 def _mock(req: BedNowcastRequest) -> BedNowcastResponse:

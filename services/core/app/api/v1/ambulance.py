@@ -5,8 +5,10 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.db.repos import dispatch as dispatch_repo
+from app.db.repos.hospital_requests import get_pending_request_for_emergency
 from app.db.session import get_session
 from app.domain import dispatch, lifecycle
+from app.integrations.ml.routing import get_route
 from app.security.deps import CurrentUser, require_role
 
 router = APIRouter()
@@ -70,9 +72,57 @@ async def get_active_job(user: CurrentUser = Depends(require_role("paramedic")))
             {"id": em["id"]},
         )).mappings().first()
 
-    leg = "to_hospital" if em["status"] in (
-        "on_board", "hospital_selecting", "hospital_confirmed", "arrived_hospital",
-    ) else "to_patient"
+        amb_loc = (await session.execute(
+            text("SELECT ST_Y(current_location::geometry) AS lat, ST_X(current_location::geometry) AS lng "
+                 "FROM ambulances WHERE id = :id"), {"id": user.ambulance_id},
+        )).mappings().first()
+
+        leg = "to_hospital" if em["status"] in (
+            "on_board", "hospital_selecting", "hospital_confirmed", "arrived_hospital",
+        ) else "to_patient"
+
+        # ActiveJob.destination is the hospital-arrival shape (HospitalView +
+        # room/team info) -- the pickup leg already has its own `pickup`
+        # field/map prop for that pin, so destination stays null until
+        # there's a real hospital to show, matching the existing contract
+        # rather than overloading the field with a second shape.
+        destination = None
+        route_target = None
+        if leg == "to_patient" and em.get("lat") is not None:
+            route_target = {"lat": em["lat"], "lng": em["lng"]}
+        elif leg == "to_hospital" and em.get("hospital_id"):
+            hosp = (await session.execute(
+                text("SELECT name, er_entrance_note, duty_manager_phone, "
+                     "ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng "
+                     "FROM hospitals WHERE id = :id"), {"id": em["hospital_id"]},
+            )).mappings().first()
+            if hosp:
+                route_target = {"lat": hosp["lat"], "lng": hosp["lng"]}
+                destination = {
+                    "hospital": {
+                        "name": hosp["name"], "location": {"lat": hosp["lat"], "lng": hosp["lng"]},
+                        "er_entrance_note": hosp["er_entrance_note"], "phone": hosp["duty_manager_phone"],
+                    },
+                    "entrance_note": hosp["er_entrance_note"],
+                }
+
+        # Real turn-by-turn only when both ends are actually known (live
+        # ambulance GPS fix + a real destination) -- no fallback straight
+        # line pretending to be a route.
+        route_data = None
+        if amb_loc and amb_loc["lat"] is not None and route_target:
+            route_data = await get_route(
+                None, {"lat": amb_loc["lat"], "lng": amb_loc["lng"]}, route_target,
+            )
+
+        hospital_selecting = None
+        if em["status"] == "hospital_selecting":
+            pending = await get_pending_request_for_emergency(session, em["id"])
+            if pending:
+                hname = (await session.execute(
+                    text("SELECT name FROM hospitals WHERE id = :id"), {"id": pending.hospital_id},
+                )).scalar_one_or_none()
+                hospital_selecting = {"hospital_name": hname}
 
     sex_label = {"M": "Male", "F": "Female"}.get((patient or {}).get("sex") or "", "Unknown")
     age = (patient or {}).get("est_age")
@@ -104,9 +154,17 @@ async def get_active_job(user: CurrentUser = Depends(require_role("paramedic")))
             "mlc_flag": em.get("mlc_flag"), "fragility": em.get("fragility"),
         },
         "transcript": em.get("transcript"),
-        "route": None, "eta_sec": em.get("eta_to_patient_sec") if leg == "to_patient" else em.get("eta_to_hospital_sec"),
-        "distance_m": None, "turns": None,
-        "destination": None, "hospital_selecting": None, "arrived_at": None,
+        "route": route_data.get("geometry") if route_data else None,
+        # Real route's own eta_sec takes priority over the stored
+        # eta_to_patient/hospital_sec columns (set once at an earlier dispatch
+        # step, not kept live) -- this is the live ETA for right now, not a
+        # stale snapshot from whenever the emergency was first dispatched.
+        "eta_sec": (route_data.get("eta_sec") if route_data else None)
+                   or (em.get("eta_to_patient_sec") if leg == "to_patient" else em.get("eta_to_hospital_sec")),
+        "distance_m": route_data.get("distance_m") if route_data else None,
+        "turns": [t["instruction"] for t in route_data["turns"]] if route_data and route_data.get("turns") else None,
+        "route_explanation": route_data.get("explanation") if route_data else None,
+        "destination": destination, "hospital_selecting": hospital_selecting, "arrived_at": None,
     }
 
 

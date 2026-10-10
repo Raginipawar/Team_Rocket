@@ -193,6 +193,7 @@ export type ActiveJob = {
   eta_sec?: number | null;
   distance_m?: number | null;
   turns?: string[];
+  route_explanation?: string | null;
   destination?: {
     hospital: HospitalView;
     room_code?: string | null;

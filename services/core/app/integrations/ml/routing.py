@@ -42,6 +42,47 @@ async def get_eta(ml_client, origin: dict, destination: dict, depart_at) -> dict
         return {"minutes": seconds / 60, "seconds": seconds}
 
 
+async def get_route(ml_client, origin: dict, destination: dict) -> dict | None:
+    """Full route for ambulance navigation (geometry + turn-by-turn steps),
+    not just the bare ETA get_eta() returns. Used by GET /ambulance/active,
+    which previously hardcoded route/distance_m/turns to null unconditionally
+    -- there was no code path that ever populated them with anything, real
+    or otherwise. Returns None (not a fake straight-line fallback) on
+    failure -- a missing route must read as "no live route yet", not an
+    incorrect one silently drawn on the map."""
+    try:
+        async with httpx.AsyncClient(base_url=ML_BASE_URL, timeout=4.0) as client:
+            resp = await client.post("/ml/v1/eta", json={"origin": origin, "destination": destination})
+            resp.raise_for_status()
+            route = resp.json()["routes"][0]
+            km = (route.get("distance_m") or 0) / 1000
+            mins = (route.get("eta_sec") or 0) / 60
+            # Honest, not padded: only claims what this system actually
+            # measures (real road-network distance/time from OSRM). No
+            # traffic or road-quality data source is integrated, so neither
+            # is named as a factor here -- technical.md's own distinction
+            # between "what we measure" and "what we intend to optimise."
+            explanation = (
+                f"Fastest route by real road-network distance and driving time "
+                f"({km:.1f} km, ~{mins:.0f} min) from OSRM live routing. "
+                f"No live traffic or road-quality data source is integrated, "
+                f"so neither factors into this choice."
+            )
+            return {
+                "geometry": route.get("geometry") or None,
+                "distance_m": route.get("distance_m"),
+                "eta_sec": route.get("eta_sec"),
+                "source": route.get("source"),
+                "explanation": explanation,
+                "turns": [
+                    {"instruction": s["instruction"], "distance_m": s["distance_m"]}
+                    for s in route.get("steps", [])
+                ],
+            }
+    except (httpx.HTTPError, KeyError, IndexError):
+        return None
+
+
 async def get_eta_matrix(ml_client, origins: list[dict], destinations: list[dict]) -> dict:
     try:
         async with httpx.AsyncClient(base_url=ML_BASE_URL, timeout=5.0) as client:

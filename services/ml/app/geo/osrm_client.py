@@ -23,7 +23,7 @@ async def route(origin: dict, destination: dict, alternatives: bool = True) -> d
     """origin/destination: {"lat":, "lng":}. Returns the raw OSRM /route
     response (code, routes[].{distance,duration,geometry,legs})."""
     coords = f"{origin['lng']},{origin['lat']};{destination['lng']},{destination['lat']}"
-    params = {"overview": "full", "geometries": "geojson", "alternatives": "true" if alternatives else "false"}
+    params = {"overview": "full", "geometries": "polyline6", "alternatives": "true" if alternatives else "false", "steps": "true"}
     async with httpx.AsyncClient(timeout=TIMEOUT_S) as client:
         resp = await client.get(f"{OSRM_URL}/route/v1/driving/{coords}", params=params)
         resp.raise_for_status()
