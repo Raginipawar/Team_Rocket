@@ -20,30 +20,6 @@ function AppCard({ href, icon, title, sub }: { href: string; icon: IconName; tit
   );
 }
 
-function Problem({ icon, title, text }: { icon: IconName; title: string; text: string }) {
-  return (
-    <div className="flex flex-col gap-2 rounded-[24px] border border-line bg-card p-5">
-      <span className="grid h-11 w-11 place-items-center rounded-full bg-red/10 text-red">
-        <Icon name={icon} size={22} />
-      </span>
-      <p className="text-[18px] font-bold leading-tight">{title}</p>
-      <p className="text-[15px] text-muted leading-relaxed">{text}</p>
-    </div>
-  );
-}
-
-function Step({ n, title, text }: { n: number; title: string; text: string }) {
-  return (
-    <div className="flex gap-4">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-[15px] font-bold text-bg">{n}</span>
-      <div>
-        <p className="text-[17px] font-bold leading-tight">{title}</p>
-        <p className="mt-0.5 text-[15px] text-muted leading-relaxed">{text}</p>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   const t = useTranslations("landing");
 
@@ -61,29 +37,6 @@ export default function Home() {
           <h1 className="text-[36px] font-extrabold leading-[1.08] tracking-tight">{t("title")}</h1>
           <p className="text-[18px] text-muted leading-relaxed">{t("subtitle")}</p>
           <p className="text-[15px] font-semibold text-red-ink">When anything fails, we fail toward 108 — never toward silence.</p>
-        </section>
-
-        {/* The problem */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-[22px] font-extrabold">Three things go wrong in the first hour</h2>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Problem icon="ambulance" title="Disconnected" text="Ambulances and hospitals don't coordinate, so nobody knows which free ambulance is actually closest." />
-            <Problem icon="hospital" title="Wrong hospital" text="The nearest hospital is often the wrong one — a cardiac patient at a trauma-only hospital loses minutes being turned away." />
-            <Problem icon="bed" title="Not ready" text="The ER finds out about the patient only when the ambulance reaches the door — no bed, doctor or equipment is ready." />
-          </div>
-        </section>
-
-        {/* How it works */}
-        <section className="flex flex-col gap-5">
-          <h2 className="text-[22px] font-extrabold">How GoldenHour connects the loop</h2>
-          <div className="flex flex-col gap-4">
-            <Step n={1} title="Caller sends an SOS" text="Voice note, text, or one button — in Hindi, Marathi or English." />
-            <Step n={2} title="AI understands" text="Speech becomes text, facts are extracted, and the case is triaged — acuity and facility type, with a confidence score." />
-            <Step n={3} title="Nearest ambulance dispatched" text="The best nearby ambulances get a live offer at once; the first to accept wins." />
-            <Step n={4} title="Right hospital matched" text="Ranked by capability, predicted bed availability, traffic-aware ETA and road comfort — not just distance." />
-            <Step n={5} title="Hospital is ready" text="A structured handover note, and the bed, specialist and equipment reserved together, before the ambulance arrives." />
-            <Step n={6} title="Family stays informed" text="A live tracking link by SMS — location and ETA only, medical details stay private." />
-          </div>
         </section>
 
         {/* Apps */}
