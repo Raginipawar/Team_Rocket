@@ -3,7 +3,7 @@ import type { Dict } from "./types";
 const en: Dict = {
   langName: "English",
   metaTitle: "GoldenHour | Faster emergency help in Pune",
-  nav: { how: "How it works", features: "Features", faq: "FAQ", getHelp: "Get help", language: "Language", demo: "Live demo" },
+  nav: { how: "How it works", features: "Features", faq: "FAQ", getHelp: "Get help", language: "Language", demo: "Live demo", liveApp: "Our app" },
   hero: {
     title1: "Help reaches you faster",
     title2: "in Pune.",
@@ -113,6 +113,12 @@ const en: Dict = {
     lead: "GoldenHour gets the right help to you, and gets the hospital ready, before you arrive.",
     cta: "See how it works",
     call: "Call 108 now",
+  },
+  liveApp: {
+    title: "This is not just a mockup. Try the real app.",
+    lead: "Every screen you just saw is a working product: real ambulance dispatch, real hospital matching, a real live map of Pune and Pimpri Chinchwad.",
+    cta: "Open the live app",
+    note: "Opens in a new tab. Built for this hackathon, running on simulated demo data.",
   },
   footer: "© 2026 Ragini Pawar. All rights reserved for the layout and UI/UX design.",
   track: {

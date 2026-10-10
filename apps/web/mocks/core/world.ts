@@ -338,4 +338,17 @@ export function seed() {
   db.contacts.set(c1, { id: c1, user_id: p1, name: "Sunita Kulkarni", phone: "+919999999999", relation: "Wife", language: "mr", priority: 1 });
   const c2 = uid();
   db.contacts.set(c2, { id: c2, user_id: p2, name: "Emergency Contact", phone: "+919999999998", relation: "Family", language: "mr", priority: 1 });
+
+  // Named demo account for the team's own PWA walkthrough (data/seed/CREDENTIALS.md).
+  const p3 = addUser({ role: "patient", name: "Ragini Pawar", phone: "+919200000003", password: "Ragini@21", hospital_id: null, ambulance_id: null, language: "en" });
+  db.profiles.set(p3, { user_id: p3, dob: "2004-07-21", sex: "female", blood_group: "B+", allergies: [], conditions: [], medications: [], insurance_provider: null, insurance_policy_no: null, home_address: "Pune, Maharashtra", home_location: { lat: 18.5603, lng: 73.8092 }, notes: null, version: 1 });
+  [
+    { name: "Vaishali Pawar", relation: "Mother", phone: "+919200000011" },
+    { name: "Vinod Pawar", relation: "Father", phone: "+919200000012" },
+    { name: "Bhumi More", relation: "Sister", phone: "+919200000013" },
+    { name: "Pariniti Pawar", relation: "Sister", phone: "+919200000014" },
+  ].forEach((c, i) => {
+    const cid = uid();
+    db.contacts.set(cid, { id: cid, user_id: p3, name: c.name, phone: c.phone, relation: c.relation, language: "en", priority: i + 1 });
+  });
 }

@@ -10,7 +10,7 @@ interface TitleDesc {
 export interface Dict {
   langName: string;
   metaTitle: string;
-  nav: { how: string; features: string; faq: string; getHelp: string; language: string; demo: string };
+  nav: { how: string; features: string; faq: string; getHelp: string; language: string; demo: string; liveApp: string };
   hero: { title1: string; title2: string; lead: string; ctaHow: string; ctaCall: string; note: string };
   screens: {
     ask: { place: string; title: string; hold: string; speak: string; type: string; call: string };
@@ -31,6 +31,7 @@ export interface Dict {
   faqTitle: string;
   faq: { q: string; a: string }[];
   closing: { title: string; lead: string; cta: string; call: string };
+  liveApp: { title: string; lead: string; cta: string; note: string };
   footer: string;
   track: {
     title: string; ambulanceFor: string; steps: string[]; min: string; to: string; arrived: string; ambulance: string;

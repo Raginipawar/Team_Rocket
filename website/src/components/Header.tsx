@@ -1,6 +1,8 @@
 import LanguageMenu from "./LanguageMenu";
 import { useI18n } from "../i18n/context";
 
+const LIVE_APP_URL = (import.meta.env.VITE_APP_URL as string | undefined) || "http://localhost:3000";
+
 export default function Header() {
   const { t } = useI18n();
   return (
@@ -18,6 +20,7 @@ export default function Header() {
         </nav>
         <div className="header-right">
           <LanguageMenu />
+          <a href={LIVE_APP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-red btn-sm" style={{ textTransform: "uppercase", letterSpacing: "0.02em" }}>{t.nav.liveApp}</a>
           <a href="#/demo" className="btn btn-light btn-sm demo-mobile">{t.nav.demo}</a>
           <a href="#top" className="btn btn-dark btn-sm">{t.nav.getHelp}</a>
         </div>
