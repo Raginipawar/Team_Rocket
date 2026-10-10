@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { ApiError, errorText, newKey, post, toApiError } from "@/lib/api";
-import type { LoginResponse } from "@/lib/api-types";
+import { ApiError, errorText, get, newKey, post, toApiError } from "@/lib/api";
+import type { HealthProfile, LoginResponse } from "@/lib/api-types";
 import type { Role } from "@/lib/enums";
 import { areaMode } from "@/lib/config";
 import { Brand, Call108, LanguageSwitcher, MockRibbon } from "@/components/shell";
@@ -40,9 +40,31 @@ function LoginInner() {
     if (ready && session) router.replace(session.user.role === role && next ? next : HOME[session.user.role]);
   }, [ready, session, role, next, router]);
 
-  const done = (r: LoginResponse) => {
+  const done = async (r: LoginResponse) => {
     signIn(r);
-    router.replace(r.user.role === role && next ? next : HOME[r.user.role]);
+    const target = r.user.role === role && next ? next : HOME[r.user.role];
+    // First-ever login felt like "enter OTP, you're just... in" -- no
+    // welcome, no prompt to fill the health profile that genuinely matters
+    // in a real emergency (blood group/allergies/conditions). Detecting
+    // "never filled" (not just "brand new account") so a patient who
+    // signed up before this existed also gets it once, not just literal
+    // day-one accounts.
+    if (r.user.role === "patient") {
+      try {
+        const profile = await get<HealthProfile>("/me/profile");
+        const seenKey = `gh-onboarded-${r.user.id}`;
+        const neverFilled = !profile.name && !profile.dob && !profile.blood_group;
+        let alreadySeen = false;
+        try { alreadySeen = localStorage.getItem(seenKey) === "1"; } catch { /* ignore */ }
+        if (neverFilled && !alreadySeen) {
+          router.replace(`/patient/welcome?next=${encodeURIComponent(target)}`);
+          return;
+        }
+      } catch {
+        /* profile fetch failed -- don't block login on it, just skip onboarding */
+      }
+    }
+    router.replace(target);
   };
 
   return (
@@ -120,7 +142,7 @@ function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
         <Button type="submit" size="lg" block loading={busy}>{t("sendCode")}</Button>
         {areaMode("AUTH") === "mock" && (
           <button type="button" className="text-left text-[15px] text-muted underline" onClick={() => setPhone("9200000001")}>
-            {t("demoLogins")}: 92000 00001 (Rahul, has a health profile)
+            {t("demoLogins")}: 92000 00001 ({t("demoPatientHint")})
           </button>
         )}
       </form>

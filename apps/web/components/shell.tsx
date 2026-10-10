@@ -115,11 +115,16 @@ export function RequireRole({ role, children }: { role: Role; children: ReactNod
   return <>{children}</>;
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:5173";
+
 export function MockRibbon() {
   if (!anyMock) return null;
   return (
-    <div className="bg-neutral-900 px-4 py-1.5 text-center text-[12px] font-semibold tracking-wide text-white/85">
-      Demo data · every hospital, ambulance and person is simulated
+    <div className="flex items-center justify-center gap-3 bg-neutral-900 px-4 py-1.5 text-center text-[12px] font-semibold tracking-wide text-white/85">
+      <span>Demo data · every hospital, ambulance and person is simulated</span>
+      <a href={SITE_URL} className="shrink-0 rounded-full bg-white/15 px-2.5 py-0.5 text-white hover:bg-white/25">
+        ← Back to GoldenHour
+      </a>
     </div>
   );
 }

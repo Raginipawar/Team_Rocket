@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError, errorText, get, put } from "@/lib/api";
@@ -13,11 +14,16 @@ import { useToast } from "@/components/ui/toast";
 const BLOOD = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
-export default function ProfilePage() {
+function ProfileInner() {
   const t = useTranslations("patient");
   const tc = useTranslations("common");
   const qc = useQueryClient();
   const toast = useToast();
+  const router = useRouter();
+  // Only present when linked here from onboarding (app/patient/welcome) --
+  // a normal visit from Settings has no `next` and keeps the old behaviour
+  // of just toasting "saved" and staying put.
+  const next = useSearchParams().get("next");
   const { updateUser, signOut } = useAuth();
   const q = useQuery({ queryKey: ["profile"], queryFn: () => get<HealthProfile>("/me/profile") });
   const [f, setF] = useState<Record<string, string>>({});
@@ -40,14 +46,15 @@ export default function ProfilePage() {
   const save = async () => {
     setSaving(true);
     try {
-      const next = await put<HealthProfile>("/me/profile", {
+      const updated = await put<HealthProfile>("/me/profile", {
         name: f.name, dob: f.dob || null, sex: f.sex || null, blood_group: f.blood_group || null,
         allergies: list(f.allergies), conditions: list(f.conditions), medications: list(f.medications),
         home_address: f.home_address || null, notes: f.notes || null, version: q.data!.version,
       });
-      qc.setQueryData(["profile"], next);
+      qc.setQueryData(["profile"], updated);
       updateUser({ name: f.name });
       toast(tc("saved"), "success");
+      if (next) router.replace(next);
     } catch (e) {
       toast(errorText(e), "error");
       if (e instanceof ApiError && e.code === "VERSION_CONFLICT") void q.refetch();
@@ -87,8 +94,16 @@ export default function ProfilePage() {
       <Field label={t("medications")} hint={t("commaHint")} htmlFor="medications"><Input id="medications" value={f.medications ?? ""} onChange={set("medications")} placeholder="Metformin 500 mg" /></Field>
       <Field label={t("homeAddress")} htmlFor="home"><Input id="home" value={f.home_address ?? ""} onChange={set("home_address")} autoComplete="street-address" /></Field>
       <Field label={t("notes")} htmlFor="notes"><Textarea id="notes" value={f.notes ?? ""} onChange={set("notes")} className="min-h-24" /></Field>
-      <Button type="submit" size="lg" block loading={saving}>{tc("save")}</Button>
-      <Button type="button" variant="ghost" block onClick={() => void signOut()}>{tc("signOut")}</Button>
+      <Button type="submit" size="lg" block loading={saving}>{next ? "Save and continue" : tc("save")}</Button>
+      {!next && <Button type="button" variant="ghost" block onClick={() => void signOut()}>{tc("signOut")}</Button>}
     </form>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense>
+      <ProfileInner />
+    </Suspense>
   );
 }

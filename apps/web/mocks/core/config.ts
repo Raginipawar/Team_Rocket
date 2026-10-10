@@ -42,7 +42,19 @@ export const C = {
 /** Mock-only knobs (env), documented in apps/web/README.md. */
 export const MOCK = {
   PORT: Number(process.env.MOCK_CORE_PORT ?? 8010),
-  JWT_SECRET: process.env.MOCK_JWT_SECRET ?? "mock-core-dev-secret",
+  // Must match the real backend's actual jwt_secret. There are TWO secret
+  // configs on the real side -- app/config.py's Settings.JWT_SECRET
+  // ("secret", unused dead config) and app/security/config.py's
+  // SecuritySettings.jwt_secret (os.getenv("JWT_SECRET",
+  // "dev-insecure-secret-change-me")) -- and jwt.py's actual
+  // encode/decode calls use the SECOND one. Got this wrong on the first
+  // pass (used "secret"), which is why a real-backend token still failed
+  // mock verification even after that "fix". Otherwise a real-backend-
+  // issued token (AUTH=real) fails verification here on any area still
+  // left on mock (e.g. ME), the frontend's refresh-then-retry both fail
+  // the same way, and the whole session gets cleared: login appears to
+  // work, then immediately bounces back to the login screen.
+  JWT_SECRET: process.env.MOCK_JWT_SECRET ?? "dev-insecure-secret-change-me",
   ML_BASE_URL: process.env.ML_BASE_URL ?? "http://localhost:8001",
   ML_TIMEOUT_MS: Number(process.env.ML_TIMEOUT_MS ?? 2500),
   OSRM_URL: process.env.OSRM_URL ?? "",

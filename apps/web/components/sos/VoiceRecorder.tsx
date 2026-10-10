@@ -75,11 +75,16 @@ export default function VoiceRecorder({ onDone, busy }: { onDone: (audio: Blob, 
       if (s >= 60) finish();
     }, 250);
     stopAll.current = () => {
+      // finish()'s r.onstop and the unmount cleanup below both call this --
+      // not resetting to a no-op after the first call meant ctx.close() ran
+      // twice, throwing "Cannot close a closed AudioContext" on navigation
+      // away right after sending.
+      stopAll.current = () => {};
       clearInterval(timer);
       cancelAnimationFrame(raf);
       stopTx?.();
       stream.getTracks().forEach((tr) => tr.stop());
-      void ctx.close();
+      if (ctx.state !== "closed") void ctx.close();
     };
   };
 

@@ -95,6 +95,7 @@
     "password": "Password",
     "signIn": "Sign in",
     "demoLogins": "Demo sign in",
+    "demoPatientHint": "Rahul, has a health profile",
     "wrongRole": "This account is for {role}. Opening the right app."
   },
   "patient": {

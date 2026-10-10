@@ -34,8 +34,8 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
           {!live && (
             <nav className="mt-1 flex" aria-label="Patient">
               <Tab href="/patient" icon="home" label={t("navHome")} />
-              <Tab href="/patient/profile" icon="heart" label={t("navProfile")} />
-              <Tab href="/patient/contacts" icon="users" label={t("navContacts")} />
+              <Tab href="/patient/profile" icon="heart" label="Health" />
+              <Tab href="/patient/family" icon="users" label="Family" />
               <Tab href="/patient/history" icon="history" label={t("navHistory")} />
             </nav>
           )}

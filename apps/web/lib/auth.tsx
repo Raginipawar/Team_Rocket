@@ -60,8 +60,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async (): Promise<string | null> => {
     if (refreshing.current) return refreshing.current;
     refreshing.current = (async () => {
+      // The refresh cookie is now named per-role (refresh_token_<role>) so
+      // concurrent logins as different roles in the same browser can't
+      // overwrite each other -- this tab tells the backend which one is
+      // its own via the role it already knows itself as. A tab that has
+      // never had a role-tagged session has nothing to refresh.
+      const role = ref.current?.user?.role;
+      if (!role) return null;
       try {
-        const res = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "same-origin", headers: { "idempotency-key": crypto.randomUUID() } });
+        const res = await fetch(`/api/v1/auth/refresh?role=${encodeURIComponent(role)}`, { method: "POST", credentials: "same-origin", headers: { "idempotency-key": crypto.randomUUID() } });
         if (!res.ok) return null;
         const body = (await res.json()) as { access_token: string; user?: User };
         const prev = ref.current?.user ?? null;
@@ -96,9 +103,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ref.current = stored;
       setSession(stored);
       setReady(true);
-    } else {
+    } else if (stored) {
+      // Expired access token but we know which role this tab was signed in
+      // as -- refresh() uses that to read the matching per-role cookie.
       ref.current = stored;
       void refresh().finally(() => setReady(true));
+    } else {
+      // Never signed in on this tab: no role to refresh with, and no point
+      // guessing at some other role's cookie. Straight to logged-out.
+      setReady(true);
     }
     // renew a minute before the 15 minute access token runs out
     const id = setInterval(() => {
@@ -114,7 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn: (r) => save({ token: r.access_token, user: r.user }),
     signOut: async () => {
       try {
-        await post("/auth/logout");
+        const role = session?.user.role;
+        await post(role ? `/auth/logout?role=${encodeURIComponent(role)}` : "/auth/logout");
       } catch {
         /* still sign out locally */
       }

@@ -1,0 +1,16 @@
+{
+  "name": "GoldenHour ER",
+  "short_name": "GH ER",
+  "description": "Hospital dashboard: incoming patient requests, rooms, resources, and staff.",
+  "start_url": "/hospital",
+  "scope": "/hospital",
+  "display": "standalone",
+  "background_color": "#f5f4f2",
+  "theme_color": "#dc2626",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
