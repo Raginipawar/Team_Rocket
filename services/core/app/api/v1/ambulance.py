@@ -1,7 +1,11 @@
 """A's file (work-distribution.md §2.2). technical.md §7.4."""
 
+import json
+import random
+
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
 from sqlalchemy import text
 
 from app.db.repos import dispatch as dispatch_repo
@@ -10,8 +14,13 @@ from app.db.session import get_session
 from app.domain import dispatch, lifecycle
 from app.integrations.ml.routing import get_route
 from app.security.deps import CurrentUser, require_role
+from app.security.jwt import create_access_token
 
 router = APIRouter()
+
+CAPABILITIES = ["general", "cardiac", "trauma", "pediatric", "ventilator"]
+EQUIPMENT = ["oxygen", "aed", "monitor", "ventilator", "suction", "stretcher"]
+AMBULANCE_CATEGORIES = ["A", "B", "C", "D"]  # AIS-125 categories
 
 
 @router.get("/me")
@@ -220,3 +229,152 @@ async def vehicle_issue(user: CurrentUser = Depends(require_role("paramedic"))) 
     async with get_session() as session:
         await dispatch.handle_vehicle_issue(session, ambulance_id=user.ambulance_id)
         await session.commit()
+
+
+class RegisterRequest(BaseModel):
+    # Section A -- operator
+    operator_name: str
+    email: str | None = None
+    organisation: str | None = None
+    # Section B -- vehicle
+    registration_no: str
+    make_model: str
+    category: str  # AIS-125 A/B/C/D
+    year: int | None = None
+    operating_area: str
+    base_location: str
+    # Section C -- capabilities (clinical matching, not just a label)
+    capabilities: list[str] = []
+    equipment: list[str] = []
+    # Section D -- authorisation info (numbers/dates only, no file upload --
+    # the team verifies supporting documents separately, the form just
+    # captures what they need to review)
+    driver_license_no: str
+    crew_details: str | None = None
+    rc_number: str | None = None
+    insurance_number: str | None = None
+    permit_number: str | None = None
+    declaration_confirmed: bool = Field(..., description="Section E declaration checkbox")
+
+
+def _validate_registration(payload: "RegisterRequest") -> None:
+    if payload.category not in AMBULANCE_CATEGORIES:
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": f"category must be one of {AMBULANCE_CATEGORIES}", "details": {}}})
+    bad_caps = [c for c in payload.capabilities if c not in CAPABILITIES]
+    if bad_caps:
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": f"unknown capabilities: {bad_caps}", "details": {}}})
+    bad_eq = [e for e in payload.equipment if e not in EQUIPMENT]
+    if bad_eq:
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": f"unknown equipment: {bad_eq}", "details": {}}})
+    if not payload.declaration_confirmed:
+        raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "declaration must be confirmed", "details": {}}})
+
+
+@router.post("/register", status_code=201)
+async def register_live(payload: RegisterRequest, user: CurrentUser = Depends(require_role("paramedic"))) -> dict:
+    """Live registration: real operator/vehicle info, submitted for the
+    team's review -- NOT auto-approved. kyc_verified stays false (the real
+    dispatch-eligibility gate, db/repos/ambulances.py find_candidates)
+    until someone on the ops side reviews and approves it. A phone OTP
+    verifies the phone, nothing else -- this is the "nothing else" part."""
+    if user.ambulance_id:
+        raise HTTPException(409, detail={"error": {"code": "ALREADY_REGISTERED", "message": "This account already has a registered ambulance", "details": {}}})
+    _validate_registration(payload)
+
+    async with get_session() as session:
+        existing = (await session.execute(
+            text("SELECT id FROM ambulances WHERE registration_no = :reg"), {"reg": payload.registration_no},
+        )).scalar_one_or_none()
+        if existing:
+            raise HTTPException(409, detail={"error": {"code": "ALREADY_EXISTS", "message": "This registration number is already registered", "details": {}}})
+
+        reg_data = payload.model_dump(exclude={"capabilities", "equipment", "registration_no", "category"})
+        ambulance_id = (await session.execute(
+            text("""
+                INSERT INTO ambulances (registration_no, type, equipment, status, driver_license_no,
+                                         kyc_verified, is_simulated, registration_status, registration_data, capabilities)
+                VALUES (:reg, :type, :equipment, 'offline', :license, false, false, 'pending', CAST(:data AS jsonb), :caps)
+                RETURNING id
+            """),
+            {
+                "reg": payload.registration_no, "type": "ALS" if "cardiac" in payload.capabilities else "BLS",
+                "equipment": payload.equipment, "license": payload.driver_license_no,
+                "data": json.dumps({**reg_data, "category": payload.category}, default=str),
+                "caps": payload.capabilities,
+            },
+        )).scalar_one()
+        await session.execute(
+            text("UPDATE users SET ambulance_id = :aid, name = COALESCE(name, :name) WHERE id = :uid"),
+            {"aid": ambulance_id, "name": payload.operator_name, "uid": user.id},
+        )
+        await session.commit()
+    # A fresh access token with the new ambulance_id claim -- the old one
+    # (still carrying ambulance_id: null) stays valid until its own natural
+    # expiry/refresh, which would otherwise leave the app unable to use
+    # ambulance-scoped routes immediately after a successful registration.
+    access = create_access_token(sub=user.id, role="paramedic", ambulance_id=str(ambulance_id))
+    return {"ambulance_id": str(ambulance_id), "registration_status": "pending", "access_token": access}
+
+
+_DEMO_NAMES = ["Demo Operator", "Demo Fleet Services"]
+
+
+@router.post("/register/demo", status_code=201)
+async def register_demo(user: CurrentUser = Depends(require_role("paramedic"))) -> dict:
+    """Demo registration: auto-fills and submits instantly, kyc_verified=true
+    right away (no real review -- that's the point of Demo), registration_no
+    recognisably fictitious (DEMO-AMB-xxxx) so it can never be confused with
+    a real plate number. Still goes through the exact same real dispatch
+    pipeline as every other ambulance in this system -- "demo" here means
+    "skipped the approval wait", not "fake backend"."""
+    if user.ambulance_id:
+        raise HTTPException(409, detail={"error": {"code": "ALREADY_REGISTERED", "message": "This account already has a registered ambulance", "details": {}}})
+
+    suffix = f"{random.randint(1000, 9999)}"
+    reg_no = f"DEMO-AMB-{suffix}"
+    caps = ["general", "cardiac"]
+    equipment = ["oxygen", "aed", "monitor", "stretcher"]
+    demo_data = {
+        "operator_name": "Demo Operator", "organisation": "Demo Fleet Services",
+        "make_model": "Force Traveller (Demo)", "operating_area": "Pune Demo Zone",
+        "base_location": "Demo Base Station", "driver_license_no": f"DEMO-DL-{suffix}",
+        "crew_details": "Demo crew (preconfigured)", "category": "B",
+    }
+
+    async with get_session() as session:
+        ambulance_id = (await session.execute(
+            text("""
+                INSERT INTO ambulances (registration_no, type, equipment, status, driver_license_no,
+                                         kyc_verified, is_simulated, registration_status, registration_data, capabilities)
+                VALUES (:reg, 'ALS', :equipment, 'offline', :license, true, true, 'demo', CAST(:data AS jsonb), :caps)
+                RETURNING id
+            """),
+            {
+                "reg": reg_no, "equipment": equipment, "license": demo_data["driver_license_no"],
+                "data": json.dumps(demo_data), "caps": caps,
+            },
+        )).scalar_one()
+        await session.execute(
+            text("UPDATE users SET ambulance_id = :aid, name = COALESCE(name, 'Demo Operator') WHERE id = :uid"),
+            {"aid": ambulance_id, "uid": user.id},
+        )
+        await session.commit()
+    access = create_access_token(sub=user.id, role="paramedic", ambulance_id=str(ambulance_id))
+    return {"ambulance_id": str(ambulance_id), "registration_status": "demo", "registration_no": reg_no, "access_token": access}
+
+
+@router.get("/registration-status")
+async def registration_status(user: CurrentUser = Depends(require_role("paramedic"))) -> dict:
+    if not user.ambulance_id:
+        return {"status": None, "ambulance_id": None}
+    async with get_session() as session:
+        row = (await session.execute(
+            text("SELECT registration_status, rejection_reason, registration_no FROM ambulances WHERE id = :id"),
+            {"id": user.ambulance_id},
+        )).mappings().first()
+    if not row:
+        return {"status": None, "ambulance_id": None}
+    return {
+        "status": row["registration_status"], "ambulance_id": user.ambulance_id,
+        "registration_no": row["registration_no"], "rejection_reason": row["rejection_reason"],
+    }

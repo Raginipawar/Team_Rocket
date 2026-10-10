@@ -68,11 +68,19 @@ async def run_dispatch_round(
 
     # Triage no longer gates dispatch: until it exists, prefer ALS, then fall back to any unit.
     required_type = (emergency.get("required_ambulance_type") if emergency.get("ai_acuity") else None) or "ALS"
+    # Clinical-specialty matching (not a ride-hailing distance-only pick): a
+    # cardiac/trauma/pediatric case prefers an ambulance actually equipped
+    # and crewed for it, when one's genuinely available nearby -- a
+    # preference in find_candidates' ordering, never a hard requirement
+    # that could leave a critical patient with no ambulance at all.
+    required_capability = {
+        "cardiac": "cardiac", "trauma": "trauma", "pediatric": "pediatric", "respiratory": "ventilator",
+    }.get(emergency.get("ai_facility") or emergency.get("final_facility") or "")
 
     async def _find(rt: str):
         return await ambulances_repo.find_candidates(
             session, lat=origin_lat, lng=origin_lng, radius_km=radius_km,
-            required_type=rt, exclude_ambulance_ids=exclude_ids,
+            required_type=rt, exclude_ambulance_ids=exclude_ids, required_capability=required_capability,
         )
 
     candidates = await _find(required_type)

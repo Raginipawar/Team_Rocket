@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -31,7 +31,16 @@ function Shell({ children }: { children: ReactNode }) {
   const wsStatus = useWsStatus(ws);
   const tokenFn = useCallback(() => session?.token ?? null, [session?.token]);
   const { queued, online } = useOfflineQueue(tokenFn);
-  const self = useQuery({ queryKey: ["amb-self"], queryFn: fetchSelf, refetchInterval: 15000 });
+  // Phone OTP verifies the phone, not that an ambulance is registered/
+  // approved -- a session with no ambulance_id (never registered, or still
+  // pending with the user having navigated straight here) must land on
+  // onboarding, not a dashboard that has nothing to show. kyc_verified
+  // itself is enforced server-side regardless (find_candidates filters on
+  // it); this is just getting the UI to the right screen.
+  useEffect(() => {
+    if (session && !session.user.ambulance_id) router.replace("/ambulance/onboarding");
+  }, [session, router]);
+  const self = useQuery({ queryKey: ["amb-self"], queryFn: fetchSelf, refetchInterval: 15000, enabled: !!session?.user.ambulance_id });
   const onDuty = !!self.data && self.data.status !== "offline" && self.data.status !== "out_of_service";
   const offers = useQuery({ queryKey: ["offers"], queryFn: fetchOffers, enabled: onDuty, refetchInterval: wsStatus === "open" ? 15000 : 3000 });
   const [gone, setGone] = useState<Record<string, string>>({});

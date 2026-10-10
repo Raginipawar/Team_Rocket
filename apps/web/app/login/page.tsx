@@ -64,6 +64,23 @@ function LoginInner() {
         /* profile fetch failed -- don't block login on it, just skip onboarding */
       }
     }
+    if (r.user.role === "paramedic") {
+      // Phone OTP verifies the phone, nothing else -- a verified phone with
+      // no (or not-yet-approved) ambulance must land on registration/status,
+      // never the real dashboard. Backend enforces this independently
+      // (kyc_verified gates dispatch eligibility); this is just getting the
+      // UI to the right screen.
+      try {
+        const reg = await get<{ status: string | null }>("/ambulance/registration-status");
+        if (reg.status !== "demo" && reg.status !== "approved") {
+          router.replace("/ambulance/onboarding");
+          return;
+        }
+      } catch {
+        router.replace("/ambulance/onboarding");
+        return;
+      }
+    }
     router.replace(target);
   };
 
@@ -75,14 +92,19 @@ function LoginInner() {
         <LanguageSwitcher compact />
       </header>
       <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pb-10 pt-8">
-        {role === "patient" ? <PatientOtp onDone={done} /> : <StaffLogin role={role} onDone={done} />}
+        {role === "patient" ? <OtpLogin role="patient" onDone={done} /> : role === "paramedic" ? <OtpLogin role="paramedic" onDone={done} /> : <StaffLogin role={role} onDone={done} />}
         {role === "patient" && <Call108 />}
       </main>
     </div>
   );
 }
 
-function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
+// Ambulance crew used to be a fixed phone+password login, same as hospital
+// staff -- that only verifies someone knows a shared password, not that
+// THIS specific phone/person is who they claim. Real OTP (same flow as
+// patient) verifies phone control; registration/approval is a SEPARATE
+// step after login (app/ambulance/onboarding), never conflated with it.
+function OtpLogin({ role, onDone }: { role: "patient" | "paramedic"; onDone: (r: LoginResponse) => void }) {
   const t = useTranslations("login");
   const [phone, setPhone] = useState("");
   const [step, setStep] = useState<"phone" | "code">("phone");
@@ -131,7 +153,7 @@ function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
     setErr(null);
     setBusy(true);
     try {
-      onDone(await post<LoginResponse>("/auth/otp/verify", { phone: `+91${digits}`, code: value }, { auth: false }));
+      onDone(await post<LoginResponse>("/auth/otp/verify", { phone: `+91${digits}`, code: value, role }, { auth: false }));
     } catch (e) {
       setErr(errorText(e));
       setBusy(false);
@@ -142,8 +164,8 @@ function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
     return (
       <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); void send(); }}>
         <div>
-          <h1 className="text-[28px] font-extrabold leading-tight">{t("patientTitle")}</h1>
-          <p className="mt-1 text-[17px] text-muted">{t("patientSub")}</p>
+          <h1 className="text-[28px] font-extrabold leading-tight">{role === "paramedic" ? "Ambulance crew sign in" : t("patientTitle")}</h1>
+          <p className="mt-1 text-[17px] text-muted">{role === "paramedic" ? "Enter your phone number to sign in or register your ambulance." : t("patientSub")}</p>
         </div>
         <Field label={t("phone")} hint={t("phoneHint")} error={err} htmlFor="phone">
           <div className="flex gap-2">
@@ -152,7 +174,7 @@ function PatientOtp({ onDone }: { onDone: (r: LoginResponse) => void }) {
           </div>
         </Field>
         <Button type="submit" size="lg" block loading={busy}>{t("sendCode")}</Button>
-        {areaMode("AUTH") === "mock" && (
+        {role === "patient" && areaMode("AUTH") === "mock" && (
           <>
             <Button type="button" size="lg" variant="outline" block loading={demoBusy} onClick={() => void signInAsRagini()}>
               Sign in as Ragini Pawar

@@ -115,7 +115,14 @@ async def otp_verify(body: dict, response: Response) -> dict:
             raise HTTPException(401, detail={"error": {"code": "UNAUTHENTICATED", "message": "Incorrect code", "details": {}}})
 
         await identity_repo.delete_otp(session, phone)
-        user = await identity_repo.get_or_create_patient_user(session, phone)
+        role = body.get("role") or "patient"
+        if role not in ("patient", "paramedic"):
+            raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "invalid role", "details": {}}})
+        try:
+            user = (await identity_repo.get_or_create_paramedic_user(session, phone)) if role == "paramedic" \
+                else (await identity_repo.get_or_create_patient_user(session, phone))
+        except ValueError as e:
+            raise HTTPException(409, detail={"error": {"code": "ROLE_MISMATCH", "message": str(e), "details": {}}})
         await audit.write(session, actor_type="user", actor_id=phone, entity="users", entity_id=user["id"],
                            action="otp_login", before=None, after={"phone": phone})
         await session.commit()

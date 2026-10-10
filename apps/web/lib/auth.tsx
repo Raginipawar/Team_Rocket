@@ -18,6 +18,10 @@ type Ctx = {
   signIn: (r: LoginResponse) => void;
   signOut: () => Promise<void>;
   updateUser: (u: Partial<User>) => void;
+  /** Adopt a fresh access token issued outside the normal login/refresh flow
+   * (e.g. right after ambulance registration, whose new token carries a
+   * just-assigned ambulance_id the old one didn't have). */
+  setToken: (token: string) => void;
 };
 
 const AuthContext = createContext<Ctx | null>(null);
@@ -136,6 +140,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     updateUser: (u) => {
       if (ref.current) save({ ...ref.current, user: { ...ref.current.user, ...u } });
+    },
+    setToken: (token) => {
+      const user = userFromToken(token, ref.current?.user ?? null);
+      if (user) save({ token, user });
     },
   }), [session, ready, save]);
 

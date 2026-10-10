@@ -36,6 +36,36 @@ async def get_or_create_patient_user(session: AsyncSession, phone: str, *, langu
     return await create_patient_user(session, phone, language=language)
 
 
+async def get_or_create_paramedic_user(session: AsyncSession, phone: str, *, language: str = "en") -> dict:
+    """Ambulance app OTP login (replaces the fixed phone+password demo
+    login). A phone-verified paramedic with no ambulance_id yet is a real,
+    valid state -- they haven't registered/selected an ambulance (Live) or
+    generated a demo one (Demo) yet. Returns ambulance_id/registration_status
+    so the frontend can route to the right step."""
+    row = (await session.execute(
+        text("SELECT id, role, name, phone, language, ambulance_id FROM users WHERE phone = :phone"),
+        {"phone": phone},
+    )).mappings().first()
+    if row:
+        if row["role"] != "paramedic":
+            raise ValueError(f"phone already registered as {row['role']}")
+        user = dict(row)
+    else:
+        user = dict((await session.execute(
+            text("INSERT INTO users (role, name, phone, language) VALUES ('paramedic', NULL, :phone, :language) "
+                 "RETURNING id, role, name, phone, language, ambulance_id"),
+            {"phone": phone, "language": language},
+        )).mappings().first())
+    if user.get("ambulance_id"):
+        amb = (await session.execute(
+            text("SELECT registration_status FROM ambulances WHERE id = :id"), {"id": user["ambulance_id"]},
+        )).mappings().first()
+        user["registration_status"] = amb["registration_status"] if amb else None
+    else:
+        user["registration_status"] = None
+    return user
+
+
 async def store_otp(session: AsyncSession, phone: str, code_hash: str, expires_at) -> None:
     await session.execute(
         text("DELETE FROM otp_codes WHERE phone = :phone"),
