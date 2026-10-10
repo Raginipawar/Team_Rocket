@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -289,4 +290,12 @@ async def mark_arrived_hospital(db: AsyncSession, emergency_id: UUID, ambulance_
     em.status = "arrived_hospital"
     em.arrived_hospital_at = datetime.utcnow()
     em.version += 1
+    try:
+        from app.domain.notify import notify_patient_and_family
+        await notify_patient_and_family(
+            db, str(emergency_id), "Arrived at the hospital",
+            "The ambulance has arrived at the hospital.", {"status": "arrived_hospital"},
+        )
+    except Exception:
+        logging.getLogger("clinical").exception("notify_patient_and_family failed for emergency %s (arrived_hospital)", emergency_id)
     return {"status": em.status}

@@ -17,3 +17,10 @@ async def get_fcm_tokens_for_user(session: AsyncSession, user_id: str) -> list[s
         {"uid": user_id},
     )).scalars().all()
     return list(rows)
+
+
+async def delete_fcm_token(session: AsyncSession, fcm_token: str) -> None:
+    """A token FCM reports as unregistered (app uninstalled, storage
+    cleared, etc.) -- stale, must not keep being sent to or counted as a
+    working subscription."""
+    await session.execute(text("DELETE FROM push_subscriptions WHERE fcm_token = :token"), {"token": fcm_token})

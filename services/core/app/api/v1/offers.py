@@ -1,15 +1,19 @@
 """A's file (work-distribution.md §2.2). POST /ambulance/offers/{id}/accept
 (technical.md §7.4, §11.1)."""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.db.repos import dispatch as dispatch_repo
 from app.db.session import get_session
 from app.domain import audit
+from app.domain.notify import notify_patient_and_family
 from app.realtime import outbox
 from app.security.deps import CurrentUser, require_role
 
 router = APIRouter()
+logger = logging.getLogger("offers")
 
 
 @router.post("/offers/{offer_id}/accept")
@@ -39,6 +43,13 @@ async def accept_offer(offer_id: str, user: CurrentUser = Depends(require_role("
         )
         await outbox.emit(session, channel=f"emergency:{result['emergency_id']}", event="emergency.status",
                            data={"status": "ambulance_assigned"})
+        try:
+            await notify_patient_and_family(
+                session, result["emergency_id"], "Ambulance on the way",
+                "An ambulance has been assigned and is heading to you.", {"status": "ambulance_assigned"},
+            )
+        except Exception:
+            logger.exception("notify_patient_and_family failed for emergency %s (ambulance_assigned)", result["emergency_id"])
         await session.commit()
 
     return {"emergency_id": result["emergency_id"], "ambulance_id": result["ambulance_id"]}

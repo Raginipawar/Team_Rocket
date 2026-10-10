@@ -4,6 +4,7 @@ pydantic==2.9.2
 pydantic-settings==2.7.0
 python-multipart==0.0.9
 pyjwt==2.9.0
+cryptography==46.0.3  # RS256 JWT signing for FCM push (HTTP v1 API, no firebase-admin -- see integrations/push/sender.py)
 argon2-cffi==23.1.0
 redis==5.0.8
 sqlalchemy[asyncio]==2.0.35

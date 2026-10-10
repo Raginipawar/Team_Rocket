@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
@@ -11,6 +12,7 @@ from ...db.engine import get_db
 from ...domain.reservations import accept_hospital_request, reject_hospital_request, walk_in_override
 from ...domain.handoff import record_patient_received
 from ...domain.clinical import handle_unknown_patient_merge
+from ...domain.notify import notify_patient_and_family
 from ...db.repos.hospitals import get_hospital, update_last_confirmed
 from ...db.repos.rooms import list_rooms, patch_room
 from ...db.repos.resources import get_resources, patch_resource
@@ -19,6 +21,7 @@ from ...db.repos.staff import get_active_staff, list_staff_members, create_staff
 from ...db.repos.analytics import get_hospital_analytics
 
 router = APIRouter(prefix="/hospital", tags=["hospital"])
+logger = logging.getLogger("hospital")
 
 class AcceptRequest(BaseModel):
     room_id: Optional[UUID] = None
@@ -207,6 +210,15 @@ async def accept_request(
             staff_ids=payload.staff_ids or [],
             responder_id=user.id,
         )
+        try:
+            hosp = await get_hospital(db, req.hospital_id)
+            await notify_patient_and_family(
+                db, str(req.emergency_id), "Hospital confirmed",
+                f"{hosp.name if hosp else 'A hospital'} has confirmed and is preparing for you.",
+                {"status": "hospital_confirmed"},
+            )
+        except Exception:
+            logger.exception("notify_patient_and_family failed for emergency %s (hospital_confirmed)", req.emergency_id)
         await db.commit()
         return {"status": "accepted"}
     except ValueError as e:

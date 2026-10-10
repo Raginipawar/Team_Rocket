@@ -79,3 +79,12 @@ async def record_patient_received(
                        after={"hospital_id": str(hospital_id), "receiving_staff_ids": receiving_staff_ids})
     await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.status",
                        data={"status": "handed_off"})
+    try:
+        from app.domain.notify import notify_patient_and_family
+        await notify_patient_and_family(
+            session, emergency_id, "Patient received",
+            "The hospital has received the patient and handover is complete.", {"status": "handed_off"},
+        )
+    except Exception:
+        import logging
+        logging.getLogger("handoff").exception("notify_patient_and_family failed for emergency %s (handed_off)", emergency_id)
