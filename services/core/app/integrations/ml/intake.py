@@ -17,12 +17,25 @@ from .base import MLUnavailable, call_ml
 # having run at all. Raised with real margin for concurrent CPU-bound
 # inference, not just the solo-call numbers.
 STT_TIMEOUT_S = 30.0
-EXTRACT_TIMEOUT_S = 20.0
+# Was 20.0 -- shorter than extract/model.py's OWN internal Ollama timeout
+# (30.0s), so this core-side call could time out and fall back before the ML
+# service even finished its own real attempt + fallback. A capability's
+# core-side timeout must always have margin beyond whatever the ML service
+# itself waits internally, not just beyond the solo-call latency.
+EXTRACT_TIMEOUT_S = 40.0
 TRIAGE_TIMEOUT_S = 15.0
 PRANK_TIMEOUT_S = 10.0
 DUPLICATE_TIMEOUT_S = 10.0
 RESOURCES_TIMEOUT_S = 10.0
-HANDOVER_TIMEOUT_S = 15.0
+# Same mismatch as EXTRACT_TIMEOUT_S above: was 15.0, shorter than
+# handover/model.py's own internal Ollama timeout (30.0s).
+HANDOVER_TIMEOUT_S = 40.0
+# Needs margin beyond followup/model.py's own internal Ollama timeout
+# (bumped to 30.0s there for the same CPU-inference-is-slow reason) plus the
+# rule-based-mock fallback overhead, or this call times out and silently
+# drops a real question as "done" before the ML side even finishes.
+FOLLOWUP_TIMEOUT_S = 40.0
+FIRST_AID_TIMEOUT_S = 5.0
 
 
 async def stt(audio_bytes: bytes, filename: str, lang_hint: str | None = None) -> dict | None:
@@ -115,6 +128,44 @@ async def handover(transcript: str, extracted: dict, followup_answers: list[str]
             "POST", "/ml/v1/handover", capability="handover", timeout_s=HANDOVER_TIMEOUT_S,
             json={"transcript": transcript, "extracted": extracted,
                   "followup_answers": followup_answers, "profile": profile, "triage": triage_result},
+        )
+    except MLUnavailable:
+        return None
+
+
+async def followup_next(facility: str, acuity: str, extracted: dict,
+                         answers: list[dict], language: str = "en") -> dict | None:
+    """On failure, the patient's followup card simply stops advancing --
+    caller treats None as done=True (no more questions) rather than blocking."""
+    try:
+        return await call_ml(
+            "POST", "/ml/v1/followup/next", capability="followup", timeout_s=FOLLOWUP_TIMEOUT_S,
+            json={"facility": facility, "acuity": acuity, "extracted": extracted,
+                  "answers": answers, "language": language},
+        )
+    except MLUnavailable:
+        return None
+
+
+async def followup_parse(question_id: str, raw_answer: str, language: str = "en") -> dict | None:
+    """On failure, store the raw text as-is (caller's fallback), parsed=None."""
+    try:
+        return await call_ml(
+            "POST", "/ml/v1/followup/parse", capability="followup", timeout_s=FOLLOWUP_TIMEOUT_S,
+            json={"question_id": question_id, "raw_answer": raw_answer, "language": language},
+        )
+    except MLUnavailable:
+        return None
+
+
+async def first_aid(facility: str, acuity: str, extracted: dict) -> dict | None:
+    """Deterministic rule-table lookup on the ML side (first_aid:rule-table:v0),
+    not a model -- still routed through call_ml for consistent timeout/base-URL
+    handling. On failure, caller simply shows no first-aid card."""
+    try:
+        return await call_ml(
+            "POST", "/ml/v1/first-aid", capability="first_aid", timeout_s=FIRST_AID_TIMEOUT_S,
+            json={"facility": facility, "acuity": acuity, "extracted": extracted},
         )
     except MLUnavailable:
         return None

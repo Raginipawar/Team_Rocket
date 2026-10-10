@@ -22,7 +22,22 @@ from app.security.refresh_store import is_revoked, revoke
 
 router = APIRouter()
 
-REFRESH_COOKIE = "refresh_token"
+# Was a single fixed cookie name shared across the whole browser origin,
+# regardless of role. Cookies aren't scoped per-tab -- logging into the
+# ambulance app in one tab and the hospital app in another (same browser,
+# same origin) meant the second login silently overwrote the first tab's
+# refresh cookie. The first tab wouldn't notice until its access token next
+# needed silent renewal, at which point it would refresh using the NOW-
+# WRONG shared cookie, get back a different user, and sign itself out
+# (lib/auth.tsx's own "cookie belongs to someone who signed in on another
+# tab" check) -- reported as "opening hospital and ambulance at once
+# doesn't work", reproduced even across separate laptops once, confirming
+# it wasn't session/profile-specific but this exact shared-cookie design.
+# One cookie per role fixes it permanently: each role's login only ever
+# touches its own cookie, so concurrent multi-role sessions in the same
+# browser can no longer collide.
+def _refresh_cookie_name(role: str) -> str:
+    return f"refresh_token_{role}"
 
 
 class OTPRequestBody:
@@ -40,10 +55,10 @@ def _issue_tokens(user: dict) -> tuple[str, str]:
     return access, refresh
 
 
-def _set_refresh_cookie(response: Response, refresh_token: str) -> None:
+def _set_refresh_cookie(response: Response, refresh_token: str, role: str) -> None:
     settings = get_security_settings()
     response.set_cookie(
-        REFRESH_COOKIE, refresh_token, httponly=True, secure=True, samesite="strict",
+        _refresh_cookie_name(role), refresh_token, httponly=True, secure=True, samesite="strict",
         max_age=settings.refresh_token_ttl_days * 86400,
     )
 
@@ -106,7 +121,7 @@ async def otp_verify(body: dict, response: Response) -> dict:
         await session.commit()
 
     access, refresh = _issue_tokens(user)
-    _set_refresh_cookie(response, refresh)
+    _set_refresh_cookie(response, refresh, user["role"])
     return {"access_token": access, "user": user}
 
 
@@ -130,13 +145,19 @@ async def login(body: dict, response: Response) -> dict:
         await session.commit()
 
     access, refresh = _issue_tokens(user)
-    _set_refresh_cookie(response, refresh)
+    _set_refresh_cookie(response, refresh, user["role"])
     return {"access_token": access, "user": {k: v for k, v in user.items() if k != "password_hash"}}
 
 
 @router.post("/auth/refresh")
-async def refresh_token_endpoint(request: Request, response: Response) -> dict:
-    raw_refresh = request.cookies.get(REFRESH_COOKIE)
+async def refresh_token_endpoint(request: Request, response: Response, role: str | None = None) -> dict:
+    # role comes from the caller's own last-known session (lib/auth.tsx
+    # sends whichever role this tab was last signed in as) -- a tab that
+    # never had a role-tagged session has nothing to refresh and shouldn't
+    # guess at one of the other per-role cookies.
+    if not role:
+        raise HTTPException(401, detail={"error": {"code": "UNAUTHENTICATED", "message": "No refresh token", "details": {}}})
+    raw_refresh = request.cookies.get(_refresh_cookie_name(role))
     if not raw_refresh:
         raise HTTPException(401, detail={"error": {"code": "UNAUTHENTICATED", "message": "No refresh token", "details": {}}})
 
@@ -155,17 +176,20 @@ async def refresh_token_endpoint(request: Request, response: Response) -> dict:
 
     await revoke(claims["jti"])  # rotation: old refresh token can never be reused
     access, new_refresh = _issue_tokens(user)
-    _set_refresh_cookie(response, new_refresh)
+    _set_refresh_cookie(response, new_refresh, user["role"])
     return {"access_token": access}
 
 
 @router.post("/auth/logout", status_code=204)
-async def logout(request: Request, response: Response) -> None:
-    raw_refresh = request.cookies.get(REFRESH_COOKIE)
+async def logout(request: Request, response: Response, role: str | None = None) -> None:
+    if not role:
+        return
+    cookie_name = _refresh_cookie_name(role)
+    raw_refresh = request.cookies.get(cookie_name)
     if raw_refresh:
         try:
             claims = decode_token(raw_refresh, expect_type="refresh")
             await revoke(claims["jti"])
         except TokenError:
             pass
-    response.delete_cookie(REFRESH_COOKIE)
+    response.delete_cookie(cookie_name)

@@ -66,11 +66,18 @@ async def run_dispatch_round(
     exclude_ids = await dispatch_repo.already_offered_ambulance_ids(session, emergency_id)
     exclude_ids = list(set(exclude_ids) | set(extra_excluded_ambulance_ids or []))
 
-    candidates = await ambulances_repo.find_candidates(
-        session, lat=origin_lat, lng=origin_lng, radius_km=radius_km,
-        required_type=emergency.get("required_ambulance_type") or "BLS",
-        exclude_ambulance_ids=exclude_ids,
-    )
+    # Triage no longer gates dispatch: until it exists, prefer ALS, then fall back to any unit.
+    required_type = (emergency.get("required_ambulance_type") if emergency.get("ai_acuity") else None) or "ALS"
+
+    async def _find(rt: str):
+        return await ambulances_repo.find_candidates(
+            session, lat=origin_lat, lng=origin_lng, radius_km=radius_km,
+            required_type=rt, exclude_ambulance_ids=exclude_ids,
+        )
+
+    candidates = await _find(required_type)
+    if not candidates and required_type == "ALS":
+        candidates = await _find("BLS")  # find_candidates only filters by type when ALS, so this means "any unit"
     if not candidates:
         logger.info("dispatch round %s for %s: no candidates within %s km", round_num, emergency_id, radius_km)
         return "no_candidates"
@@ -84,11 +91,21 @@ async def run_dispatch_round(
         }
         for c in candidates
     ]
-    ranked = await ml_dispatch.dispatch_rank(
-        {"location": {"lat": origin_lat, "lng": origin_lng},
-         "acuity": emergency.get("ai_acuity"), "required_type": emergency.get("required_ambulance_type")},
-        ranking_input,
-    )
+    try:
+        ranked = await asyncio.wait_for(
+            ml_dispatch.dispatch_rank(
+                {"location": {"lat": origin_lat, "lng": origin_lng},
+                 "acuity": emergency.get("ai_acuity"), "required_type": required_type},
+                ranking_input,
+            ),
+            timeout=2.0,
+        )
+    except Exception:
+        logger.warning("dispatch_rank unavailable, falling back to nearest-first")
+        ranked = [
+            {"ambulance_id": ri["ambulance_id"], "accept_prob": 0.7, "expected_arrival_sec": ri["eta_sec"]}
+            for ri in ranking_input
+        ]
 
     top = ranked[:OFFERS_PER_ROUND]
     for i, r in enumerate(top):

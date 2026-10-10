@@ -13,7 +13,14 @@ from .mock import pick_next_rule_based
 
 OLLAMA_URL = "http://localhost:11434"
 MODEL = "qwen2.5:7b-instruct"
-TIMEOUT_S = 15.0
+# Measured on this machine's CPU-only Ollama: a trivial 7-token reply alone
+# took 6.4s with the model already loaded (not a cold start). The real
+# select-next-question prompt (known facts + answered ids + candidate list,
+# structured JSON reasoning) is far more complex than that and was
+# consistently exceeding the old 15.0s, silently falling back to the rule-
+# based mock question every single time -- a real question either way, but
+# never the LLM's actual pick. Matches extract/handover's own 30.0s here.
+TIMEOUT_S = 30.0
 
 SELECT_SYSTEM_PROMPT = """You are choosing which follow-up question to ask
 next in an emergency call, to reduce uncertainty about triage as fast as

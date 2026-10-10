@@ -6,14 +6,24 @@ framework lands; the job body (domain/intake.process_emergency) doesn't change."
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
 
+from pydantic import BaseModel
+
 from app.db.repos import emergencies as emergencies_repo
 from app.db.repos import identity as identity_repo
 from app.db.session import get_session
-from app.domain import audit, intake
+from app.domain import audit, followup, intake
 from app.domain.privacy import project
-from app.integrations.ml import intake as ml_intake
 from app.security.deps import CurrentUser, get_current_user
 from app.security.tokens import hash_token, new_token
+
+
+class FollowupAnswerRequest(BaseModel):
+    question_id: str
+    answer: str
+
+
+class CancelRequest(BaseModel):
+    reason: str | None = None
 
 router = APIRouter()
 
@@ -54,28 +64,14 @@ async def create_emergency(
     if channel not in ("app_button", "app_voice", "app_text", "sms"):
         raise HTTPException(400, "invalid channel")
 
-    # app_voice sent an audio file, but nothing anywhere ever read it -- no
-    # UploadFile param existed here, so FastAPI silently dropped the
-    # multipart field, and domain/intake.process_emergency's own comment
-    # ("STT already ran, if voice, before this job") describes a step that
-    # never actually ran. ml_intake.stt() was already fully wired against
-    # the real /ml/v1/stt capability, just never called. Transcribe here,
-    # synchronously, before the row exists committed -- process_emergency
-    # reads transcript fresh from the DB when its background task fires, so
-    # it only needs to be written before that, not before the HTTP response.
-    transcript_text = text
-    stt_language = None
-    stt_confidence = None
+    # The offer must never wait on ML. Audio is only read here; STT runs in the
+    # background pipeline (intake.process_emergency) after dispatch has started.
+    audio_bytes: bytes | None = None
+    audio_name = "sos.webm"
     if channel == "app_voice" and audio is not None:
         audio_bytes = await audio.read()
-        stt_result = await ml_intake.stt(audio_bytes, audio.filename or "sos.webm")
-        if stt_result:
-            transcript_text = stt_result.get("transcript") or text
-            stt_language = stt_result.get("language")
-            stt_confidence = stt_result.get("confidence")
-        # stt_result is None on ML-unavailable/timeout -- per technical.md §9.1
-        # the emergency still gets created on whatever text/button data it has;
-        # transcript just stays whatever the client sent (usually empty).
+        audio_name = audio.filename or audio_name
+    transcript_text = text
 
     async with get_session() as session:
         caller_user_id = None
@@ -91,10 +87,10 @@ async def create_emergency(
             channel=channel, raw_text=text, lat=lat, lng=lng, accuracy_m=accuracy_m,
             family_track_token_hash=track_token_hash,
         )
-        if transcript_text or stt_language:
+        if transcript_text:
             await emergencies_repo.update_emergency(
                 session, emergency["id"], expected_version=emergency["version"],
-                transcript=transcript_text, language=stt_language, stt_confidence=stt_confidence,
+                transcript=transcript_text,
             )
         await emergencies_repo.create_patient_row(
             session, emergency_id=emergency["id"], user_id=caller_user_id, is_unknown=caller_user_id is None,
@@ -106,7 +102,9 @@ async def create_emergency(
         )
         await session.commit()
 
-    background_tasks.add_task(_run_process_emergency, emergency["id"])
+    # Starlette runs background tasks in order: dispatch first (~1s), then the slow ML pipeline.
+    background_tasks.add_task(_run_dispatch, emergency["id"])
+    background_tasks.add_task(_run_process_emergency, emergency["id"], audio_bytes, audio_name)
 
     return {
         "emergency_id": emergency["id"],
@@ -116,10 +114,22 @@ async def create_emergency(
     }
 
 
-async def _run_process_emergency(emergency_id: str) -> None:
+async def _run_dispatch(emergency_id: str) -> None:
     async with get_session() as session:
         try:
-            await intake.process_emergency(session, emergency_id)
+            await intake.begin_dispatch(session, emergency_id)
+            await session.commit()  # the outbox relay only sees offer.new after this commit
+        except Exception:
+            await session.rollback()
+            raise
+
+
+async def _run_process_emergency(
+    emergency_id: str, audio_bytes: bytes | None = None, audio_name: str = "sos.webm",
+) -> None:
+    async with get_session() as session:
+        try:
+            await intake.process_emergency(session, emergency_id, audio_bytes=audio_bytes, audio_name=audio_name)
             await session.commit()
         except Exception:
             await session.rollback()
@@ -137,6 +147,58 @@ async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_curre
         raise HTTPException(404, "emergency not found")
     _authorize_emergency_access(user, emergency)
     return project(user.role, emergency)
+
+
+@router.get("/emergencies/{emergency_id}/followup")
+async def get_followup(emergency_id: str, user: CurrentUser = Depends(get_current_user)) -> dict:
+    # lib/patient.ts's fetchFollowup() already tolerates a 404 gracefully
+    # ("not implemented on this core yet: the card simply stays hidden") --
+    # it existed as a documented gap, not a crash, but the real card never
+    # showed because the route never existed at all.
+    async with get_session() as session:
+        emergency = await emergencies_repo.get_emergency(session, emergency_id)
+        if emergency is None:
+            raise HTTPException(404, "emergency not found")
+        _authorize_emergency_access(user, emergency)
+        state = await followup.get_followup_state(session, emergency_id)
+    if state is None:
+        raise HTTPException(404, "emergency not found")
+    return state
+
+
+@router.post("/emergencies/{emergency_id}/followup")
+async def post_followup_answer(
+    emergency_id: str, payload: FollowupAnswerRequest, user: CurrentUser = Depends(get_current_user),
+) -> dict:
+    async with get_session() as session:
+        emergency = await emergencies_repo.get_emergency(session, emergency_id)
+        if emergency is None:
+            raise HTTPException(404, "emergency not found")
+        _authorize_emergency_access(user, emergency)
+        state = await followup.answer_followup_question(
+            session, emergency_id, question_id=payload.question_id, raw_answer=payload.answer,
+        )
+        await session.commit()
+    return state
+
+
+@router.post("/emergencies/{emergency_id}/cancel")
+async def cancel_emergency_endpoint(
+    emergency_id: str, payload: CancelRequest, user: CurrentUser = Depends(get_current_user),
+) -> dict:
+    async with get_session() as session:
+        try:
+            await followup.cancel_emergency(
+                session, emergency_id, caller_user_id=user.id, reason=payload.reason or "Cancelled by caller",
+            )
+            await session.commit()
+            return {"status": "cancelled"}
+        except PermissionError:
+            raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "not your emergency"}})
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail={"error": {"code": "NOT_FOUND", "message": str(e)}})
+        except Exception as e:
+            raise HTTPException(status_code=409, detail={"error": {"code": "CONFLICT", "message": str(e)}})
 
 
 @router.get("/track/{raw_token}")

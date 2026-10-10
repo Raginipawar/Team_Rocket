@@ -5,7 +5,7 @@ comment on each UPDATE explaining what a zero-row result means)."""
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-OFFER_EXPIRY_SEC = 20
+OFFER_EXPIRY_SEC = 45
 
 
 class AlreadyTaken(Exception):
@@ -30,7 +30,7 @@ async def create_offer(
             "(emergency_id, ambulance_id, round, status, predicted_accept_prob, predicted_eta_sec, rank, "
             " offered_at, expires_at) "
             "VALUES (:emergency_id, :ambulance_id, :round, 'pending', :prob, :eta_sec, :rank, "
-            " now(), now() + make_interval(secs => :expiry_sec)) "
+            " clock_timestamp(), clock_timestamp() + make_interval(secs => :expiry_sec)) "
             "RETURNING id, emergency_id, ambulance_id, round, expires_at"
         ),
         {
@@ -48,6 +48,40 @@ async def already_offered_ambulance_ids(session: AsyncSession, emergency_id: str
         {"id": emergency_id},
     )).scalars().all()
     return [str(r) for r in rows]
+
+
+async def list_pending_offers(session: AsyncSession, ambulance_id: str) -> list[dict]:
+    """GET /ambulance/offers (lib/ambulance.ts fetchOffers()). Never existed
+    on the real backend -- fetchOffers() already tolerated a 404 gracefully
+    ("router not live yet: offers still arrive over WS"), but the ambulance
+    app ALSO polls this every 3-15s as a backup/resync alongside the WS
+    push, and that graceful-404-to-[] fallback was overwriting the real
+    offer React Query had just received over WS moments earlier -- a real
+    live offer disappearing from the screen a few seconds after arriving,
+    not a 20s-expiry issue. Real rows now, so the poll can never wipe it."""
+    rows = (await session.execute(
+        text("""
+            SELECT off.id AS offer_id, off.emergency_id, off.expires_at, off.predicted_eta_sec AS eta_sec,
+                   em.final_acuity, em.ai_acuity, em.final_facility, em.ai_facility,
+                   ST_Y(em.location::geometry) AS pickup_lat, ST_X(em.location::geometry) AS pickup_lng,
+                   em.location_accuracy_m, em.landmark_text
+            FROM dispatch_offers off
+            JOIN emergencies em ON em.id = off.emergency_id
+            WHERE off.ambulance_id = :ambulance_id AND off.status = 'pending' AND off.expires_at > now()
+            ORDER BY off.offered_at DESC
+        """),
+        {"ambulance_id": ambulance_id},
+    )).mappings().all()
+    return [
+        {
+            "offer_id": str(r["offer_id"]), "emergency_id": str(r["emergency_id"]),
+            "expires_at": r["expires_at"].isoformat() if r["expires_at"] else None,
+            "pickup_lat": r["pickup_lat"], "pickup_lng": r["pickup_lng"],
+            "eta_sec": r["eta_sec"], "acuity": r["final_acuity"] or r["ai_acuity"] or "urgent",
+            "facility": r["final_facility"] or r["ai_facility"] or "general",
+        }
+        for r in rows
+    ]
 
 
 async def get_offer(session: AsyncSession, offer_id: str) -> dict | None:

@@ -26,11 +26,59 @@ logger = logging.getLogger("intake")
 MCI_PATIENT_THRESHOLD = 5
 
 
-async def process_emergency(session: AsyncSession, emergency_id: str) -> None:
+async def _update_retry(session: AsyncSession, emergency_id: str, **fields) -> dict | None:
+    """update_emergency with optimistic locking, re-reading the version on conflict.
+    Dispatch and the paramedic's app bump the row version while this slow pipeline runs."""
+    for _ in range(5):
+        fresh = await emergencies_repo.get_emergency(session, emergency_id)
+        if fresh is None:
+            return None
+        try:
+            await emergencies_repo.update_emergency(
+                session, emergency_id, expected_version=fresh["version"], **fields)
+            return fresh
+        except emergencies_repo.VersionConflict:
+            continue
+    raise RuntimeError(f"could not update emergency {emergency_id}: repeated version conflicts")
+
+
+async def begin_dispatch(session: AsyncSession, emergency_id: str) -> None:
+    """Fast path, runs the moment an SOS is saved. No ML in front of it."""
+    em = await emergencies_repo.get_emergency(session, emergency_id)
+    if em is None or em["status"] != "received":
+        return
+    await _update_retry(session, emergency_id, status="dispatching")
+    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.status",
+                      data={"status": "dispatching", "version": em["version"] + 1})
+    await dispatch.start_dispatch(session, emergency_id=emergency_id, priority=True, reason="sos_received")
+
+
+async def process_emergency(
+    session: AsyncSession, emergency_id: str, *, audio_bytes: bytes | None = None, audio_name: str = "sos.webm",
+) -> None:
     emergency = await emergencies_repo.get_emergency(session, emergency_id)
     if emergency is None:
         logger.error("process_emergency: emergency %s not found", emergency_id)
         return
+
+    # Step 4.0: speech-to-text, now in the background (dispatch no longer waits for it).
+    if audio_bytes:
+        stt_result = await ml.stt(audio_bytes, audio_name)
+        if stt_result:
+            await _update_retry(
+                session, emergency_id,
+                transcript=stt_result.get("transcript") or emergency.get("transcript"),
+                language=stt_result.get("language"), stt_confidence=stt_result.get("confidence"),
+            )
+            await session.commit()
+            emergency = await emergencies_repo.get_emergency(session, emergency_id)
+            await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.transcript",
+                              data={"transcript": emergency.get("transcript")})
+            if emergency.get("ambulance_id"):
+                await outbox.emit(session, channel=f"ambulance:{emergency['ambulance_id']}",
+                                  event="emergency.transcript",
+                                  data={"emergency_id": emergency_id, "transcript": emergency.get("transcript")})
+            await session.commit()
 
     text_for_extraction = emergency.get("transcript") or ""
     language = emergency.get("language") or "en"
@@ -73,8 +121,9 @@ async def process_emergency(session: AsyncSession, emergency_id: str) -> None:
         triage_result["acuity"] == "critical" or triage_result["needs_review"]
     ) else "BLS"
 
-    await emergencies_repo.update_emergency(
-        session, emergency_id, expected_version=emergency["version"],
+    # Never touches `status`: dispatch/paramedic flow owns it, and this must not overwrite at_scene etc.
+    fresh = await _update_retry(
+        session, emergency_id,
         extracted=_json(extracted),
         location_source=location_source,
         ai_acuity=triage_result["acuity"], ai_facility=triage_result["facility"],
@@ -84,27 +133,33 @@ async def process_emergency(session: AsyncSession, emergency_id: str) -> None:
         prank_score=(prank_result or {}).get("score"),
         duplicate_of=(duplicate_result or {}).get("duplicate_of"),
         predicted_resources=_json(resources_result or {}),
-        status="triaged",
     )
+    if fresh is None:
+        return
+    fresh = await emergencies_repo.get_emergency(session, emergency_id)
 
     await audit.write(
         session, actor_type="ai", actor_id="triage", entity="emergencies", entity_id=emergency_id,
-        action="triage_complete", before={"status": "received"}, after=triage_result,
+        action="triage_complete", before=None, after=triage_result,
         model_version=triage_result.get("model_version"),
     )
-    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.triage", data={
+    payload = {
         "acuity": triage_result["acuity"], "facility": triage_result["facility"],
         "confidence": triage_result["confidence"], "needs_review": triage_result["needs_review"],
         "confirmed": False,
-    })
+    }
+    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.triage", data=payload)
+    if fresh.get("ambulance_id"):
+        await outbox.emit(session, channel=f"ambulance:{fresh['ambulance_id']}",
+                          event="emergency.triage", data={"emergency_id": emergency_id, **payload})
 
-    if duplicate_result and duplicate_result.get("same_incident") and not duplicate_result.get("additional_patients"):
-        await emergencies_repo.update_emergency(
-            session, emergency_id, expected_version=emergency["version"] + 1, status="merged_duplicate",
+    # Prank / duplicate results flag the case for human review; they never cancel a real emergency.
+    if (prank_result or {}).get("score", 0) >= 0.8 or (duplicate_result or {}).get("same_incident"):
+        await audit.write(
+            session, actor_type="ai", actor_id="intake", entity="emergencies", entity_id=emergency_id,
+            action="flagged_for_review", before=None,
+            after={"prank": prank_result, "duplicate": duplicate_result},
         )
-        await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.status",
-                           data={"status": "merged_duplicate", "version": emergency["version"] + 2})
-        return
 
     patient_count = extracted.get("patient_count", 1)
     if patient_count >= MCI_PATIENT_THRESHOLD:
@@ -112,15 +167,6 @@ async def process_emergency(session: AsyncSession, emergency_id: str) -> None:
             session, type="mass_casualty", emergency_id=emergency_id,
             context={"summary": f"{patient_count} patients reported at one location"},
         )
-
-    await emergencies_repo.update_emergency(
-        session, emergency_id, expected_version=emergency["version"] + 1, status="dispatching",
-    )
-    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.status",
-                       data={"status": "dispatching", "version": emergency["version"] + 2})
-
-    await dispatch.start_dispatch(session, emergency_id=emergency_id, priority=triage_result["acuity"] == "critical",
-                                   reason="triage_confirmed")
 
 
 def _json(obj: dict) -> str:

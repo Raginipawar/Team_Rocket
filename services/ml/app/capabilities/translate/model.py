@@ -13,7 +13,10 @@ import httpx
 
 OLLAMA_URL = "http://localhost:11434"
 MODEL = "qwen2.5:7b-instruct"
-TIMEOUT_S = 15.0
+# Same measured-too-tight issue as followup/model.py's TIMEOUT_S -- this
+# machine's CPU-only Ollama took 6.4s for a trivial 7-token reply alone with
+# the model already loaded.
+TIMEOUT_S = 30.0
 
 LANGUAGE_NAMES = {"hi": "Hindi", "mr": "Marathi", "en": "English"}
 

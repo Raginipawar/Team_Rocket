@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import text
 
+from app.db.repos import dispatch as dispatch_repo
 from app.db.session import get_session
 from app.domain import dispatch, lifecycle
 from app.security.deps import CurrentUser, require_role
@@ -33,6 +34,14 @@ async def get_self(user: CurrentUser = Depends(require_role("paramedic"))) -> di
         "is_simulated": row["is_simulated"],
         "location": {"lat": row["lat"], "lng": row["lng"]} if row["lat"] is not None else None,
     }
+
+
+@router.get("/offers")
+async def get_offers(user: CurrentUser = Depends(require_role("paramedic"))) -> list[dict]:
+    if not user.ambulance_id:
+        raise HTTPException(403, "user has no assigned ambulance")
+    async with get_session() as session:
+        return await dispatch_repo.list_pending_offers(session, user.ambulance_id)
 
 
 @router.get("/active")
