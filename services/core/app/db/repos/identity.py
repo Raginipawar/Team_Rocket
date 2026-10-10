@@ -9,9 +9,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_user_by_phone(session: AsyncSession, phone: str) -> dict | None:
+    """Phone-only lookup -- ambiguous if the same phone has rows under more
+    than one role (demo need: only 2 real phones, same number used for both
+    a patient and an ambulance account). Fine for callers that only ever
+    deal with one role's accounts; get_user_by_phone_and_role is the real
+    role-aware lookup used by OTP login."""
     row = (await session.execute(
         text("SELECT id, role, name, phone, language FROM users WHERE phone = :phone"),
         {"phone": phone},
+    )).mappings().first()
+    return dict(row) if row else None
+
+
+async def get_user_by_phone_and_role(session: AsyncSession, phone: str, role: str) -> dict | None:
+    row = (await session.execute(
+        text("SELECT id, role, name, phone, language, ambulance_id FROM users WHERE phone = :phone AND role = :role"),
+        {"phone": phone, "role": role},
     )).mappings().first()
     return dict(row) if row else None
 
@@ -30,7 +43,7 @@ async def create_patient_user(session: AsyncSession, phone: str, *, name: str | 
 
 
 async def get_or_create_patient_user(session: AsyncSession, phone: str, *, language: str = "en") -> dict:
-    existing = await get_user_by_phone(session, phone)
+    existing = await get_user_by_phone_and_role(session, phone, "patient")
     if existing:
         return existing
     return await create_patient_user(session, phone, language=language)
@@ -41,14 +54,13 @@ async def get_or_create_paramedic_user(session: AsyncSession, phone: str, *, lan
     login). A phone-verified paramedic with no ambulance_id yet is a real,
     valid state -- they haven't registered/selected an ambulance (Live) or
     generated a demo one (Demo) yet. Returns ambulance_id/registration_status
-    so the frontend can route to the right step."""
-    row = (await session.execute(
-        text("SELECT id, role, name, phone, language, ambulance_id FROM users WHERE phone = :phone"),
-        {"phone": phone},
-    )).mappings().first()
+    so the frontend can route to the right step.
+
+    Looked up by (phone, role), not phone alone -- the same phone can have
+    a patient row AND a paramedic row (demo need: only 2 real phones to
+    test with), each its own account, not a role conflict."""
+    row = await get_user_by_phone_and_role(session, phone, "paramedic")
     if row:
-        if row["role"] != "paramedic":
-            raise ValueError(f"phone already registered as {row['role']}")
         user = dict(row)
     else:
         user = dict((await session.execute(
