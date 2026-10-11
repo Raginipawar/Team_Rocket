@@ -75,22 +75,21 @@ function ProfileInner() {
         <BackHeader title={t("profileTitle")} sub={t("profileSub")} />
       )}
       <Field label={t("name")} htmlFor="name"><Input id="name" value={f.name ?? ""} onChange={set("name")} autoComplete="name" /></Field>
-      <div className="grid grid-cols-2 gap-5">
-        {/* iOS/Safari renders a native calendar-icon pseudo-element inside
-            date inputs that ignores the input's own border-radius clipping
-            and visibly pokes out past the right edge -- overflow-hidden on
-            the input itself plus a wider gap keeps it from bleeding into
-            the Sex field next to it. */}
-        <Field label={t("dob")} htmlFor="dob"><Input id="dob" type="date" value={f.dob ?? ""} onChange={set("dob")} className="overflow-hidden pr-2" /></Field>
-        <Field label={t("sex")} htmlFor="sex">
-          <Select id="sex" value={f.sex ?? ""} onChange={set("sex")}>
-            <option value="">-</option>
-            <option value="male">{t("male")}</option>
-            <option value="female">{t("female")}</option>
-            <option value="other">{t("other")}</option>
-          </Select>
-        </Field>
-      </div>
+      {/* A side-by-side 50/50 grid still crowded the date input even with
+          overflow-hidden: iOS/Safari enforces its own minimum intrinsic
+          width on a native date picker regardless of the CSS column width,
+          so at phone widths it kept pushing past the border into Sex next
+          to it. Stacking them removes the possibility of that entirely --
+          no column width for iOS to disagree with. */}
+      <Field label={t("dob")} htmlFor="dob"><Input id="dob" type="date" value={f.dob ?? ""} onChange={set("dob")} /></Field>
+      <Field label={t("sex")} htmlFor="sex">
+        <Select id="sex" value={f.sex ?? ""} onChange={set("sex")}>
+          <option value="">-</option>
+          <option value="male">{t("male")}</option>
+          <option value="female">{t("female")}</option>
+          <option value="other">{t("other")}</option>
+        </Select>
+      </Field>
       <Field label={t("bloodGroup")}>
         <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label={t("bloodGroup")}>
           {BLOOD.map((b) => (
