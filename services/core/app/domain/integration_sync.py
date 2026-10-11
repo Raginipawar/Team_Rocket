@@ -96,6 +96,17 @@ async def sync_hospital_from_api(session: AsyncSession, hospital_id: str) -> dic
             )
         updated.append(rtype)
 
+    rooms_result = await _sync_sibling_table(
+        session, hospital_id, row["integration_endpoint_url"], headers,
+        table="hospital_rooms", select="code,type,status",
+        sync_fn=_replace_rooms,
+    )
+    staff_result = await _sync_sibling_table(
+        session, hospital_id, row["integration_endpoint_url"], headers,
+        table="hospital_staff", select="name,specialty,on_duty",
+        sync_fn=_replace_staff,
+    )
+
     # A successful sync is as real a "yes, these numbers are current" signal
     # as a manual Confirm availability tap -- dispatch's freshness check
     # (hospital.py's _calculate_freshness) shouldn't need a human to also
@@ -104,4 +115,78 @@ async def sync_hospital_from_api(session: AsyncSession, hospital_id: str) -> dic
         text("UPDATE hospitals SET integration_last_synced_at = now(), last_confirmed_at = now() WHERE id = :id"),
         {"id": hospital_id},
     )
-    return {"updated": updated, "skipped": skipped}
+    return {"updated": updated, "skipped": skipped, "rooms": rooms_result, "staff": staff_result}
+
+
+def _sibling_url(capacity_url: str, table: str, select: str) -> str:
+    base = capacity_url.split("/rest/v1/")[0].rstrip("/")
+    return f"{base}/rest/v1/{table}?select={select}"
+
+
+async def _sync_sibling_table(session, hospital_id, capacity_url, headers, *, table, select, sync_fn) -> dict:
+    # Rooms/staff are optional extensions of the same connection -- a
+    # hospital that only set up hospital_capacity (resources) shouldn't
+    # have its whole sync fail because hospital_rooms doesn't exist yet.
+    url = _sibling_url(capacity_url, table, select)
+    try:
+        async with httpx.AsyncClient(timeout=SYNC_TIMEOUT_SEC) as client:
+            resp = await client.get(url, headers=headers)
+            if resp.status_code == 404:
+                return {"skipped": f"{table} table not found at {url}"}
+            resp.raise_for_status()
+            items = resp.json()
+    except (httpx.HTTPError, ValueError) as e:
+        return {"error": str(e)}
+    if not isinstance(items, list):
+        return {"error": "expected a JSON array of rows"}
+    return await sync_fn(session, hospital_id, items)
+
+
+async def _replace_rooms(session: AsyncSession, hospital_id: str, items: list) -> dict:
+    valid_statuses = {"free", "occupied", "reserved", "cleaning", "out_of_service"}
+    codes = []
+    for item in items:
+        if not isinstance(item, dict) or not item.get("code") or item.get("status") not in valid_statuses:
+            continue
+        codes.append(item["code"])
+        await session.execute(text("""
+            INSERT INTO rooms (hospital_id, code, type, status) VALUES (:hid, :code, :type, :status)
+            ON CONFLICT (hospital_id, code) DO UPDATE SET type = :type, status = :status
+        """), {"hid": hospital_id, "code": item["code"], "type": item.get("type", "er_bed"), "status": item["status"]})
+    # Full replace, demo-appropriate: a room no longer listed in the
+    # hospital's own table is one they removed there, not one we should
+    # keep showing. (A real deployment with live patient occupancy would
+    # need a softer reconciliation -- out of scope here, see module docstring.)
+    if codes:
+        await session.execute(
+            text("DELETE FROM rooms WHERE hospital_id = :hid AND code != ALL(:codes)"),
+            {"hid": hospital_id, "codes": codes},
+        )
+    return {"synced": len(codes)}
+
+
+async def _replace_staff(session: AsyncSession, hospital_id: str, items: list) -> dict:
+    names = []
+    for item in items:
+        if not isinstance(item, dict) or not item.get("name") or not item.get("specialty"):
+            continue
+        names.append(item["name"])
+        # staff has no unique constraint on (hospital_id, name) -- a plain
+        # INSERT ... ON CONFLICT DO NOTHING has no constraint to trigger on,
+        # so it would just insert a fresh duplicate row every sync instead
+        # of updating the existing one. WHERE NOT EXISTS first, then UPDATE.
+        params = {"hid": hospital_id, "name": item["name"], "specialty": item["specialty"], "active": bool(item.get("on_duty", True))}
+        await session.execute(text("""
+            INSERT INTO staff (hospital_id, name, specialty, is_active)
+            SELECT :hid, :name, :specialty, :active
+            WHERE NOT EXISTS (SELECT 1 FROM staff WHERE hospital_id = :hid AND name = :name)
+        """), params)
+        await session.execute(text("""
+            UPDATE staff SET specialty = :specialty, is_active = :active WHERE hospital_id = :hid AND name = :name
+        """), params)
+    if names:
+        await session.execute(
+            text("DELETE FROM staff WHERE hospital_id = :hid AND name != ALL(:names)"),
+            {"hid": hospital_id, "names": names},
+        )
+    return {"synced": len(names)}
