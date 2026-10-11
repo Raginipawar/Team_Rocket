@@ -159,7 +159,20 @@ async def update_integration(
             {"mode": payload.integration_mode, "url": payload.endpoint_url, "id": user.hospital_id},
         )
     await db.commit()
-    return {"status": "updated", "integration_mode": payload.integration_mode}
+
+    # "Enter the link and key, data shows up" -- a separate Sync now click
+    # after Save was one extra step nobody wants during a demo. A failed
+    # first sync (bad URL/key typo) is reported back in the same response
+    # rather than silently left for a later click to surface.
+    sync_result = None
+    if payload.integration_mode == "api":
+        try:
+            sync_result = await sync_hospital_from_api(db, str(user.hospital_id))
+            await db.commit()
+        except SyncError as e:
+            sync_result = {"error": str(e)}
+
+    return {"status": "updated", "integration_mode": payload.integration_mode, "sync": sync_result}
 
 
 @router.post("/integration/sync")

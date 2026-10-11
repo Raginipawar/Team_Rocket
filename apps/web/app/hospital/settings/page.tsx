@@ -61,9 +61,13 @@ function DataIntegrationCard({ dashboard, onSaved }: { dashboard: ReturnType<typ
     }
     setBusy(true);
     try {
-      await patch("/hospital/integration", { integration_mode: mode, endpoint_url: endpoint.trim() || null, api_key: apiKey.trim() || undefined });
+      const r = await patch<{ sync: { updated?: string[]; error?: string } | null }>(
+        "/hospital/integration", { integration_mode: mode, endpoint_url: endpoint.trim() || null, api_key: apiKey.trim() || undefined },
+      );
       setApiKey("");
-      toast("Integration settings saved", "success");
+      if (r.sync?.error) toast(`Saved, but the first sync failed: ${r.sync.error}`, "error");
+      else if (r.sync?.updated) toast(`Connected -- synced ${r.sync.updated.length} resource type(s)`, "success");
+      else toast("Integration settings saved", "success");
       onSaved();
     } catch (e) {
       setErr(errorText(e));

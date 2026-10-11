@@ -179,6 +179,22 @@ async def run_migrations(x_migrate_key: str = Header(default="")):
 # a one-off way to wipe accumulated test ambulances/emergencies/offers
 # without touching real accounts (users/hospitals/families stay put).
 # Remove once this round of manual testing is done.
+# A turnkey demo target for the hospital Data Integration card -- paste
+# this exact URL as the endpoint (any string works as the API key, it's
+# not checked) and Sync now pulls real-looking numbers immediately, no
+# external service, Supabase project or anything else to stand up first.
+# Slightly randomised each call so repeated syncs visibly change something.
+@app.get("/internal/demo-hospital-feed")
+async def demo_hospital_feed():
+    import random
+    types = ["ventilator", "cath_lab", "ct_scanner", "mri", "defibrillator",
+             "blood_o_neg", "blood_o_pos", "blood_a_pos", "blood_b_pos", "blood_ab_pos",
+             "dialysis", "operating_theatre"]
+    return {"resources": [
+        {"type": t, "available": random.randint(0, 20), "total": 20} for t in types
+    ]}
+
+
 @app.post("/internal/reset-test-data")
 async def reset_test_data(x_migrate_key: str = Header(default="")):
     if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
