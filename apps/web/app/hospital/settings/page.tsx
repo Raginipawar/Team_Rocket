@@ -72,6 +72,20 @@ function DataIntegrationCard({ dashboard, onSaved }: { dashboard: ReturnType<typ
     }
   };
 
+  const syncNow = async () => {
+    setErr(null);
+    setBusy(true);
+    try {
+      const r = await post<{ updated: string[]; skipped: unknown[] }>("/hospital/integration/sync");
+      toast(r.skipped.length ? `Synced ${r.updated.length} resource type(s), ${r.skipped.length} unrecognised` : `Synced ${r.updated.length} resource type(s)`, "success");
+      onSaved();
+    } catch (e) {
+      setErr(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const disconnect = async () => {
     setBusy(true);
     try {
@@ -119,6 +133,9 @@ function DataIntegrationCard({ dashboard, onSaved }: { dashboard: ReturnType<typ
           ) : h?.integration_mode === "api" ? (
             <p className="text-[14px] text-amber">Connected, but no sync has happened yet.</p>
           ) : null}
+          {h?.integration_mode === "api" && (
+            <Button size="md" variant="outline" loading={busy} onClick={() => void syncNow()}>Sync now</Button>
+          )}
         </div>
       )}
 

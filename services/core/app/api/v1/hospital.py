@@ -13,6 +13,7 @@ from ...domain.reservations import accept_hospital_request, reject_hospital_requ
 from ...domain.handoff import record_patient_received
 from ...domain.clinical import handle_unknown_patient_merge
 from ...domain.notify import notify_patient_and_family
+from ...domain.integration_sync import sync_hospital_from_api, SyncError
 from ...db.repos.hospitals import get_hospital, update_last_confirmed
 from ...db.repos.rooms import list_rooms, patch_room
 from ...db.repos.resources import get_resources, patch_resource
@@ -159,6 +160,24 @@ async def update_integration(
         )
     await db.commit()
     return {"status": "updated", "integration_mode": payload.integration_mode}
+
+
+@router.post("/integration/sync")
+async def sync_integration(
+    user = Depends(require_role('hospital_staff')),
+    db: AsyncSession = Depends(get_db),
+):
+    """The settings page could toggle API mode and save an endpoint/key, but
+    nothing ever actually called it -- this is the missing piece. Manually
+    triggered (a real connected system would call this on its own schedule;
+    this hackathon doesn't have a job scheduler to do that automatically
+    yet, see domain/lifecycle_monitor.py's own doc comment on that gap)."""
+    try:
+        result = await sync_hospital_from_api(db, str(user.hospital_id))
+    except SyncError as e:
+        raise HTTPException(status_code=400, detail={"error": {"code": "SYNC_FAILED", "message": str(e), "details": {}}})
+    await db.commit()
+    return {"status": "synced", **result}
 
 
 @router.post("/integration/disconnect")
