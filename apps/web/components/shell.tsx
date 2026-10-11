@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { buzz } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth";
 import type { Role } from "@/lib/enums";
 import { cn } from "@/lib/cn";
@@ -213,4 +214,43 @@ export function Brand({ small }: { small?: boolean }) {
       GoldenHour
     </span>
   );
+}
+
+/** A distinct sound for the hospital dashboard -- it reused the exact same
+ * urgent square-wave beeping the ambulance app uses for crew offers, which
+ * sounds identical and tells staff nothing about which screen rang. This is
+ * a warm two-note sine chime instead: a front-desk/PA-system notification,
+ * not an emergency siren. Does not touch useOfferAlert (ambulance.ts) at all. */
+export function useHospitalAlert(ringing: boolean) {
+  useEffect(() => {
+    if (!ringing) return;
+    let ctx: AudioContext | null = null;
+    try {
+      ctx = new AudioContext();
+    } catch {
+      return;
+    }
+    const chime = () => {
+      if (!ctx) return;
+      [{ t: 0, f: 1046.5 }, { t: 0.22, f: 784 }].forEach(({ t, f }) => {
+        const o = ctx!.createOscillator();
+        const g = ctx!.createGain();
+        o.type = "sine";
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, ctx!.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.22, ctx!.currentTime + t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx!.currentTime + t + 0.5);
+        o.connect(g).connect(ctx!.destination);
+        o.start(ctx!.currentTime + t);
+        o.stop(ctx!.currentTime + t + 0.52);
+      });
+      buzz([150, 80, 150]);
+    };
+    chime();
+    const id = setInterval(chime, 2200);
+    return () => {
+      clearInterval(id);
+      void ctx?.close();
+    };
+  }, [ringing]);
 }

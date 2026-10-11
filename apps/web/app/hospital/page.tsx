@@ -14,7 +14,7 @@ import Icon from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
 import { minutes, mmss, reg } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
-import { useOfferAlert } from "@/lib/ambulance";
+import { useHospitalAlert } from "@/components/shell";
 import { cn } from "@/lib/cn";
 
 function IncomingRow({ a }: { a: IncomingAmbulance }) {
@@ -77,7 +77,7 @@ export default function HospitalDashboardPage() {
   // arrivals were silent, staff had to be staring at "At the door" to
   // notice. Same ring pattern the ambulance app uses for new offers,
   // now covering both, until whichever one gets handled.
-  useOfferAlert(!!dashboard && (dashboard.pending_requests.length > 0 || (dashboard.at_door ?? []).length > 0));
+  useHospitalAlert(!!dashboard && (dashboard.pending_requests.length > 0 || (dashboard.at_door ?? []).length > 0));
 
   if (loading) return <LoadingState />;
   if (error || !dashboard) return <ErrorState text="Could not load the dashboard" onRetry={refetch} />;
