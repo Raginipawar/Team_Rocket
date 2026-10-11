@@ -125,18 +125,20 @@ export default function PatientHome() {
       </section>
       <span id="who" className="sr-only">{t("whoNeedsHelp")}</span>
 
-      <div className="relative mx-auto flex w-full max-w-[340px] items-center justify-center py-2">
-        <button onClick={() => setSheet("voice")} aria-label={t("speak")}
-          className="absolute left-0 grid h-16 w-16 place-items-center rounded-full bg-soft shadow-md active:scale-95">
-          <Icon name="mic" size={26} />
-        </button>
+      <div className="mx-auto flex flex-col items-center gap-3 py-2">
         <SosButton busy={busy} onFire={() => void send("app_button")} />
-        <button onClick={() => setSheet("text")} aria-label={t("type")}
-          className="absolute right-0 grid h-16 w-16 place-items-center rounded-full bg-soft shadow-md active:scale-95">
-          <Icon name="keyboard" size={26} />
-        </button>
+        <div className="flex items-center gap-8">
+          <button onClick={() => setSheet("voice")} aria-label={t("speak")}
+            className="grid h-14 w-14 place-items-center rounded-full bg-soft shadow-md active:scale-95">
+            <Icon name="mic" size={24} />
+          </button>
+          <button onClick={() => setSheet("text")} aria-label={t("type")}
+            className="grid h-14 w-14 place-items-center rounded-full bg-soft shadow-md active:scale-95">
+            <Icon name="keyboard" size={24} />
+          </button>
+        </div>
       </div>
-      <p className="-mt-2 text-center text-[16px] text-muted">{forSelf ? t("meHint") : t("otherHint")}</p>
+      <p className="-mt-1 text-center text-[16px] text-muted">{forSelf ? t("meHint") : t("otherHint")}</p>
 
       <LocationIndicator geo={geo} landmark={landmark} onLandmark={setLandmark} />
 
