@@ -50,6 +50,13 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Addition requirement: multi-patient allocation + forecasting */}
+        <section className="flex flex-col gap-4">
+          <h2 className="text-[22px] font-extrabold">Allocation &amp; forecasting demo</h2>
+          <p className="text-[15px] text-muted -mt-2">A standalone scenario for the batch-allocation and availability-forecasting requirement.</p>
+          <AppCard href="/demo/allocation" icon="chart" title="Run patient surge scenario" sub="Batch allocation across hospitals, with replanning and forecast vs baseline comparison" />
+        </section>
+
         <Call108 />
 
         <footer className="pt-6 text-center text-[14px] text-muted">
