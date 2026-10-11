@@ -14,7 +14,7 @@ from sqlalchemy import text
 from app.db.repos import emergencies as emergencies_repo
 from app.db.repos import identity as identity_repo
 from app.db.session import get_session
-from app.domain import audit, followup, intake
+from app.domain import audit, followup, intake, tracking
 from app.domain.privacy import project
 from app.security.deps import CurrentUser, get_current_user
 from app.security.tokens import hash_token, new_token
@@ -193,11 +193,20 @@ async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_curre
                  "ORDER BY created_at DESC LIMIT 1"),
             {"id": emergency_id},
         )).mappings().first()
+        # The frontend's EmergencyView.ambulance (api-types.ts) expects a
+        # nested {registration_no, location, eta_sec, ...} object -- this
+        # row only ever carried a flat ambulance_id, so that card was always
+        # empty (not an error, just permanently undefined). See domain/tracking.py.
+        ambulance_view = (
+            await tracking.get_ambulance_view(session, str(emergency["ambulance_id"]), emergency)
+            if emergency.get("ambulance_id") else None
+        )
     _authorize_emergency_access(user, emergency)
     if esc:
         emergency = {**emergency, "escalation": {
             "type": esc["type"], "message": _ESCALATION_MESSAGES.get(esc["type"], "Still working on this -- taking longer than usual."),
         }}
+    emergency = {**emergency, "ambulance": ambulance_view}
     return project(user.role, emergency)
 
 

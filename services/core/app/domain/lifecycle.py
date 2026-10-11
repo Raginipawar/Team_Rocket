@@ -9,7 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repos import ambulances as ambulances_repo
-from app.domain import audit, handoff
+from app.domain import audit, handoff, tracking
 from app.realtime import outbox
 
 GEOFENCE_SCENE_M = 75
@@ -36,7 +36,7 @@ async def record_heartbeat(
     emergency_id = str(ambulance["active_emergency_id"])
     row = (await session.execute(
         text(
-            "SELECT status, "
+            "SELECT status, on_board_at, eta_to_patient_sec, eta_to_hospital_sec, eta_low_sec, eta_high_sec, "
             "ST_Distance(location, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography) AS dist_to_pickup_m, "
             "hospital_id "
             "FROM emergencies WHERE id = :id"
@@ -45,6 +45,17 @@ async def record_heartbeat(
     )).mappings().first()
     if row is None:
         return
+
+    # The patient/family live screen has no other real-time source for
+    # ambulance movement -- REST (GET /emergencies/{id}) only refreshes on
+    # its own poll interval, and nothing emitted this event before (grep
+    # found zero call sites), so the map/ETA never actually moved live.
+    eta_sec, eta_low_sec, eta_high_sec = tracking.pick_eta(dict(row))
+    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="ambulance.location", data={
+        "lat": lat, "lng": lng, "heading": heading, "speed_kmh": speed_kmh,
+        "eta_sec": eta_sec, "eta_low_sec": eta_low_sec, "eta_high_sec": eta_high_sec,
+        "signal": "ok",  # this heartbeat just arrived -- freshness staleness is a REST-poll concern, not this path's
+    })
 
     if row["status"] == "ambulance_assigned" and row["dist_to_pickup_m"] is not None and row["dist_to_pickup_m"] <= GEOFENCE_SCENE_M:
         await _transition_at_scene(session, emergency_id)
