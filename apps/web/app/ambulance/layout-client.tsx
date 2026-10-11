@@ -17,7 +17,7 @@ import Icon from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
 import { km, minutes } from "@/lib/format";
 import { cn } from "@/lib/cn";
-import { buzz } from "@/lib/hooks";
+import { buzz, usePushRegistration } from "@/lib/hooks";
 import { AmbulanceContext } from "./context";
 
 function Shell({ children }: { children: ReactNode }) {
@@ -47,6 +47,7 @@ function Shell({ children }: { children: ReactNode }) {
   const [busy, setBusy] = useState<string | null>(null);
 
   useHeartbeat(onDuty, (d) => ws?.heartbeat(d));
+  usePushRegistration(true); // real dispatch offer must reach a crew member even with the screen off
 
   useChannel(ws, self.data ? `ambulance:${self.data.id}` : null, (ev: WsEnvelope) => {
     if (ev.event === "offer.new") {

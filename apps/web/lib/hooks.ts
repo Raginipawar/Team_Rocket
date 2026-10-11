@@ -43,6 +43,22 @@ export function useGeolocation(watch = true): GeoState & { request: () => void }
  * ambulance for them" (family space) can use a family member's own real
  * recent location instead of the caller's, who may not even be with them.
  * Throttled: watchPosition can fire far more often than is useful to send. */
+/** Registers this device for push (permission + FCM token) once per
+ * session and sends the token to the backend -- "even if the screen is
+ * not currently on" requires a registered token to send to at all. */
+export function usePushRegistration(enabled: boolean) {
+  const done = useRef(false);
+  useEffect(() => {
+    if (!enabled || done.current) return;
+    done.current = true;
+    void (async () => {
+      const { registerForPush } = await import("./firebase");
+      const token = await registerForPush();
+      if (token) void post("/me/push-subscriptions", { fcm_token: token }).catch(() => {});
+    })();
+  }, [enabled]);
+}
+
 export function useLocationPing(enabled: boolean, minIntervalMs = 15000) {
   const geo = useGeolocation(enabled);
   const lastSentAt = useRef(0);
