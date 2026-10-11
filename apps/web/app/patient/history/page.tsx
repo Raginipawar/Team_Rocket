@@ -8,6 +8,7 @@ import type { Acuity, EmergencyStatus, Facility } from "@/lib/enums";
 import { dateTime } from "@/lib/format";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui/bits";
 import { AcuityBadge } from "@/components/emergency/badges";
+import { BackHeader } from "@/components/shell";
 import Icon from "@/components/ui/icon";
 
 type Item = { id: string; status: EmergencyStatus; received_at: string; acuity: Acuity; facility: Facility; hospital_name: string | null; for_self: boolean };
@@ -19,7 +20,7 @@ export default function HistoryPage() {
   const q = useQuery({ queryKey: ["my-emergencies"], queryFn: () => get<Item[]>("/me/emergencies"), retry: false });
   return (
     <div className="flex flex-col gap-5 pt-2">
-      <h1 className="text-[28px] font-extrabold">{t("historyTitle")}</h1>
+      <BackHeader title={t("historyTitle")} />
       {q.isLoading ? <LoadingState /> : q.isError ? (
         q.error instanceof ApiError && q.error.status === 404 ? <EmptyState icon="history" title={t("noHistory")} /> : <ErrorState text={errorText(q.error)} onRetry={() => q.refetch()} />
       ) : !q.data?.length ? <EmptyState icon="history" title={t("noHistory")} /> : (

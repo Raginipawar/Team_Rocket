@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
@@ -10,6 +11,25 @@ import Icon from "@/components/ui/icon";
 import { LoadingState } from "@/components/ui/bits";
 import { useHealth } from "@/app/providers";
 import { anyMock } from "@/lib/config";
+
+/** Patient tab pages (Health/Family/History) reached via the bottom nav
+ * had no way back to Home except re-tapping that same tab -- no visible
+ * affordance at the top like every other sub-page in this app has. One
+ * shared header instead of duplicating the same Link+Icon block 3x. */
+export function BackHeader({ title, sub, href = "/patient" }: { title: string; sub?: string; href?: string }) {
+  const tc = useTranslations("common");
+  return (
+    <div className="flex items-center gap-3 pt-1">
+      <Link href={href} className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-soft" aria-label={tc("back")}>
+        <Icon name="back" size={22} />
+      </Link>
+      <div className="min-w-0 flex-1">
+        <h1 className="truncate text-[28px] font-extrabold">{title}</h1>
+        {sub && <p className="mt-1 text-[17px] text-muted">{sub}</p>}
+      </div>
+    </div>
+  );
+}
 
 const LANGS = [
   { code: "en", label: "English" },

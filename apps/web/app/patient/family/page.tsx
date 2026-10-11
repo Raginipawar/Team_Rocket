@@ -12,6 +12,7 @@ import { Card, ErrorState, Field, Input, LoadingState } from "@/components/ui/bi
 import { Sheet } from "@/components/ui/sheet";
 import Icon from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
+import { BackHeader } from "@/components/shell";
 import { phone as fmtPhone } from "@/lib/format";
 
 type Member = {
@@ -150,10 +151,7 @@ export default function FamilyPage() {
 
   return (
     <div className="flex flex-col gap-5 pt-2">
-      <div>
-        <h1 className="text-[28px] font-extrabold">Family space</h1>
-        <p className="mt-1 text-[17px] text-muted">Connect with family so you can check on each other and call for help.</p>
-      </div>
+      <BackHeader title="Family space" sub="Connect with family so you can check on each other and call for help." />
 
       {fam.isLoading ? (
         <LoadingState />

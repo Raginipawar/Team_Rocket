@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ErrorState, Field, Input, LoadingState, Select, Textarea } from "@/components/ui/bits";
 import { useToast } from "@/components/ui/toast";
+import { BackHeader } from "@/components/shell";
 
 const BLOOD = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
@@ -65,10 +66,14 @@ function ProfileInner() {
 
   return (
     <form className="flex flex-col gap-5 pt-2" onSubmit={(e) => { e.preventDefault(); void save(); }}>
-      <div>
-        <h1 className="text-[28px] font-extrabold">{t("profileTitle")}</h1>
-        <p className="mt-1 text-[17px] text-muted">{t("profileSub")}</p>
-      </div>
+      {next ? (
+        <div>
+          <h1 className="text-[28px] font-extrabold">{t("profileTitle")}</h1>
+          <p className="mt-1 text-[17px] text-muted">{t("profileSub")}</p>
+        </div>
+      ) : (
+        <BackHeader title={t("profileTitle")} sub={t("profileSub")} />
+      )}
       <Field label={t("name")} htmlFor="name"><Input id="name" value={f.name ?? ""} onChange={set("name")} autoComplete="name" /></Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label={t("dob")} htmlFor="dob"><Input id="dob" type="date" value={f.dob ?? ""} onChange={set("dob")} /></Field>
