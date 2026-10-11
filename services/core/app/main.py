@@ -195,6 +195,52 @@ async def demo_hospital_feed():
     ]}
 
 
+# Seeds real-looking rooms/staff for a hospital registered through the app
+# -- registration creates zero of either (no seeding flow exists), which
+# otherwise leaves Rooms/Staff genuinely empty for a demo. Safe to call
+# more than once: ON CONFLICT skips rooms that already exist by code.
+@app.post("/internal/seed-hospital-rooms-staff")
+async def seed_hospital_rooms_staff(hospital_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        exists = (await session.execute(text("SELECT 1 FROM hospitals WHERE id = :id"), {"id": hospital_id})).scalar_one_or_none()
+        if not exists:
+            raise HTTPException(404, "hospital not found")
+        rooms = [
+            ("ER-01", "er_bed"), ("ER-02", "er_bed"), ("ER-03", "er_bed"), ("ER-04", "er_bed"), ("ER-05", "er_bed"),
+            ("RB-01", "resus_bay"), ("RB-02", "resus_bay"),
+            ("TB-01", "trauma_bay"), ("TB-02", "trauma_bay"),
+            ("ICU-01", "icu_bed"), ("ICU-02", "icu_bed"), ("ICU-03", "icu_bed"),
+            ("LR-01", "labour_room"),
+            ("PE-01", "pediatric_er"), ("PE-02", "pediatric_er"),
+        ]
+        # A mix of free/occupied/reserved -- all-free looks fake for a demo.
+        statuses = ["free", "free", "occupied", "free", "reserved", "free", "occupied",
+                    "free", "free", "occupied", "free", "free", "free", "free", "occupied"]
+        for (code, rtype), status in zip(rooms, statuses):
+            await session.execute(
+                text("INSERT INTO rooms (hospital_id, code, type, status) VALUES (:hid, :code, :type, :status) "
+                     "ON CONFLICT (hospital_id, code) DO NOTHING"),
+                {"hid": hospital_id, "code": code, "type": rtype, "status": status},
+            )
+        staff = [
+            ("Dr. Anika Sharma", "emergency_physician"), ("Dr. Rohan Mehta", "cardiologist"),
+            ("Dr. Priya Nair", "trauma_surgeon"), ("Dr. Karan Joshi", "anesthetist"),
+            ("Dr. Sana Khan", "pediatrician"), ("Nurse Vivek Rao", "er_nurse"),
+            ("Nurse Meera Iyer", "er_nurse"), ("Nurse Arjun Desai", "er_nurse"),
+        ]
+        for name, specialty in staff:
+            await session.execute(
+                text("INSERT INTO staff (hospital_id, name, specialty, is_active) "
+                     "SELECT :hid, :name, :specialty, true WHERE NOT EXISTS "
+                     "(SELECT 1 FROM staff WHERE hospital_id = :hid AND name = :name)"),
+                {"hid": hospital_id, "name": name, "specialty": specialty},
+            )
+        await session.commit()
+    return {"status": "seeded", "rooms": len(rooms), "staff": len(staff)}
+
+
 # Lets me see exactly what's stored and attempt the sync server-side
 # myself, instead of relaying toast text back and forth over chat.
 @app.get("/internal/debug-hospitals")

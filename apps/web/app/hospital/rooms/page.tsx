@@ -7,7 +7,7 @@ import type { Room } from "@/lib/api-types";
 import { ENUMS, type OverrideReason, type RoomStatus } from "@/lib/enums";
 import { useHosp } from "../context";
 import { minutes, reg } from "@/lib/format";
-import { Card, LoadingState, Select, ErrorState } from "@/components/ui/bits";
+import { Card, EmptyState, LoadingState, Select, ErrorState } from "@/components/ui/bits";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import Icon from "@/components/ui/icon";
@@ -63,7 +63,13 @@ export default function RoomsPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-[26px] font-extrabold">Rooms</h1>
-      {Object.entries(dashboard.rooms).map(([type, rooms]) => (
+      {/* A hospital registered through the app has zero rooms by design --
+          nothing seeds them automatically, and there's no "add room" flow
+          yet (unlike staff, which has one). Empty silently rendered as a
+          blank page under the title before, indistinguishable from broken. */}
+      {Object.keys(dashboard.rooms).length === 0 ? (
+        <EmptyState icon="bed" title="No rooms set up yet" text="Contact support to get your hospital's rooms added to the system." />
+      ) : Object.entries(dashboard.rooms).map(([type, rooms]) => (
         <section key={type}>
           <h2 className="mb-3 text-[18px] font-bold capitalize">{type.replace(/_/g, " ")}s <span className="font-normal text-muted">· {rooms.filter((r) => r.status === "free").length} free</span></h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

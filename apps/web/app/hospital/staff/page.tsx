@@ -6,7 +6,7 @@ import { ENUMS, type StaffSpecialty } from "@/lib/enums";
 import { errorText, get, post } from "@/lib/api";
 import type { Shift, Staff } from "@/lib/api-types";
 import { useHosp } from "../context";
-import { Card, ErrorState, Field, Input, LoadingState, Select } from "@/components/ui/bits";
+import { Card, EmptyState, ErrorState, Field, Input, LoadingState, Select } from "@/components/ui/bits";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import Icon from "@/components/ui/icon";
@@ -96,6 +96,7 @@ export default function StaffPage() {
         <h1 className="text-[26px] font-extrabold">Staff and shifts</h1>
         <Button onClick={() => setAdding(true)}><Icon name="plus" size={20} />Add staff</Button>
       </div>
+      {list.length === 0 && <EmptyState icon="user" title="No staff added yet" text="Tap Add staff above to get started." />}
       <div className="flex flex-col gap-2">
         {list.map((s) => (
           <Card key={s.id} className="flex items-center gap-3">
