@@ -173,3 +173,28 @@ async def run_migrations(x_migrate_key: str = Header(default="")):
     from scripts.apply_sql_migrations import apply_all
     applied = await apply_all(settings.DATABASE_URL)
     return {"applied": applied}
+
+
+# Temporary: same no-Shell-tab problem as /internal/migrate above -- needed
+# a one-off way to wipe accumulated test ambulances/emergencies/offers
+# without touching real accounts (users/hospitals/families stay put).
+# Remove once this round of manual testing is done.
+@app.post("/internal/reset-test-data")
+async def reset_test_data(x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        await session.execute(text("UPDATE users SET ambulance_id = NULL WHERE ambulance_id IS NOT NULL"))
+        for stmt in [
+            "DELETE FROM patients", "DELETE FROM dispatch_offers", "DELETE FROM hospital_requests",
+            "DELETE FROM reservation_items", "DELETE FROM reservations", "DELETE FROM handoffs",
+            "DELETE FROM escalations", "DELETE FROM followup_answers", "DELETE FROM triage_confirmations",
+            "DELETE FROM sms_messages WHERE emergency_id IS NOT NULL",
+            "DELETE FROM ml_predictions WHERE emergency_id IS NOT NULL",
+            "DELETE FROM one_time_tokens WHERE emergency_id IS NOT NULL OR escalation_id IS NOT NULL",
+            "DELETE FROM ambulance_status_log", "DELETE FROM emergencies", "DELETE FROM incidents",
+            "DELETE FROM ambulances",
+        ]:
+            await session.execute(text(stmt))
+        await session.commit()
+    return {"status": "wiped"}
