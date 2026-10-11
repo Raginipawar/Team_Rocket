@@ -211,6 +211,28 @@ async def debug_hospitals(x_migrate_key: str = Header(default="")):
     return [dict(r) for r in rows]
 
 
+# Fixes the stored endpoint URL directly -- the settings page UI keeps
+# saving just the bare project URL (missing /rest/v1/<table>?select=...),
+# this appends it server-side so it's correct without another round trip.
+@app.post("/internal/debug-fix-endpoint")
+async def debug_fix_endpoint(hospital_id: str, table: str = "hospital_capacity", x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        base = (await session.execute(
+            text("SELECT integration_endpoint_url FROM hospitals WHERE id = :id"), {"id": hospital_id},
+        )).scalar_one_or_none()
+        if not base:
+            raise HTTPException(404, "hospital has no endpoint_url set")
+        fixed = base.split("/rest/v1/")[0].rstrip("/") + f"/rest/v1/{table}?select=type,available,total"
+        await session.execute(
+            text("UPDATE hospitals SET integration_endpoint_url = :url WHERE id = :id"),
+            {"url": fixed, "id": hospital_id},
+        )
+        await session.commit()
+    return {"fixed_url": fixed}
+
+
 @app.post("/internal/debug-sync-hospital")
 async def debug_sync_hospital(hospital_id: str, x_migrate_key: str = Header(default="")):
     if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
