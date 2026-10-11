@@ -28,7 +28,7 @@ export default function HistoryPage() {
             <li key={e.id}>
               <Link href={`/patient/emergency/${e.id}`} className="flex items-center gap-3 rounded-[22px] border border-line bg-card p-4">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[18px] font-bold">{tf(e.facility)} · {ts(e.status)}</p>
+                  <p className="text-[18px] font-bold">{e.facility ? tf(e.facility) : "Pending"} · {ts(e.status)}</p>
                   <p className="text-[15px] text-muted">{dateTime(e.received_at)}{e.hospital_name ? ` · ${e.hospital_name}` : ""}</p>
                 </div>
                 <AcuityBadge acuity={e.acuity} />

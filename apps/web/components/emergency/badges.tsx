@@ -15,13 +15,17 @@ const ACUITY_STYLE: Record<Acuity, { cls: string; icon: IconName }> = {
 };
 
 /** Severity: colour + icon + word, never colour alone. */
-export function AcuityBadge({ acuity, size = "md" }: { acuity: Acuity; size?: "md" | "lg" }) {
+export function AcuityBadge({ acuity, size = "md" }: { acuity: Acuity | null | undefined; size?: "md" | "lg" }) {
   const t = useTranslations("acuity");
-  const s = ACUITY_STYLE[acuity];
+  // An emergency whose triage background task hasn't finished yet (or
+  // failed) has acuity=null -- ACUITY_STYLE[null] was undefined, and
+  // `.cls` on that crashed the whole page (history list, request cards,
+  // anywhere this renders), not just this one badge.
+  const s = (acuity && ACUITY_STYLE[acuity]) || { cls: "bg-soft text-muted", icon: "clock" as const };
   return (
     <span className={cn("inline-flex items-center gap-1.5 rounded-full font-bold", s.cls, size === "lg" ? "px-4 py-1.5 text-[17px]" : "px-3 py-1 text-[14px]")}>
       <Icon name={s.icon} size={size === "lg" ? 18 : 15} stroke={2.4} />
-      {t(acuity).toUpperCase()}
+      {acuity ? t(acuity).toUpperCase() : "PENDING"}
     </span>
   );
 }
@@ -30,8 +34,16 @@ const FAC_ICON: Record<Facility, IconName> = {
   cardiac: "heart", stroke: "user", trauma: "alert", burns: "alert", respiratory: "info", obstetric: "users", pediatric: "users", poisoning: "alert", general: "hospital",
 };
 
-export function FacilityChip({ facility }: { facility: Facility }) {
+export function FacilityChip({ facility }: { facility: Facility | null | undefined }) {
   const t = useTranslations("facility");
+  if (!facility) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-soft px-3 py-1 text-[14px] font-semibold text-muted">
+        <Icon name="clock" size={15} stroke={2.2} />
+        Pending
+      </span>
+    );
+  }
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-soft px-3 py-1 text-[14px] font-semibold">
       <Icon name={FAC_ICON[facility]} size={15} stroke={2.2} />
