@@ -25,7 +25,7 @@ async def find_candidates(
         SELECT id, registration_no, type, capabilities,
                ST_Y(current_location::geometry) AS lat, ST_X(current_location::geometry) AS lng,
                ST_Distance(current_location, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography) AS distance_m,
-               (:req_cap IS NOT NULL AND :req_cap = ANY(capabilities)) AS capability_match
+               (CAST(:req_cap AS text) IS NOT NULL AND CAST(:req_cap AS text) = ANY(capabilities)) AS capability_match
         FROM ambulances
         WHERE status = 'available' AND kyc_verified = true
           AND ST_DWithin(current_location, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :radius_m)
