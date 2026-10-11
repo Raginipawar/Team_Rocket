@@ -4,6 +4,8 @@ as a stand-in for B's real arq job framework (app/jobs/worker.py, not built
 yet) -- swap `background_tasks.add_task` for a real job enqueue once that
 framework lands; the job body (domain/intake.process_emergency) doesn't change."""
 
+import logging
+
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
 
 from pydantic import BaseModel
@@ -139,6 +141,13 @@ async def _run_dispatch(emergency_id: str) -> None:
             await session.commit()  # the outbox relay only sees offer.new after this commit
         except Exception:
             await session.rollback()
+            # A bare `raise` here used to just vanish -- Starlette's
+            # BackgroundTask runner has no visible failure path for the
+            # caller (the 202 was already sent), and whatever happened
+            # wasn't showing up in the Render log either. Log loudly so a
+            # real exception is never silently indistinguishable from
+            # "dispatch quietly found nothing."
+            logging.getLogger("dispatch").exception("background dispatch failed for emergency %s", emergency_id)
             raise
 
 
