@@ -14,6 +14,7 @@ import Icon from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
 import { minutes, mmss, reg } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
+import { useOfferAlert } from "@/lib/ambulance";
 import { cn } from "@/lib/cn";
 
 function IncomingRow({ a }: { a: IncomingAmbulance }) {
@@ -71,6 +72,10 @@ export default function HospitalDashboardPage() {
   const qc = useQueryClient();
   const toast = useToast();
   const [confirming, setConfirming] = useState(false);
+  // Nothing audible or visible-beyond-the-tab ever signalled a new request
+  // arriving -- a staff member had to be staring at the page already.
+  // Same ring pattern the ambulance app already uses for new offers.
+  useOfferAlert(!!dashboard && dashboard.pending_requests.length > 0);
 
   if (loading) return <LoadingState />;
   if (error || !dashboard) return <ErrorState text="Could not load the dashboard" onRetry={refetch} />;
