@@ -211,6 +211,39 @@ async def debug_hospitals(x_migrate_key: str = Header(default="")):
     return [dict(r) for r in rows]
 
 
+# Calls the exact same dashboard-assembly logic GET /hospital/dashboard
+# uses, bypassing auth, to see whether it throws for a hospital with zero
+# rooms/staff -- rather than guessing from "could not load" toast text.
+@app.get("/internal/debug-dashboard")
+async def debug_dashboard(hospital_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    import traceback
+    from app.db.repos.hospitals import get_hospital
+    from app.db.repos.rooms import list_rooms
+    from app.db.repos.resources import get_resources
+    from app.db.repos.hospital_requests import list_pending_requests, list_incoming_ambulances
+    from app.db.repos.staff import get_active_staff
+    try:
+        async with get_session() as session:
+            hospital = await get_hospital(session, hospital_id)
+            if not hospital:
+                return {"error": "hospital not found"}
+            rooms = await list_rooms(session, hospital_id)
+            resources = await get_resources(session, hospital_id)
+            staff_on_duty = await get_active_staff(session, hospital_id)
+            incoming = await list_incoming_ambulances(session, hospital_id, at_door=False)
+            at_door = await list_incoming_ambulances(session, hospital_id, at_door=True)
+            pending_requests = await list_pending_requests(session, hospital_id)
+        return {
+            "ok": True, "rooms_count": len(rooms), "resources_count": len(resources),
+            "staff_count": len(staff_on_duty), "incoming_count": len(incoming),
+            "at_door_count": len(at_door), "pending_requests_count": len(pending_requests),
+        }
+    except Exception as e:
+        return {"ok": False, "error": str(e), "traceback": traceback.format_exc()}
+
+
 # Fixes the stored endpoint URL directly -- the settings page UI keeps
 # saving just the bare project URL (missing /rest/v1/<table>?select=...),
 # this appends it server-side so it's correct without another round trip.

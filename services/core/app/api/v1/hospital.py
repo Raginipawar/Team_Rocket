@@ -363,6 +363,45 @@ async def update_staff_shifts(
     await db.commit()
     return {"status": "updated"}
 
+@router.get("/patients")
+async def list_unidentified_patients(
+    user = Depends(require_role('hospital_staff')),
+    db: AsyncSession = Depends(get_db)
+):
+    # The frontend (app/hospital/patients/page.tsx) has always called this --
+    # it just never existed on the backend (404 -> "Could not load"). Only
+    # patients still unidentified (merged_into_user_id IS NULL) at THIS
+    # hospital's emergencies.
+    rows = (await db.execute(text("""
+        SELECT p.temp_id, p.emergency_id, p.est_age, p.sex, p.created_at,
+               em.status, em.received_at, (p.merged_into_user_id IS NOT NULL) AS merged
+        FROM patients p
+        JOIN emergencies em ON em.id = p.emergency_id
+        WHERE em.hospital_id = :hid AND p.is_unknown = true
+        ORDER BY em.received_at DESC NULLS LAST, p.created_at DESC
+        LIMIT 100
+    """), {"hid": user.hospital_id})).mappings().all()
+    def _display(r) -> str:
+        bits = ["Unknown"]
+        if r["est_age"]:
+            bits.append(f"~{r['est_age']}y")
+        if r["sex"]:
+            bits.append(r["sex"])
+        return ", ".join(bits)
+
+    return {"patients": [
+        {
+            "temp_id": r["temp_id"] or str(r["emergency_id"]),
+            "emergency_id": str(r["emergency_id"]),
+            "display": _display(r),
+            "status": r["status"],
+            "merged": bool(r["merged"]),
+            "received_at": r["received_at"].isoformat() if r["received_at"] else None,
+        }
+        for r in rows
+    ]}
+
+
 @router.post("/patients/{temp_id}/merge")
 async def merge_patient(
     temp_id: UUID,
