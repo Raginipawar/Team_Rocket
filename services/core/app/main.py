@@ -195,6 +195,36 @@ async def demo_hospital_feed():
     ]}
 
 
+# Lets me see exactly what's stored and attempt the sync server-side
+# myself, instead of relaying toast text back and forth over chat.
+@app.get("/internal/debug-hospitals")
+async def debug_hospitals(x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        rows = (await session.execute(text("""
+            SELECT id, name, integration_mode, integration_endpoint_url,
+                   (integration_api_key IS NOT NULL) AS api_key_set,
+                   integration_last_synced_at
+            FROM hospitals ORDER BY updated_at DESC
+        """))).mappings().all()
+    return [dict(r) for r in rows]
+
+
+@app.post("/internal/debug-sync-hospital")
+async def debug_sync_hospital(hospital_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    from app.domain.integration_sync import sync_hospital_from_api, SyncError
+    async with get_session() as session:
+        try:
+            result = await sync_hospital_from_api(session, hospital_id)
+            await session.commit()
+            return {"status": "ok", **result}
+        except SyncError as e:
+            return {"status": "error", "message": str(e)}
+
+
 # Removes the seeded demo hospital (0009_demo_seed.sql's "Greenfield Heart
 # Centre", is_simulated=true) and everything tied to it, leaving real
 # registered hospitals untouched -- its id is hardcoded in that migration.
