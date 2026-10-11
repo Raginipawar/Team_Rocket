@@ -198,3 +198,33 @@ async def reset_test_data(x_migrate_key: str = Header(default="")):
             await session.execute(text(stmt))
         await session.commit()
     return {"status": "wiped"}
+
+
+# Temporary: no Shell tab on Render's free plan to just run a SELECT by
+# hand -- same constraint the two routes above exist for. Dumps exactly
+# what dispatch itself sees for the most recent emergency, to stop
+# guessing from HTTP status codes alone.
+@app.get("/internal/debug-dispatch")
+async def debug_dispatch(x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        emergency = (await session.execute(text("""
+            SELECT id, status, created_at, ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng
+            FROM emergencies ORDER BY created_at DESC LIMIT 1
+        """))).mappings().first()
+        ambulances = (await session.execute(text("""
+            SELECT id, registration_no, status, kyc_verified, type, last_heartbeat_at,
+                   ST_Y(current_location::geometry) AS lat, ST_X(current_location::geometry) AS lng,
+                   now() - last_heartbeat_at AS heartbeat_age
+            FROM ambulances
+        """))).mappings().all()
+        offers = (await session.execute(text("""
+            SELECT id, emergency_id, ambulance_id, round, status, offered_at, expires_at
+            FROM dispatch_offers ORDER BY offered_at DESC LIMIT 10
+        """))).mappings().all()
+    return {
+        "latest_emergency": dict(emergency) if emergency else None,
+        "ambulances": [dict(a) for a in ambulances],
+        "recent_offers": [dict(o) for o in offers],
+    }
