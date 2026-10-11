@@ -46,7 +46,12 @@ async def sync_hospital_from_api(session: AsyncSession, hospital_id: str) -> dic
 
     headers = {"Accept": "application/json"}
     if row["integration_api_key"]:
+        # Supabase's PostgREST (the realistic case: a hospital's own table,
+        # not a hand-built API) requires the key on BOTH headers -- apikey
+        # always, Authorization for RLS policies that check auth.role().
+        # A non-Supabase endpoint just ignores the extra header.
         headers["Authorization"] = f"Bearer {row['integration_api_key']}"
+        headers["apikey"] = row["integration_api_key"]
 
     try:
         async with httpx.AsyncClient(timeout=SYNC_TIMEOUT_SEC) as client:
@@ -58,9 +63,12 @@ async def sync_hospital_from_api(session: AsyncSession, hospital_id: str) -> dic
     except ValueError as e:
         raise SyncError(f"endpoint did not return valid JSON: {e}") from e
 
-    items = payload.get("resources") if isinstance(payload, dict) else None
+    # Accept either a bare array (Supabase/PostgREST's own response shape
+    # for a table -- GET .../hospital_capacity?select=... returns rows
+    # directly, not wrapped) or {"resources": [...]} for a hand-built API.
+    items = payload if isinstance(payload, list) else (payload.get("resources") if isinstance(payload, dict) else None)
     if not isinstance(items, list):
-        raise SyncError('expected {"resources": [{"type": ..., "available": ..., "total": ...}, ...]}')
+        raise SyncError('expected a JSON array of rows, or {"resources": [{"type": ..., "available": ..., "total": ...}, ...]}')
 
     known_types = {r["type"] for r in (await session.execute(
         text("SELECT type FROM hospital_resources WHERE hospital_id = :id"), {"id": hospital_id},
