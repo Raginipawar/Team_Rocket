@@ -195,6 +195,36 @@ async def demo_hospital_feed():
     ]}
 
 
+# Removes the seeded demo hospital (0009_demo_seed.sql's "Greenfield Heart
+# Centre", is_simulated=true) and everything tied to it, leaving real
+# registered hospitals untouched -- its id is hardcoded in that migration.
+@app.post("/internal/remove-demo-hospital")
+async def remove_demo_hospital(x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    hid = "a61d76bf-457c-47c0-bee7-134134835119"
+    async with get_session() as session:
+        name = (await session.execute(text("SELECT name FROM hospitals WHERE id = :id"), {"id": hid})).scalar_one_or_none()
+        if name is None:
+            return {"status": "already removed"}
+        await session.execute(text("UPDATE users SET hospital_id = NULL WHERE hospital_id = :id"), {"id": hid})
+        await session.execute(text("UPDATE emergencies SET hospital_id = NULL WHERE hospital_id = :id"), {"id": hid})
+        for stmt in [
+            "DELETE FROM staff_shifts WHERE staff_id IN (SELECT id FROM staff WHERE hospital_id = :id)",
+            "DELETE FROM staff WHERE hospital_id = :id",
+            "DELETE FROM hospital_occupancy_history WHERE hospital_id = :id",
+            "DELETE FROM hospital_resources WHERE hospital_id = :id",
+            "DELETE FROM rooms WHERE hospital_id = :id",
+            "DELETE FROM reservations WHERE hospital_id = :id",
+            "DELETE FROM hospital_requests WHERE hospital_id = :id",
+            "DELETE FROM handoffs WHERE hospital_id = :id",
+            "DELETE FROM hospitals WHERE id = :id",
+        ]:
+            await session.execute(text(stmt), {"id": hid})
+        await session.commit()
+    return {"status": "removed", "name": name}
+
+
 @app.post("/internal/reset-test-data")
 async def reset_test_data(x_migrate_key: str = Header(default="")):
     if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
