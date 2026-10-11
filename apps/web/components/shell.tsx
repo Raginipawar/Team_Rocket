@@ -62,6 +62,51 @@ export function LanguageSwitcher({ compact }: { compact?: boolean }) {
   );
 }
 
+/** Globe icon -> popover with the 3 languages + sign out. LanguageSwitcher's
+ * inline pill row ("English हिन्दी मराठी") doesn't fit the patient header's
+ * width next to the GoldenHour wordmark -- it just overflows off-screen.
+ * A single icon that expands on demand fits any width. */
+export function LanguageMenu() {
+  const locale = useLocale();
+  const router = useRouter();
+  const t = useTranslations("common");
+  const { signOut } = useAuth();
+  const [open, setOpen] = useState(false);
+  const set = (code: string) => {
+    document.cookie = `NEXT_LOCALE=${code}; path=/; max-age=31536000; samesite=lax`;
+    setOpen(false);
+    router.refresh();
+  };
+  return (
+    <div className="relative">
+      <button type="button" aria-label={t("language")} aria-expanded={open} onClick={() => setOpen((v) => !v)}
+        className="grid h-10 w-10 place-items-center rounded-full bg-soft">
+        <Icon name="globe" size={20} />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
+          <div role="menu" className="absolute right-0 top-12 z-50 w-48 rounded-2xl border border-line bg-card p-1.5 shadow-xl">
+            {LANGS.map((l) => (
+              <button key={l.code} role="menuitemradio" aria-checked={locale === l.code} onClick={() => set(l.code)} lang={l.code}
+                className={cn("flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-[16px] font-semibold", locale === l.code ? "bg-soft text-ink" : "text-muted")}>
+                {l.label}
+                {locale === l.code && <Icon name="check" size={16} />}
+              </button>
+            ))}
+            <div className="my-1 h-px bg-line" />
+            <button role="menuitem" onClick={() => void signOut()}
+              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[16px] font-semibold text-red-ink">
+              <Icon name="logout" size={18} />
+              {t("signOut")}
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 /** Always visible on patient screens (UI rule 6). */
 export function Call108({ variant = "bar" }: { variant?: "bar" | "button" | "banner" }) {
   const t = useTranslations("common");

@@ -14,7 +14,7 @@ import type { EmergencyStatus } from "@/lib/enums";
 import SosButton from "@/components/sos/SosButton";
 import VoiceRecorder from "@/components/sos/VoiceRecorder";
 import LocationIndicator from "@/components/sos/LocationIndicator";
-import { LanguageSwitcher } from "@/components/shell";
+import { LanguageMenu } from "@/components/shell";
 import { Sheet } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/bits";
@@ -90,7 +90,7 @@ export default function PatientHome() {
             GoldenHour
           </span>
         </div>
-        <LanguageSwitcher compact />
+        <LanguageMenu />
       </div>
 
       {menuOpen && (

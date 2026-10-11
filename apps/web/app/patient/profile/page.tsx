@@ -75,8 +75,13 @@ function ProfileInner() {
         <BackHeader title={t("profileTitle")} sub={t("profileSub")} />
       )}
       <Field label={t("name")} htmlFor="name"><Input id="name" value={f.name ?? ""} onChange={set("name")} autoComplete="name" /></Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label={t("dob")} htmlFor="dob"><Input id="dob" type="date" value={f.dob ?? ""} onChange={set("dob")} /></Field>
+      <div className="grid grid-cols-2 gap-5">
+        {/* iOS/Safari renders a native calendar-icon pseudo-element inside
+            date inputs that ignores the input's own border-radius clipping
+            and visibly pokes out past the right edge -- overflow-hidden on
+            the input itself plus a wider gap keeps it from bleeding into
+            the Sex field next to it. */}
+        <Field label={t("dob")} htmlFor="dob"><Input id="dob" type="date" value={f.dob ?? ""} onChange={set("dob")} className="overflow-hidden pr-2" /></Field>
         <Field label={t("sex")} htmlFor="sex">
           <Select id="sex" value={f.sex ?? ""} onChange={set("sex")}>
             <option value="">-</option>
