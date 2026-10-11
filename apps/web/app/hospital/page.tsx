@@ -72,10 +72,12 @@ export default function HospitalDashboardPage() {
   const qc = useQueryClient();
   const toast = useToast();
   const [confirming, setConfirming] = useState(false);
-  // Nothing audible or visible-beyond-the-tab ever signalled a new request
-  // arriving -- a staff member had to be staring at the page already.
-  // Same ring pattern the ambulance app already uses for new offers.
-  useOfferAlert(!!dashboard && dashboard.pending_requests.length > 0);
+  // Nothing audible ever signalled either a new request OR an ambulance
+  // physically arriving at the door -- only new requests rang before,
+  // arrivals were silent, staff had to be staring at "At the door" to
+  // notice. Same ring pattern the ambulance app uses for new offers,
+  // now covering both, until whichever one gets handled.
+  useOfferAlert(!!dashboard && (dashboard.pending_requests.length > 0 || (dashboard.at_door ?? []).length > 0));
 
   if (loading) return <LoadingState />;
   if (error || !dashboard) return <ErrorState text="Could not load the dashboard" onRetry={refetch} />;
