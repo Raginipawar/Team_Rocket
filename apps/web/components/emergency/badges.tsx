@@ -96,12 +96,15 @@ export function SignalBadge({ signal }: { signal: Signal }) {
 export function WhyYou({ reasons }: { reasons: string[] }) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      {reasons.map((r) => (
-        <span key={r} className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-semibold", r.toLowerCase().includes("ago") || r.toLowerCase().includes("stale") ? "bg-amber-soft text-amber" : "bg-green-soft text-green")}>
-          <Icon name={r.toLowerCase().includes("ago") ? "clock" : "check"} size={13} stroke={2.6} />
-          {r}
-        </span>
-      ))}
+      {reasons.map((raw, i) => {
+        const r = typeof raw === "string" ? raw : String(raw ?? "");
+        return (
+          <span key={i} className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-semibold", r.toLowerCase().includes("ago") || r.toLowerCase().includes("stale") ? "bg-amber-soft text-amber" : "bg-green-soft text-green")}>
+            <Icon name={r.toLowerCase().includes("ago") ? "clock" : "check"} size={13} stroke={2.6} />
+            {r}
+          </span>
+        );
+      })}
     </div>
   );
 }

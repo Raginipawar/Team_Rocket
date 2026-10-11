@@ -116,7 +116,19 @@ async def start_selection(
             await create_hospital_request_with_hold(
                 db, emergency_id=emergency_id, hospital_id=UUID(hospital_id),
                 rank=candidate.get("rank", 1), features=candidate.get("features", {}),
-                explanation=candidate.get("explanation", []), acuity=acuity, facility=facility,
+                # ML's hospital-rank returns explanation items as
+                # {factor, value, contribution, text} objects, not plain
+                # strings (services/ml/.../schemas.py Explanation) -- the
+                # frontend's WhyYou chips render plain strings and crashed
+                # the whole hospital dashboard (`e.toLowerCase is not a
+                # function`) the first time a real ranked request reached
+                # it, since every explanation before this was either the
+                # mock's or a hand-written string (ops.py, clinical.py).
+                explanation=[
+                    e.get("text", str(e)) if isinstance(e, dict) else str(e)
+                    for e in candidate.get("explanation", [])
+                ],
+                acuity=acuity, facility=facility,
                 score=candidate.get("score"), required_resources=required_resources,
             )
             return
