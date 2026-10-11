@@ -21,7 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.api.v1 import (
-    ambulance, analytics, auth, clinical, emergencies, hospital, me, offers, ops,
+    allocation_demo, ambulance, analytics, auth, clinical, emergencies, hospital, me, offers, ops,
     registration, webhooks_sms, webhooks_telegram,
 )
 from app.config import settings
@@ -100,6 +100,7 @@ app.include_router(hospital.router, prefix="/api/v1", tags=["hospital"])
 app.include_router(clinical.router, prefix="/api/v1", tags=["clinical"])
 app.include_router(ops.router, prefix="/api/v1", tags=["ops"])
 app.include_router(webhooks_telegram.router, prefix="/api/v1", tags=["webhooks"])
+app.include_router(allocation_demo.router, prefix="/api/v1", tags=["allocation-demo"])
 app.include_router(ws_router, tags=["realtime"])
 
 

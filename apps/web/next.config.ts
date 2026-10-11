@@ -35,6 +35,8 @@ const nextConfig: NextConfig = {
     rules.push({ source: "/core/readyz", destination: `${healthTarget}/readyz` });
     rules.push({ source: "/core/healthz", destination: `${healthTarget}/healthz` });
     rules.push({ source: "/core/dev/:path*", destination: `${MOCK_CORE_URL}/dev/:path*` });
+    // Standalone demo endpoint, no auth, no mock variant -- always the real core.
+    rules.push({ source: "/api/v1/allocation-demo/:path*", destination: `${CORE_URL}/api/v1/allocation-demo/:path*` });
     return rules;
   },
   async headers() {
