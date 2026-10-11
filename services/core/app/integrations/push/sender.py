@@ -26,6 +26,13 @@ _cached_token_exp: float = 0.0
 
 
 def _load_service_account() -> dict | None:
+    # Render has no writable place to drop a private-key file, so production
+    # carries the whole JSON in one env var; local dev keeps using the file
+    # under infra/env/secrets (gitignored, never committed).
+    from app.config import get_settings
+    raw = get_settings().FCM_SERVICE_ACCOUNT_JSON
+    if raw:
+        return json.loads(raw)
     if not SERVICE_ACCOUNT_PATH.exists():
         return None
     return json.loads(SERVICE_ACCOUNT_PATH.read_text(encoding="utf-8"))
