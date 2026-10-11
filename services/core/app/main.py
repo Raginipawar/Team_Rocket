@@ -208,11 +208,17 @@ async def reset_test_data(x_migrate_key: str = Header(default="")):
 async def debug_dispatch(x_migrate_key: str = Header(default="")):
     if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
         raise HTTPException(status_code=403, detail="forbidden")
+    from app.db.repos import emergencies as emergencies_repo
+    from app.domain import tracking
     async with get_session() as session:
-        emergency = (await session.execute(text("""
-            SELECT id, status, created_at, ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng
-            FROM emergencies ORDER BY created_at DESC LIMIT 1
-        """))).mappings().first()
+        latest_row = (await session.execute(text(
+            "SELECT id FROM emergencies ORDER BY created_at DESC LIMIT 1"
+        ))).mappings().first()
+        emergency = await emergencies_repo.get_emergency(session, str(latest_row["id"])) if latest_row else None
+        ambulance_view = (
+            await tracking.get_ambulance_view(session, str(emergency["ambulance_id"]), emergency)
+            if emergency and emergency.get("ambulance_id") else None
+        )
         ambulances = (await session.execute(text("""
             SELECT id, registration_no, status, kyc_verified, type, last_heartbeat_at,
                    ST_Y(current_location::geometry) AS lat, ST_X(current_location::geometry) AS lng,
@@ -224,7 +230,8 @@ async def debug_dispatch(x_migrate_key: str = Header(default="")):
             FROM dispatch_offers ORDER BY offered_at DESC LIMIT 10
         """))).mappings().all()
     return {
-        "latest_emergency": dict(emergency) if emergency else None,
+        "latest_emergency": emergency,
+        "ambulance_view": ambulance_view,
         "ambulances": [dict(a) for a in ambulances],
         "recent_offers": [dict(o) for o in offers],
     }
