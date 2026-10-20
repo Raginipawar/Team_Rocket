@@ -32,7 +32,7 @@ _EMERGENCY_MARKER_FIELDS = {"ai_acuity", "final_acuity", "transcript", "extracte
 # caller_phone/caller_user_id/language/stt_confidence/location detail.
 _EMERGENCY_FAMILY_ALLOWLIST = {
     "id", "status", "version",
-    "ambulance_id", "hospital_id", "reservation_id", "ambulance",
+    "ambulance_id", "hospital_id", "reservation_id", "ambulance", "route", "leg",
     "eta_to_patient_sec", "eta_to_hospital_sec", "eta_low_sec", "eta_high_sec",
     "escalated",
     "received_at", "triaged_at", "assigned_at", "at_scene_at", "on_board_at",

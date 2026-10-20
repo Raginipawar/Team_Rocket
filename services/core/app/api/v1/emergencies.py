@@ -201,12 +201,19 @@ async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_curre
             await tracking.get_ambulance_view(session, str(emergency["ambulance_id"]), emergency)
             if emergency.get("ambulance_id") else None
         )
+        # EmergencyView.route/leg (api-types.ts) -- the patient's own map
+        # has never had a route line, regardless of GPS state, because
+        # nothing ever computed one for this endpoint at all.
+        route_view = (
+            await tracking.get_patient_route_view(session, str(emergency["ambulance_id"]), emergency)
+            if emergency.get("ambulance_id") else {"route": None, "leg": None}
+        )
     _authorize_emergency_access(user, emergency)
     if esc:
         emergency = {**emergency, "escalation": {
             "type": esc["type"], "message": _ESCALATION_MESSAGES.get(esc["type"], "Still working on this -- taking longer than usual."),
         }}
-    emergency = {**emergency, "ambulance": ambulance_view}
+    emergency = {**emergency, "ambulance": ambulance_view, **route_view}
     return project(user.role, emergency)
 
 

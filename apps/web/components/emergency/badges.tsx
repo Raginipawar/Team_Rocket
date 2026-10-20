@@ -58,6 +58,14 @@ export function Confidence({ value, confirmed }: { value: number; confirmed?: bo
   if (confirmed) {
     return <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-green"><Icon name="check" size={15} stroke={2.6} />{t("confirmedByCrew")}</span>;
   }
+  // A real AI result is never exactly 0% confident -- that's the
+  // MLUnavailable fallback shape (confidence hardcoded to 0.0) or triage
+  // genuinely hasn't run yet, not a real "I'm 0% sure" result. Showing it
+  // as a confidence number reads as the AI having failed outright, when
+  // it just hasn't produced a result to show confidence about yet.
+  if (!value) {
+    return <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-muted"><Icon name="clock" size={15} stroke={2.4} />Details coming</span>;
+  }
   const p = Math.round(value * 100);
   const tone = p >= 80 ? "text-green" : p >= 60 ? "text-amber" : "text-red-ink";
   return <span className={cn("text-[14px] font-semibold", tone)}>AI · {t("confidence", { p })}</span>;
