@@ -122,17 +122,28 @@ async def triage(text: str, extracted: dict, profile_summary: str | None = None,
     """technical.md §9.3: on failure, safe-side default -- acuity critical,
     facility general, needs_review=true (forces ALS dispatch). Never returns
     None: callers rely on this dict always having acuity/facility/needs_review."""
-    try:
-        result = await call_ml(
-            "POST", "/ml/v1/triage", capability="triage", timeout_s=TRIAGE_TIMEOUT_S,
-            json={
-                "text": text, "extracted": extracted,
-                "profile_summary": profile_summary,
-                "followup_answers": followup_answers or [],
-            },
-        )
-        return _apply_keyword_escalation(result, text)
-    except MLUnavailable:
+    payload = {
+        "text": text, "extracted": extracted,
+        "profile_summary": profile_summary,
+        "followup_answers": followup_answers or [],
+    }
+    # The first attempt most often times out from Ollama queue contention
+    # (extract()/duplicate-check sharing the same single-threaded queue),
+    # not a dead ML service -- by the time our timeout fires, that queue has
+    # usually drained, so one retry with a shorter timeout frequently
+    # succeeds where giving up immediately would have silently landed every
+    # real SOS on the confidence-0.0 fallback forever (no later retry existed
+    # anywhere else in the pipeline).
+    for timeout_s in (TRIAGE_TIMEOUT_S, TRIAGE_TIMEOUT_S / 2):
+        try:
+            result = await call_ml(
+                "POST", "/ml/v1/triage", capability="triage", timeout_s=timeout_s,
+                json=payload,
+            )
+            return _apply_keyword_escalation(result, text)
+        except MLUnavailable:
+            continue
+    else:
         return {
             "acuity": "critical", "acuity_probs": {"critical": 1.0},
             "facility": "general", "facility_probs": {"general": 1.0},

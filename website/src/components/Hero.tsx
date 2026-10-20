@@ -16,11 +16,11 @@ export default function Hero() {
         >
           <h1>{t.hero.title1}<br />{t.hero.title2}</h1>
           <p className="lead">{t.hero.lead}</p>
-          <div className="hero-ctas">
-            <a href="#how" className="btn btn-dark">{t.hero.ctaHow}</a>
-            <a href="tel:108" className="btn btn-light">{t.hero.ctaCall}</a>
+          <div className="hero-ctas hero-ctas-stack">
+            <a href="/apps" className="btn btn-red">{t.nav.liveApp}</a>
+            <a href="#how" className="btn btn-light">{t.hero.ctaHow}</a>
           </div>
-          <p className="hero-note">{t.hero.note}</p>
+          <a href="tel:108" className="hero-note hero-note-link">{t.hero.ctaCall}</a>
         </motion.div>
 
         <div className="hero-phones">

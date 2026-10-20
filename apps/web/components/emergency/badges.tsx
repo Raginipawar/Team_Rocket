@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRef } from "react";
 import type { Acuity, Facility, Freshness } from "@/lib/enums";
 import type { Signal } from "@/lib/api-types";
 import { cn } from "@/lib/cn";
@@ -52,6 +53,29 @@ export function FacilityChip({ facility }: { facility: Facility | null | undefin
   );
 }
 
+// Triage can take a while (the ML service runs real models, not a mock) and
+// has no server-side timestamp the client can diff against here, so this
+// times from when the caller first saw confidence=0 -- an honest "how long
+// you personally have been waiting", not a fake/exact ETA. Past ~25s the
+// label changes: triage's own real-call timeout is well past typical, so a
+// long wait at that point usually means the fallback already landed
+// (confidence stuck at 0, no further update coming) rather than "still
+// thinking" -- telling the crew that instead of counting forever gives them
+// the "this isn't coming, confirm manually" signal they actually need.
+function WaitingConfidence() {
+  const startRef = useRef<number | null>(null);
+  if (startRef.current === null) startRef.current = Date.now();
+  const now = useNow(1000);
+  const elapsedS = Math.floor((now - startRef.current) / 1000);
+  const slow = elapsedS >= 25;
+  return (
+    <span className={cn("inline-flex items-center gap-1 text-[14px] font-semibold", slow ? "text-amber" : "text-muted")}>
+      <Icon name="clock" size={15} stroke={2.4} />
+      {slow ? `Taking longer than usual (${elapsedS}s) — you can confirm details yourself` : `Details coming — usually ready in ~20s (${elapsedS}s)`}
+    </span>
+  );
+}
+
 /** Every AI output shows its confidence (UI rule 3). */
 export function Confidence({ value, confirmed }: { value: number; confirmed?: boolean }) {
   const t = useTranslations("live");
@@ -64,7 +88,7 @@ export function Confidence({ value, confirmed }: { value: number; confirmed?: bo
   // as a confidence number reads as the AI having failed outright, when
   // it just hasn't produced a result to show confidence about yet.
   if (!value) {
-    return <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-muted"><Icon name="clock" size={15} stroke={2.4} />Details coming</span>;
+    return <WaitingConfidence />;
   }
   const p = Math.round(value * 100);
   const tone = p >= 80 ? "text-green" : p >= 60 ? "text-amber" : "text-red-ink";

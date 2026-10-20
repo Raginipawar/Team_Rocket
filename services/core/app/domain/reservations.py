@@ -87,6 +87,15 @@ async def create_hospital_request_with_hold(
             # as if we hold a room we don't).
             room = None
 
+    # expires_at was never set here, so every row landed NULL -- the
+    # hospital dashboard's CountdownRing does `new Date(null)` -> epoch
+    # 1970, which is always in the past, so `left` clamped to 0 forever
+    # (looked like a frozen/broken timer, not a missing value). Window
+    # matches RequestCard's own total-seconds-per-acuity (its is_priority
+    # branch is dead in practice -- nothing anywhere ever sets that column
+    # True, so acuity is the only real-world driver today).
+    request_window_s = 45 if acuity == "critical" else 60
+    sent_at = datetime.utcnow()
     req = HospitalRequest(
         emergency_id=emergency_id,
         hospital_id=hospital_id,
@@ -96,7 +105,9 @@ async def create_hospital_request_with_hold(
         score=score,
         explanation=explanation,
         features=features,
-        is_family_choice=is_family_choice
+        is_family_choice=is_family_choice,
+        sent_at=sent_at,
+        expires_at=sent_at + timedelta(seconds=request_window_s),
     )
     db.add(req)
 

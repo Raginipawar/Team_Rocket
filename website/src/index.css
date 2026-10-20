@@ -83,7 +83,10 @@ html:not([lang="en"]) .scr-list div, html:not([lang="en"]) .pill-btn, html:not([
 .hero { padding-top: 72px; text-align: center; }
 .hero .lead { max-width: 36rem; margin: 1.25rem auto 0; }
 .hero-ctas { margin-top: 2rem; display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+.hero-ctas-stack { flex-direction: column; align-items: center; }
+.hero-ctas-stack .btn { width: 100%; max-width: 280px; }
 .hero-note { margin-top: 1rem; font-size: .9rem; color: var(--faint); }
+.hero-note-link { display: inline-block; text-decoration: underline; text-underline-offset: 3px; }
 .hero-phones { margin-top: 64px; display: flex; justify-content: center; align-items: flex-end; gap: 48px; padding-bottom: 8px; }
 .hero-phones .side { display: none; }
 @media (min-width: 900px) { .hero-phones .side { display: block; transform: scale(.9); } .hero-phones .side .phone { margin-bottom: 40px; } }
