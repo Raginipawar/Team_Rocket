@@ -171,13 +171,25 @@ const HOME: Record<Role, string> = { patient: "/patient", paramedic: "/ambulance
 
 /** Role guard: server enforces RBAC too (§18); this only routes people to the right app. */
 export function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
-  const { session, ready } = useAuth();
+  const { session, ready, refreshAs } = useAuth();
   const router = useRouter();
   const path = usePathname();
   const [ok, setOk] = useState(false);
+  const [triedRestore, setTriedRestore] = useState(false);
   useEffect(() => {
     if (!ready) return;
     if (!session) {
+      // sessionStorage can come back empty on a backgrounded mobile tab
+      // even though the httpOnly refresh cookie is still valid -- try a
+      // silent restore for the role this route actually needs before
+      // treating it as a real logout.
+      if (!triedRestore) {
+        setTriedRestore(true);
+        void refreshAs(role).then((token) => {
+          if (!token) router.replace(`/login?role=${role}&next=${encodeURIComponent(path)}`);
+        });
+        return;
+      }
       router.replace(`/login?role=${role}&next=${encodeURIComponent(path)}`);
       return;
     }
@@ -186,7 +198,7 @@ export function RequireRole({ role, children }: { role: Role; children: ReactNod
       return;
     }
     setOk(true);
-  }, [ready, session, role, router, path]);
+  }, [ready, session, role, router, path, triedRestore, refreshAs]);
   if (!ok) return <LoadingState />;
   return <>{children}</>;
 }

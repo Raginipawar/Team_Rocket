@@ -22,6 +22,11 @@ type Ctx = {
    * (e.g. right after ambulance registration, whose new token carries a
    * just-assigned ambulance_id the old one didn't have). */
   setToken: (token: string) => void;
+  /** Try to silently restore a session for a known role (RequireRole's own
+   * prop) using only the httpOnly refresh cookie -- for when sessionStorage
+   * came back empty but the cookie didn't. Returns the new token, or null
+   * if there's genuinely no valid session for that role. */
+  refreshAs: (role: string) => Promise<string | null>;
 };
 
 const AuthContext = createContext<Ctx | null>(null);
@@ -61,6 +66,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const doRefresh = useCallback(async (role: string): Promise<string | null> => {
+    try {
+      const res = await fetch(`/api/v1/auth/refresh?role=${encodeURIComponent(role)}`, { method: "POST", credentials: "same-origin", headers: { "idempotency-key": crypto.randomUUID() } });
+      if (!res.ok) return null;
+      const body = (await res.json()) as { access_token: string; user?: User };
+      const prev = ref.current?.user ?? null;
+      const user = body.user ?? userFromToken(body.access_token, prev);
+      if (!user) return null;
+      if (prev && prev.id !== user.id) {
+        // the cookie belongs to someone who signed in on another tab
+        save(null);
+        return null;
+      }
+      save({ token: body.access_token, user: { ...prev, ...user } });
+      return body.access_token;
+    } catch {
+      return null;
+    }
+  }, [save]);
+
   const refresh = useCallback(async (): Promise<string | null> => {
     if (refreshing.current) return refreshing.current;
     refreshing.current = (async () => {
@@ -72,27 +97,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const role = ref.current?.user?.role;
       if (!role) return null;
       try {
-        const res = await fetch(`/api/v1/auth/refresh?role=${encodeURIComponent(role)}`, { method: "POST", credentials: "same-origin", headers: { "idempotency-key": crypto.randomUUID() } });
-        if (!res.ok) return null;
-        const body = (await res.json()) as { access_token: string; user?: User };
-        const prev = ref.current?.user ?? null;
-        const user = body.user ?? userFromToken(body.access_token, prev);
-        if (!user) return null;
-        if (prev && prev.id !== user.id) {
-          // the cookie belongs to someone who signed in on another tab
-          save(null);
-          return null;
-        }
-        save({ token: body.access_token, user: { ...prev, ...user } });
-        return body.access_token;
-      } catch {
-        return null;
+        return await doRefresh(role);
       } finally {
         setTimeout(() => (refreshing.current = null), 0);
       }
     })();
     return refreshing.current;
-  }, [save]);
+  }, [doRefresh]);
+
+  // Mobile browsers can silently wipe sessionStorage on a backgrounded tab
+  // (OS memory reclaim, tab discard on screen lock/app switch) even though
+  // nothing actually expired -- the access token lives there specifically
+  // so one browser can hold separate patient/ambulance/hospital sessions in
+  // different tabs (a shared localStorage key would clobber between them),
+  // but that means a wiped tab has no in-memory role to refresh with and
+  // used to go straight to login even though the httpOnly refresh cookie
+  // (unaffected by sessionStorage loss) was still perfectly valid. Each
+  // route already knows which role it requires (RequireRole's own prop),
+  // so it can ask for a refresh using THAT role before giving up.
+  const refreshAs = useCallback(async (role: string): Promise<string | null> => {
+    if (refreshing.current) return refreshing.current;
+    refreshing.current = (async () => {
+      try {
+        return await doRefresh(role);
+      } finally {
+        setTimeout(() => (refreshing.current = null), 0);
+      }
+    })();
+    return refreshing.current;
+  }, [doRefresh]);
 
   useEffect(() => {
     setTokenSource({ get: () => ref.current?.token ?? null, refresh, onLoggedOut: () => save(null) });
@@ -145,7 +178,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const user = userFromToken(token, ref.current?.user ?? null);
       if (user) save({ token, user });
     },
-  }), [session, ready, save]);
+    refreshAs,
+  }), [session, ready, save, refreshAs]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
