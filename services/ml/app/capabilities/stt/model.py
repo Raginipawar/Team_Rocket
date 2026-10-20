@@ -97,8 +97,20 @@ def _transcribe_with_indic_model(audio_path: str, language: str) -> dict | None:
         waveform = decode_audio(audio_path, sampling_rate=16000)
         inputs = processor(waveform, sampling_rate=16000, return_tensors="pt").input_features.to(device)
 
+        # Without forcing this, generate() falls back to whatever task is
+        # baked into the checkpoint's own generation_config.json -- for at
+        # least one of these community fine-tunes that was "translate", not
+        # "transcribe", so the call silently returned an ENGLISH translation
+        # instead of the original Marathi/Hindi text. Since this model tends
+        # to score higher confidence than the general multilingual pass, its
+        # (wrong-language) output then won and overwrote the real transcript
+        # -- found by a real Marathi recording coming back in English, not
+        # by reading the code. Explicitly forcing "transcribe" is the only
+        # way to be sure which task actually ran.
+        forced_decoder_ids = processor.get_decoder_prompt_ids(language=language, task="transcribe")
         with torch.no_grad():
-            out = model.generate(inputs, output_scores=True, return_dict_in_generate=True, max_new_tokens=200)
+            out = model.generate(inputs, forced_decoder_ids=forced_decoder_ids,
+                                  output_scores=True, return_dict_in_generate=True, max_new_tokens=200)
 
         transcript = processor.batch_decode(out.sequences, skip_special_tokens=True)[0].strip()
         token_ids = out.sequences[0][1:]
