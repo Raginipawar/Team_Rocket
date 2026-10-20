@@ -15,7 +15,10 @@ import { Field, Input } from "@/components/ui/bits";
 import Icon from "@/components/ui/icon";
 import { useGeolocation, useNow } from "@/lib/hooks";
 
-const HOME: Record<Role, string> = { patient: "/patient", paramedic: "/ambulance", hospital_staff: "/hospital", developer: "/" };
+// Same fix as components/shell.tsx's own HOME map: "/" is now the
+// marketing landing page (reverse-proxy rewrite), not a valid landing
+// spot for a just-logged-in ops account anymore.
+const HOME: Record<Role, string> = { patient: "/patient", paramedic: "/ambulance", hospital_staff: "/hospital", developer: "/ops" };
 
 const DEMO: Record<string, { label: string; id: string }[]> = {
   paramedic: [

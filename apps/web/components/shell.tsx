@@ -167,15 +167,22 @@ export function ConnectionBanners({ patient }: { patient?: boolean }) {
   return null;
 }
 
-const HOME: Record<Role, string> = { patient: "/patient", paramedic: "/ambulance", hospital_staff: "/hospital", developer: "/" };
+// developer (the real "ops" role) was "/" -- harmless before, but now "/"
+// is the marketing landing page (reverse-proxy rewrite), so an ops
+// account landing there after login or a role-mismatch redirect went
+// somewhere actively wrong, not just a no-op.
+const HOME: Record<Role, string> = { patient: "/patient", paramedic: "/ambulance", hospital_staff: "/hospital", developer: "/ops" };
 
 /** Role guard: server enforces RBAC too (§18); this only routes people to the right app. */
+const ROLE_LABEL: Record<Role, string> = { patient: "Patient", paramedic: "Ambulance crew", hospital_staff: "Hospital staff", developer: "Ops" };
+
 export function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
-  const { session, ready, refreshAs } = useAuth();
+  const { session, ready, refreshAs, signOut } = useAuth();
   const router = useRouter();
   const path = usePathname();
   const [ok, setOk] = useState(false);
   const [triedRestore, setTriedRestore] = useState(false);
+  const [switching, setSwitching] = useState(false);
   useEffect(() => {
     if (!ready) return;
     if (!session) {
@@ -194,11 +201,43 @@ export function RequireRole({ role, children }: { role: Role; children: ReactNod
       return;
     }
     if (session.user.role !== role) {
-      router.replace(HOME[session.user.role] ?? "/");
+      // Used to silently redirect to whichever role WAS logged in, with
+      // zero explanation -- tapping "Ambulance" (or Hospital) from the
+      // role picker while a patient session was still active from earlier
+      // testing just... opened the patient app, no error, no hint why.
+      // Real first-time visitors hit this too (any stale/shared-browser
+      // session), not just dev testing. Now shown explicitly instead of
+      // acted on automatically.
+      setOk(false);
       return;
     }
     setOk(true);
   }, [ready, session, role, router, path, triedRestore, refreshAs]);
+
+  if (ready && session && session.user.role !== role && !ok) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
+        <p className="text-[20px] font-bold">You&apos;re signed in as {ROLE_LABEL[session.user.role]}</p>
+        <p className="max-w-sm text-[16px] text-muted">This screen is for {ROLE_LABEL[role]}. Sign out to continue here, or go back to your own app.</p>
+        <div className="flex gap-3">
+          <button
+            className="rounded-full bg-ink px-5 py-3 text-[16px] font-semibold text-bg disabled:opacity-60"
+            disabled={switching}
+            onClick={async () => {
+              setSwitching(true);
+              await signOut();
+              router.replace(`/login?role=${role}&next=${encodeURIComponent(path)}`);
+            }}
+          >
+            {switching ? "Signing out…" : "Sign out and continue"}
+          </button>
+          <button className="rounded-full border border-line px-5 py-3 text-[16px] font-semibold" onClick={() => router.replace(HOME[session.user.role] ?? "/")}>
+            Go to my app
+          </button>
+        </div>
+      </div>
+    );
+  }
   if (!ok) return <LoadingState />;
   return <>{children}</>;
 }
