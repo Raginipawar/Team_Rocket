@@ -204,7 +204,7 @@ async def debug_hospital_staff_login(hospital_id: str, x_migrate_key: str = Head
         raise HTTPException(status_code=403, detail="forbidden")
     async with get_session() as session:
         rows = (await session.execute(text(
-            "SELECT id, phone, username, name FROM users WHERE hospital_id = :hid AND role = 'hospital_staff'"
+            "SELECT id, phone, name FROM users WHERE hospital_id = :hid AND role = 'hospital_staff'"
         ), {"hid": hospital_id})).mappings().all()
     return [dict(r) for r in rows]
 
