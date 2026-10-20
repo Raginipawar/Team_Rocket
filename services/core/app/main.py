@@ -196,6 +196,28 @@ async def demo_hospital_feed():
     ]}
 
 
+# Moves a hospital to a real, different location than wherever the demo
+# devices physically are -- the pickup leg of a route necessarily stays
+# short (ambulance+patient devices are together in the room for the demo
+# to work at all), but the scene->hospital leg's distance only depends on
+# the hospital's stored coordinates, so this alone makes OSRM compute a
+# genuine multi-km route/ETA/road-comfort score instead of a ~0m line.
+@app.post("/internal/set-hospital-location")
+async def set_hospital_location(hospital_id: str, lat: float, lng: float, address: str = "", x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        result = await session.execute(
+            text("UPDATE hospitals SET location = ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), "
+                 "address = COALESCE(NULLIF(:address, ''), address) WHERE id = :id"),
+            {"lat": lat, "lng": lng, "address": address, "id": hospital_id},
+        )
+        if result.rowcount == 0:
+            raise HTTPException(404, "hospital not found")
+        await session.commit()
+    return {"status": "updated", "lat": lat, "lng": lng}
+
+
 # Seeds real-looking rooms/staff for a hospital registered through the app
 # -- registration creates zero of either (no seeding flow exists), which
 # otherwise leaves Rooms/Staff genuinely empty for a demo. Safe to call
