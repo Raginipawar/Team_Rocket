@@ -33,13 +33,14 @@ async def create_emergency(
     lng: float | None,
     accuracy_m: float | None,
     family_track_token_hash: str,
+    language: str | None = None,
 ) -> dict:
     row = (await session.execute(
         text(
             "INSERT INTO emergencies "
-            "(incident_id, caller_user_id, caller_phone, channel, raw_text, "
+            "(incident_id, caller_user_id, caller_phone, channel, raw_text, language, "
             " location, location_accuracy_m, status, family_track_token_hash, received_at) "
-            "VALUES (:incident_id, :caller_user_id, :caller_phone, :channel, :raw_text, "
+            "VALUES (:incident_id, :caller_user_id, :caller_phone, :channel, :raw_text, :language, "
             " CASE WHEN CAST(:lat AS double precision) IS NULL THEN NULL "
             " ELSE ST_SetSRID(ST_MakePoint(CAST(:lng AS double precision), CAST(:lat AS double precision)), 4326) END, "
             " CAST(:accuracy_m AS real), 'received', :family_track_token_hash, now()) "
@@ -47,7 +48,7 @@ async def create_emergency(
         ),
         {
             "incident_id": incident_id, "caller_user_id": caller_user_id, "caller_phone": caller_phone,
-            "channel": channel, "raw_text": raw_text, "lat": lat, "lng": lng,
+            "channel": channel, "raw_text": raw_text, "language": language, "lat": lat, "lng": lng,
             "accuracy_m": accuracy_m, "family_track_token_hash": family_track_token_hash,
         },
     )).mappings().first()

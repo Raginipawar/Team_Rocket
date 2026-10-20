@@ -63,6 +63,7 @@ async def create_emergency(
     accuracy_m: float | None = Form(None),
     caller_phone: str | None = Form(None),
     audio: UploadFile | None = File(None),
+    language: str | None = Form(None),
 ) -> dict:
     if channel not in ("app_button", "app_voice", "app_text", "sms"):
         raise HTTPException(400, "invalid channel")
@@ -105,7 +106,7 @@ async def create_emergency(
         emergency = await emergencies_repo.create_emergency(
             session, incident_id=incident_id, caller_user_id=caller_user_id, caller_phone=caller_phone,
             channel=channel, raw_text=text, lat=lat, lng=lng, accuracy_m=accuracy_m,
-            family_track_token_hash=track_token_hash,
+            family_track_token_hash=track_token_hash, language=language,
         )
         if transcript_text:
             await emergencies_repo.update_emergency(

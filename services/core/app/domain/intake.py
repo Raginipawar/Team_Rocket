@@ -63,7 +63,14 @@ async def process_emergency(
 
     # Step 4.0: speech-to-text, now in the background (dispatch no longer waits for it).
     if audio_bytes:
-        stt_result = await ml.stt(audio_bytes, audio_name)
+        # Whisper's own language auto-detection is unreliable for romanized/
+        # code-switched Hindi/Marathi speech (a well-known real failure mode
+        # -- it can misdetect the script entirely, producing garbage in the
+        # wrong language's vocabulary). The app already knows which language
+        # the caller selected in the UI (sent as `language` on emergency
+        # creation) but this call never passed it through -- found by a real
+        # Marathi test producing an empty transcript, not by reading the code.
+        stt_result = await ml.stt(audio_bytes, audio_name, lang_hint=emergency.get("language"))
         if stt_result:
             await _update_retry(
                 session, emergency_id,

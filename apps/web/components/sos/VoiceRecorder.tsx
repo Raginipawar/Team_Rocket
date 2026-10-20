@@ -14,6 +14,7 @@ export default function VoiceRecorder({ onDone, busy }: { onDone: (audio: Blob, 
   const [state, setState] = useState<"idle" | "rec" | "blocked">("idle");
   const [secs, setSecs] = useState(0);
   const [text, setText] = useState("");
+  const [liveCaptionsSupported, setLiveCaptionsSupported] = useState(true);
   const rec = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -39,6 +40,7 @@ export default function VoiceRecorder({ onDone, busy }: { onDone: (audio: Blob, 
     setSecs(0);
     setText("");
     const stopTx = startTranscript(locale, setText);
+    setLiveCaptionsSupported(stopTx !== null);
     // waveform
     const ctx = new AudioContext();
     const src = ctx.createMediaStreamSource(stream);
@@ -117,6 +119,9 @@ export default function VoiceRecorder({ onDone, busy }: { onDone: (audio: Blob, 
         </p>
       )}
       {text && <p className="w-full rounded-2xl border border-line px-4 py-3 text-[17px]">&ldquo;{text}&rdquo;</p>}
+      {state === "rec" && !text && !liveCaptionsSupported && (
+        <p className="text-[14px] text-muted">Live captions aren&apos;t available on this device -- your recording is still being sent and transcribed normally.</p>
+      )}
       {state === "idle" ? (
         <Button size="xl" variant="danger" block onClick={start} loading={busy}><Icon name="mic" size={26} />{t("startRecording")}</Button>
       ) : (
