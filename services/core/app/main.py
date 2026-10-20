@@ -196,6 +196,36 @@ async def demo_hospital_feed():
     ]}
 
 
+# Frees a stuck ambulance (status != available, usually still attached to
+# an earlier test emergency that was never finished/closed) and cancels
+# whatever emergency it's still holding -- with only 1 ambulance in the
+# whole system, a prior unfinished test run leaves it permanently
+# unavailable for the next one, and dispatch correctly finds zero
+# candidates with no visible error (it IS correct, just not what you want
+# mid-demo-testing).
+@app.post("/internal/free-ambulance")
+async def free_ambulance(ambulance_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        active_em = (await session.execute(
+            text("SELECT active_emergency_id FROM ambulances WHERE id = :id"), {"id": ambulance_id},
+        )).scalar_one_or_none()
+        if active_em is not None:
+            await session.execute(
+                text("UPDATE emergencies SET status = 'cancelled', version = version + 1 WHERE id = :id AND status NOT IN ('handed_off','closed','cancelled')"),
+                {"id": str(active_em)},
+            )
+        result = await session.execute(
+            text("UPDATE ambulances SET status = 'available', active_emergency_id = NULL WHERE id = :id"),
+            {"id": ambulance_id},
+        )
+        if result.rowcount == 0:
+            raise HTTPException(404, "ambulance not found")
+        await session.commit()
+    return {"status": "freed", "cancelled_emergency": str(active_em) if active_em else None}
+
+
 # Moves a hospital to a real, different location than wherever the demo
 # devices physically are -- the pickup leg of a route necessarily stays
 # short (ambulance+patient devices are together in the room for the demo
