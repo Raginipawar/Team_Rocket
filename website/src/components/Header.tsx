@@ -5,7 +5,12 @@ import { useI18n } from "../i18n/context";
 // served from the same domain as the real app (via a reverse-proxy
 // rewrite on the app's own Next.js config), the real app's own routes
 // live on THIS domain too, so this is just a same-origin relative link now.
-const LIVE_APP_URL = "/login";
+// /login alone defaults to role=patient (no role picker), skipping
+// straight to a patient phone-number screen with no way to say "I'm an
+// ambulance crew" or "I'm hospital staff" -- /apps is the real role
+// picker (patient/ambulance/hospital cards), each card's own route then
+// bounces to the correctly-roled /login itself if not signed in.
+const LIVE_APP_URL = "/apps";
 
 export default function Header() {
   const { t } = useI18n();
