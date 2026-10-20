@@ -196,6 +196,60 @@ async def demo_hospital_feed():
     ]}
 
 
+@app.get("/internal/debug-hospital-requests")
+async def debug_hospital_requests(hospital_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        rows = (await session.execute(text(
+            "SELECT id, emergency_id, status, created_at FROM hospital_requests "
+            "WHERE hospital_id = :hid ORDER BY created_at DESC LIMIT 10"
+        ), {"hid": hospital_id})).mappings().all()
+    return [dict(r) for r in rows]
+
+
+# Force-removes a stuck hospital_request (and releases any reservation
+# hold tied to it) when accept/reject both fail -- a real escape hatch,
+# not something that should be needed once the underlying bugs are fixed.
+@app.post("/internal/remove-hospital-request")
+async def remove_hospital_request(request_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        req = (await session.execute(text(
+            "SELECT emergency_id FROM hospital_requests WHERE id = :id"
+        ), {"id": request_id})).mappings().first()
+        if req is None:
+            raise HTTPException(404, "hospital_request not found")
+        reservations = (await session.execute(text(
+            "SELECT id FROM reservations WHERE hospital_request_id = :id AND status IN ('held','confirmed')"
+        ), {"id": request_id})).mappings().all()
+        for r in reservations:
+            # Release each item's hold the same safe (floor-guarded) way
+            # the real reject path does, not a raw UPDATE that could repeat
+            # the exact over-release bug this is here because of.
+            items = (await session.execute(text(
+                "SELECT kind, resource_type, quantity FROM reservation_items WHERE reservation_id = :id AND kind = 'resource'"
+            ), {"id": r["id"]})).mappings().all()
+            hosp_id = (await session.execute(text(
+                "SELECT hospital_id FROM reservations WHERE id = :id"
+            ), {"id": r["id"]})).scalar_one()
+            for item in items:
+                await session.execute(text(
+                    "UPDATE hospital_resources SET available = available + LEAST(:qty, reserved), "
+                    "reserved = reserved - LEAST(:qty, reserved), updated_at = now() "
+                    "WHERE hospital_id = :hid AND type = :rtype"
+                ), {"qty": item["quantity"], "hid": str(hosp_id), "rtype": item["resource_type"]})
+            await session.execute(text(
+                "UPDATE reservations SET status = 'released', updated_at = now() WHERE id = :id"
+            ), {"id": r["id"]})
+        await session.execute(text(
+            "UPDATE hospital_requests SET status = 'cancelled', updated_at = now() WHERE id = :id"
+        ), {"id": request_id})
+        await session.commit()
+    return {"status": "removed", "request_id": request_id, "emergency_id": str(req["emergency_id"])}
+
+
 # Looks up the login identifier (phone/username) for a hospital's staff
 # account -- never the password itself, which is hashed and unrecoverable.
 @app.get("/internal/debug-hospital-staff-login")
