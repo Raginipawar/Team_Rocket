@@ -196,6 +196,38 @@ async def demo_hospital_feed():
     ]}
 
 
+# Looks up the login identifier (phone/username) for a hospital's staff
+# account -- never the password itself, which is hashed and unrecoverable.
+@app.get("/internal/debug-hospital-staff-login")
+async def debug_hospital_staff_login(hospital_id: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    async with get_session() as session:
+        rows = (await session.execute(text(
+            "SELECT id, phone, username, name FROM users WHERE hospital_id = :hid AND role = 'hospital_staff'"
+        ), {"hid": hospital_id})).mappings().all()
+    return [dict(r) for r in rows]
+
+
+# Resets a hospital staff account's password directly -- there's no
+# password-reset flow built yet, and a lost/forgotten password otherwise
+# has no recovery path at all.
+@app.post("/internal/debug-reset-password")
+async def debug_reset_password(user_id: str, new_password: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    from app.security.passwords import hash_password
+    async with get_session() as session:
+        result = await session.execute(
+            text("UPDATE users SET password_hash = :h WHERE id = :id"),
+            {"h": hash_password(new_password), "id": user_id},
+        )
+        if result.rowcount == 0:
+            raise HTTPException(404, "user not found")
+        await session.commit()
+    return {"status": "password reset"}
+
+
 # Frees a stuck ambulance (status != available, usually still attached to
 # an earlier test emergency that was never finished/closed) and cancels
 # whatever emergency it's still holding -- with only 1 ambulance in the
