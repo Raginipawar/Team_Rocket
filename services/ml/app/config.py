@@ -13,6 +13,8 @@ class Settings:
     mapbox_token: str = os.getenv("MAPBOX_TOKEN", "")
     geo_mode: str = os.getenv("GEO_MODE", "fixtures")  # "live" | "fixtures"
     artifacts_dir: str = os.getenv("ML_ARTIFACTS_DIR", "services/ml/app/artifacts")
+    # "muril" (default, unchanged) | "qwen" (alternate engine, model_qwen.py)
+    triage_engine: str = os.getenv("TRIAGE_ENGINE", "muril")
 
     def capability_mode(self, name: str) -> str:
         """Per-capability override: ML_MOCK_CAPABILITIES=stt,triage forces those to mock
