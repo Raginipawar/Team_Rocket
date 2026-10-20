@@ -1,7 +1,11 @@
 import LanguageMenu from "./LanguageMenu";
 import { useI18n } from "../i18n/context";
 
-const LIVE_APP_URL = (import.meta.env.VITE_APP_URL as string | undefined) || "http://localhost:3000";
+// Was an external vercel.app URL opened in a new tab -- once this site is
+// served from the same domain as the real app (via a reverse-proxy
+// rewrite on the app's own Next.js config), the real app's own routes
+// live on THIS domain too, so this is just a same-origin relative link now.
+const LIVE_APP_URL = "/login";
 
 export default function Header() {
   const { t } = useI18n();
@@ -20,7 +24,7 @@ export default function Header() {
         </nav>
         <div className="header-right">
           <LanguageMenu />
-          <a href={LIVE_APP_URL} target="_blank" rel="noopener noreferrer" className="btn btn-red btn-sm" style={{ textTransform: "uppercase", letterSpacing: "0.02em" }}>{t.nav.liveApp}</a>
+          <a href={LIVE_APP_URL} className="btn btn-red btn-sm" style={{ textTransform: "uppercase", letterSpacing: "0.02em" }}>{t.nav.liveApp}</a>
           <a href="#/demo" className="btn btn-light btn-sm demo-mobile">{t.nav.demo}</a>
           <a href="#top" className="btn btn-dark btn-sm">{t.nav.getHelp}</a>
         </div>

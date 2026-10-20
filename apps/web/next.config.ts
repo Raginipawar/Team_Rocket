@@ -10,6 +10,11 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const CORE_URL = process.env.CORE_URL ?? "http://localhost:8000";
 const MOCK_CORE_URL = process.env.MOCK_CORE_URL ?? "http://localhost:8010";
+// The marketing landing page (website/, a separate Vite SPA, its own Vercel
+// project) -- proxied in at "/" so one domain serves both instead of two
+// separate vercel.app links. Its own built assets all live under a single
+// /assets/* prefix (Vite's default), so that's the only other path needed.
+const WEBSITE_URL = process.env.WEBSITE_URL ?? "https://website-self-ten-77.vercel.app";
 
 const AREAS: Record<string, string[]> = {
   AUTH: ["/api/v1/auth/:path*"],
@@ -37,7 +42,17 @@ const nextConfig: NextConfig = {
     rules.push({ source: "/core/dev/:path*", destination: `${MOCK_CORE_URL}/dev/:path*` });
     // Standalone demo endpoint, no auth, no mock variant -- always the real core.
     rules.push({ source: "/api/v1/allocation-demo/:path*", destination: `${CORE_URL}/api/v1/allocation-demo/:path*` });
-    return rules;
+    return {
+      // beforeFiles: wins over this app's OWN page.tsx at "/" -- a normal
+      // (default-position) rewrite only fires when no real page already
+      // matched, so it would never actually override the existing route.
+      beforeFiles: [
+        { source: "/", destination: `${WEBSITE_URL}/` },
+        { source: "/assets/:path*", destination: `${WEBSITE_URL}/assets/:path*` },
+      ],
+      afterFiles: rules,
+      fallback: [],
+    };
   },
   async headers() {
     return [{ source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache" }, { key: "Service-Worker-Allowed", value: "/" }] }];
