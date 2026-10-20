@@ -23,7 +23,15 @@ STT_TIMEOUT_S = 30.0
 # core-side timeout must always have margin beyond whatever the ML service
 # itself waits internally, not just beyond the solo-call latency.
 EXTRACT_TIMEOUT_S = 40.0
-TRIAGE_TIMEOUT_S = 15.0
+# Was 15.0 -- fine for the MuRIL engine (a dedicated small model, no Ollama
+# contention), but triage now also runs through Ollama when TRIAGE_ENGINE=qwen,
+# concurrently with duplicate-check in process_emergency's own asyncio.gather,
+# right after extract() just used the same single-threaded Ollama queue. Same
+# margin-beyond-the-ML-service's-own-timeout reasoning as EXTRACT_TIMEOUT_S/
+# HANDOVER_TIMEOUT_S above -- found by a real SOS silently hitting
+# MLUnavailable and falling back to critical/general/confidence-0.0, not by
+# reading the code.
+TRIAGE_TIMEOUT_S = 40.0
 PRANK_TIMEOUT_S = 10.0
 DUPLICATE_TIMEOUT_S = 10.0
 RESOURCES_TIMEOUT_S = 10.0
