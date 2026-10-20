@@ -136,13 +136,38 @@ async def hospital_rank(ml_client, emergency: dict, candidates: list[dict]) -> l
         return ranked
 
 
-async def bed_nowcast(ml_client, hospital_id, room_type, last_reported_free, minutes_since_report, eta_min) -> dict:
+async def bed_nowcast(ml_client, hospital_id, room_type, last_reported_free, minutes_since_report, eta_min, db=None) -> dict:
+    # The real model requires 5 more fields than this ever sent
+    # (hour/weekday/arrival_rate_1h/discharge_rate_1h/incoming_reserved) --
+    # every call 422'd and silently fell back to a neutral 0.5 score via
+    # the except below, so the trained bed-forecast model had genuinely
+    # never run in the real flow. Found by calling it directly, not by
+    # reading the code (the fallback made the bug invisible end-to-end).
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+    arrival_rate_1h, discharge_rate_1h, incoming_reserved = 0.0, 0.0, 0
+    if db is not None:
+        from sqlalchemy import text
+        arrival_rate_1h = float((await db.execute(
+            text("SELECT COUNT(*) FROM hospital_requests WHERE hospital_id = :hid AND created_at > now() - interval '1 hour'"),
+            {"hid": str(hospital_id)},
+        )).scalar_one())
+        discharge_rate_1h = float((await db.execute(
+            text("SELECT COUNT(*) FROM handoffs WHERE hospital_id = :hid AND offloaded_at > now() - interval '1 hour'"),
+            {"hid": str(hospital_id)},
+        )).scalar_one())
+        incoming_reserved = (await db.execute(
+            text("SELECT COUNT(*) FROM reservations WHERE hospital_id = :hid AND status IN ('held','confirmed')"),
+            {"hid": str(hospital_id)},
+        )).scalar_one()
     try:
         async with httpx.AsyncClient(base_url=ML_BASE_URL, timeout=2.0) as client:
             resp = await client.post("/ml/v1/bed-nowcast", json={
                 "hospital_id": str(hospital_id), "room_type": room_type,
                 "last_reported_free": last_reported_free, "minutes_since_report": minutes_since_report,
-                "eta_min": eta_min,
+                "eta_min": eta_min, "hour": now.hour, "weekday": now.weekday(),
+                "arrival_rate_1h": arrival_rate_1h, "discharge_rate_1h": discharge_rate_1h,
+                "incoming_reserved": incoming_reserved,
             })
             resp.raise_for_status()
             data = resp.json()

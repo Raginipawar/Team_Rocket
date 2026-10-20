@@ -61,7 +61,7 @@ async def start_selection(
         comfort = await get_road_comfort(ml_client, "")
         eta_sec = eta_data.get("seconds", 600)
         nowcast = await bed_nowcast(ml_client, str(cand.id), ACCEPTABLE_ROOM_TYPES.get(facility, ["er_bed"])[0],
-                                     1, 10, eta_data.get("minutes", 10))
+                                     1, 10, eta_data.get("minutes", 10), db=db)
 
         candidate_by_id[str(cand.id)] = cand
         candidate_features.append({
