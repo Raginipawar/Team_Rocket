@@ -62,7 +62,18 @@ async def run_dispatch_round(
         return "no_location"
 
     origin_lat, origin_lng = origin_override or (emergency["lat"], emergency["lng"])
-    radius_km = DISPATCH_RADII_KM[round_num - 1]
+    # With a small fleet, the 5/10/20km expanding-radius search can leave a
+    # patient waiting through 1-2 rounds (up to 60s) for literally the only
+    # other ambulance in range, or find nothing at all if it happens to sit
+    # just past 20km -- there's no real "search wider first" value when
+    # there's barely anyone to search among. Below the threshold, skip the
+    # radius restriction entirely and go straight to nearest-available,
+    # no distance cap.
+    total_available = (await session.execute(text(
+        "SELECT COUNT(*) FROM ambulances WHERE status = 'available' AND kyc_verified = true"
+    ))).scalar_one()
+    SMALL_FLEET_THRESHOLD = 3
+    radius_km = DISPATCH_RADII_KM[round_num - 1] if total_available > SMALL_FLEET_THRESHOLD else 20000.0
     exclude_ids = await dispatch_repo.already_offered_ambulance_ids(session, emergency_id)
     exclude_ids = list(set(exclude_ids) | set(extra_excluded_ambulance_ids or []))
 
