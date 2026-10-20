@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import HospitalResource  # type: ignore
@@ -36,13 +36,24 @@ async def decrement_resource(db: AsyncSession, hospital_id: UUID, resource_type:
 
 async def increment_resource(db: AsyncSession, hospital_id: UUID, resource_type: str, quantity: int) -> None:
     """Release path: credit back available, release the matching reserved
-    amount (mirrors decrement_resource -- previously only touched available)."""
-    stmt = (
-        update(HospitalResource)
-        .where(HospitalResource.hospital_id == hospital_id, HospitalResource.type == resource_type)
-        .values(available=HospitalResource.available + quantity, reserved=HospitalResource.reserved - quantity)
-    )
-    await db.execute(stmt)
+    amount (mirrors decrement_resource -- previously only touched available).
+
+    Unlike decrement_resource, this had no floor guard: if `reserved` was
+    already lower than `quantity` (e.g. a hold that was never actually
+    applied to reserved in the first place, or a resource count overwritten
+    by a later sync without preserving reserved), this pushed reserved
+    negative and crashed on the schema's own `reserved >= 0` CHECK -- found
+    by a real reject action 500ing, not by reading the code. Releasing only
+    min(quantity, reserved) can never go negative, and since it just moves
+    that amount from reserved to available (sum unchanged), the schema's
+    other invariant (available + reserved <= total) stays satisfied too."""
+    await db.execute(text(
+        "UPDATE hospital_resources SET "
+        "available = available + LEAST(:qty, reserved), "
+        "reserved = reserved - LEAST(:qty, reserved), "
+        "updated_at = now() "
+        "WHERE hospital_id = :hid AND type = :rtype"
+    ), {"qty": quantity, "hid": str(hospital_id), "rtype": resource_type})
 
 
 async def patch_resource(db: AsyncSession, resource_id: UUID, available: int, total: int | None, version: int) -> HospitalResource:
