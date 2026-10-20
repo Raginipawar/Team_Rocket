@@ -57,7 +57,7 @@ function Shell({ children }: { children: ReactNode }) {
     } else if (ev.event === "offer.revoked") {
       const d = ev.data as { offer_id: string; reason: string };
       qc.setQueryData<Offer[]>(["offers"], (xs = []) => xs.filter((x) => x.offer_id !== d.offer_id));
-      if (d.reason === "taken") setGone((g) => ({ ...g, [d.offer_id]: "taken" }));
+      if (d.reason === "taken" || d.reason === "cancelled") setGone((g) => ({ ...g, [d.offer_id]: d.reason }));
     } else if (ev.event === "alert") {
       toast((ev.data as { message: string }).message, "info");
     } else {
@@ -104,10 +104,10 @@ function Shell({ children }: { children: ReactNode }) {
         <div className="min-h-dvh bg-page text-ink">
           <MockRibbon />
           {children}
-          {Object.entries(gone).slice(-1).map(([id]) => (
+          {Object.entries(gone).slice(-1).map(([id, reason]) => (
             <div key={id} className="fixed inset-x-4 bottom-6 z-[70] flex items-center gap-3 rounded-2xl bg-ink px-5 py-4 text-[17px] font-semibold text-bg shadow-xl" role="status">
               <Icon name="info" size={22} />
-              <span className="flex-1">{t("taken")}</span>
+              <span className="flex-1">{reason === "cancelled" ? "The patient cancelled this request" : t("taken")}</span>
               <button onClick={() => setGone({})} className="underline">OK</button>
             </div>
           ))}

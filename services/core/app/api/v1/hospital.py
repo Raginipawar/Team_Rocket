@@ -22,6 +22,14 @@ from ...db.repos.staff import get_active_staff, list_staff_members, create_staff
 from ...db.repos.analytics import get_hospital_analytics
 
 router = APIRouter(prefix="/hospital", tags=["hospital"])
+
+
+def _hospital_latlng(hospital) -> dict | None:
+    if hospital.location is None:
+        return None
+    from geoalchemy2.shape import to_shape
+    point = to_shape(hospital.location)
+    return {"lat": point.y, "lng": point.x}
 logger = logging.getLogger("hospital")
 
 class AcceptRequest(BaseModel):
@@ -111,6 +119,12 @@ async def get_dashboard(
 
     return {
         "hospital": {"id": str(hospital.id), "name": hospital.name,
+                     # Never included at all -- the dashboard's own "Incoming"
+                     # map passes this straight to hospitals=[...] (app/hospital/
+                     # page.tsx), so with no location it always rendered an
+                     # empty array: no hospital pin, map just defaulted to a
+                     # wide generic view with nothing to center/zoom on.
+                     "location": _hospital_latlng(hospital),
                      "last_confirmed_at": hospital.last_confirmed_at.isoformat() if hospital.last_confirmed_at else None,
                      "hospital_code": hospital.hospital_code,
                      "integration_mode": hospital.integration_mode or "manual",

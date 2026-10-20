@@ -7,7 +7,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from sqlalchemy import select, update
+from sqlalchemy import select, text, update
 
 from app.db.models import Ambulance, Emergency, Reservation
 from app.db.repos import patient as patient_repo
@@ -94,6 +94,26 @@ async def cancel_emergency(db: AsyncSession, emergency_id: UUID, *, caller_user_
     )).scalar_one_or_none()
     if res:
         await release_reservation(db, res.id, "released")
+
+    # No code anywhere ever emitted "offer.revoked" -- the frontend already
+    # has a full "taken"/removed-offer UI built for it (app/ambulance/
+    # layout-client.tsx), but a cancelled emergency's pending offers were
+    # never marked done or announced. A crew that had already been offered
+    # this case kept seeing/ringing it in their app for up to the offer's
+    # own 45s expiry, or risked trying to accept a case the patient had
+    # already cancelled. Found by testing a real cancel, not by reading the
+    # code -- the request kept "coming" ambulance-side after cancelling.
+    pending_offers = (await db.execute(text(
+        "SELECT id, ambulance_id FROM dispatch_offers WHERE emergency_id = :id AND status = 'pending'"
+    ), {"id": str(emergency_id)})).mappings().all()
+    if pending_offers:
+        await db.execute(text(
+            "UPDATE dispatch_offers SET status = 'superseded', responded_at = now() "
+            "WHERE emergency_id = :id AND status = 'pending'"
+        ), {"id": str(emergency_id)})
+        for o in pending_offers:
+            await outbox.emit(db, channel=f"ambulance:{o['ambulance_id']}", event="offer.revoked",
+                               data={"offer_id": str(o["id"]), "reason": "cancelled"})
 
     await audit.write(
         db, actor_type="user", actor_id=str(caller_user_id), entity="emergencies",
