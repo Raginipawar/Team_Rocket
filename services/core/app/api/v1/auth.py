@@ -139,7 +139,10 @@ async def login(body: dict, response: Response) -> dict:
     if not identifier or not password:
         raise HTTPException(400, detail={"error": {"code": "VALIDATION_ERROR", "message": "credentials required", "details": {}}})
 
-    allowed = await hit(f"login:{identifier}", limit=5, window_sec=600)
+    # Was limit=5 -- same demo-rehearsal reasoning as otp_request_limit
+    # (security/config.py): kept blocking the team's own repeated testing,
+    # not an attacker. Loosened, not removed, for the same reason.
+    allowed = await hit(f"login:{identifier}", limit=50, window_sec=600)
     if not allowed:
         raise HTTPException(429, detail={"error": {"code": "RATE_LIMITED", "message": "Too many login attempts", "details": {}}})
 

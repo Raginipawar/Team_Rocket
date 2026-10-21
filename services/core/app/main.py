@@ -339,6 +339,31 @@ async def rename_ambulance(phone: str, x_migrate_key: str = Header(default="")):
     return {"ambulance_id": str(ambulance_id), "old_registration_no": old_reg, "new_registration_no": new_reg}
 
 
+# OTP/login rate limits (security/rate_limit.py: 3 OTP requests per phone per
+# 10 min, 5 login attempts per 10 min) are correctly strict for real traffic,
+# but repeated manual testing on the same phone during demo rehearsal
+# legitimately hits them -- this is the fast way to clear one phone's limits
+# without waiting out the window. Two different mechanisms, not one: the OTP
+# request/login limits are Redis counters (security/rate_limit.py's `hit`),
+# but "too many attempts" on OTP *verify* is a DB column (otp_codes.attempts,
+# see api/v1/auth.py otp_verify) -- deleting the pending OTP row resets that.
+@app.post("/internal/clear-rate-limit")
+async def clear_rate_limit(phone: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    r = redis.from_url(settings.REDIS_URL)
+    cleared = []
+    for key in (f"otp_request:{phone}", f"login:{phone}"):
+        if await r.delete(key):
+            cleared.append(key)
+    await r.aclose()
+    from app.db.repos import identity as identity_repo
+    async with get_session() as session:
+        await identity_repo.delete_otp(session, phone)
+        await session.commit()
+    return {"cleared_redis_keys": cleared, "pending_otp_cleared": True}
+
+
 # Moves a hospital to a real, different location than wherever the demo
 # devices physically are -- the pickup leg of a route necessarily stays
 # short (ambulance+patient devices are together in the room for the demo
