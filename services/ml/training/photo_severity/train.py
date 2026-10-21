@@ -16,7 +16,7 @@ from torchvision import datasets, models, transforms
 DATA_DIR = "services/ml/data/photo_severity"
 ARTIFACT_PATH = "services/ml/artifacts/photo_severity/mobilenet_v2_finetuned.pt"
 REPORT_PATH = "services/ml/training/photo_severity/REPORT.json"
-EPOCHS = 8
+EPOCHS = 14
 BATCH_SIZE = 16
 LR = 1e-3
 
@@ -24,16 +24,33 @@ LR = 1e-3
 def main() -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    transform = transforms.Compose([
+    # Light augmentation on top of the generator's own per-image variation --
+    # a real photo is never framed/lit/colored exactly like the training
+    # set, so forcing a bit of that variation at train time (not just baking
+    # it into the generator once) makes the decision boundary less brittle.
+    train_transform = transforms.Compose([
+        transforms.Resize((128, 128)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(12),
+        transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.2),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    eval_transform = transforms.Compose([
         transforms.Resize((128, 128)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
-    full_ds = datasets.ImageFolder(DATA_DIR, transform=transform)
+    full_ds = datasets.ImageFolder(DATA_DIR, transform=train_transform)
     classes = full_ds.classes  # alphabetical: ImageFolder's own ordering, saved below so serving matches exactly
 
     n_val = max(1, int(0.2 * len(full_ds)))
     train_ds, val_ds = random_split(full_ds, [len(full_ds) - n_val, n_val], generator=torch.Generator().manual_seed(42))
+    # The val split must not see train-time augmentation (that would make
+    # val accuracy an optimistic lie) -- ImageFolder's transform is shared by
+    # reference across random_split's two Subsets, so val_ds's underlying
+    # dataset object is swapped to the eval transform after the split.
+    val_ds.dataset = datasets.ImageFolder(DATA_DIR, transform=eval_transform)
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE)
 

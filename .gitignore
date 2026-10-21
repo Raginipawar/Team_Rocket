@@ -16,6 +16,7 @@ node_modules/
 # Build/scratch
 cache/
 data/processed/
+services/ml/data/wound_dataset_raw/
 
 # Delivery artifacts / docs not meant for the repo
 *.zip

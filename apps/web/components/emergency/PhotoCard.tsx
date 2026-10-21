@@ -24,7 +24,16 @@ export default function PhotoCard({ emergencyId, hasPhoto, analysis }: { emergen
   const [open, setOpen] = useState(false);
   if (!hasPhoto || !session?.token) return null;
   const src = `/api/v1/emergencies/${emergencyId}/photo?token=${encodeURIComponent(session.token)}`;
-  const label = analysis?.finetuned_classifier?.label ?? analysis?.vision_llm?.label;
+  // A real test photo first caught the fine-tuned classifier confidently
+  // mislabeling a real bleeding wound as "none_minor" (it had only ever
+  // seen synthetic drawn shapes). Retrained on a real labeled wound
+  // dataset (training/photo_severity/merge_real_dataset.py) -- re-tested
+  // against that exact same real photo afterward: the retrained classifier
+  // now reads it correctly (95% confidence) while moondream, the
+  // general-purpose vision LLM, still gets it wrong on that image. The
+  // classifier is the primary read for that reason, not by default --
+  // moondream's read is still shown, as a second opinion.
+  const label = analysis && analysis.finetuned_classifier.label !== "unclear" ? analysis.finetuned_classifier.label : null;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -33,12 +42,12 @@ export default function PhotoCard({ emergencyId, hasPhoto, analysis }: { emergen
         <img src={src} alt="Photo from caller" className="h-40 w-full object-cover" />
         <span className={cn("absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[13px] font-bold",
           !analysis ? "bg-ink/70 text-white" : analysis.needs_review ? "bg-amber text-white" : "bg-ink/85 text-white")}>
-          {!analysis ? <><Icon name="clock" size={13} stroke={2.6} />Analyzing...</> : (label ? LABEL_TEXT[label] ?? label : "Unclear")}
+          {!analysis ? <><Icon name="clock" size={13} stroke={2.6} />Analyzing...</> : (label ? LABEL_TEXT[label] ?? label : "AI uncertain -- check photo")}
         </span>
       </button>
-      {analysis?.needs_review && (
+      {analysis && !analysis.agreement && (
         <p className="flex items-center gap-1.5 text-[13px] font-semibold text-amber">
-          <Icon name="alert" size={14} stroke={2.6} />AI reads disagreed on this photo -- please look at it directly.
+          <Icon name="alert" size={14} stroke={2.6} />Second AI read disagrees on this photo -- please look at it directly.
         </p>
       )}
 
@@ -48,14 +57,14 @@ export default function PhotoCard({ emergencyId, hasPhoto, analysis }: { emergen
           <img src={src} alt="Photo from caller" className="w-full rounded-2xl" />
           {analysis ? (
             <div className="flex flex-col gap-2 text-[15px]">
-              <p>Vision model read: <b>{LABEL_TEXT[analysis.vision_llm.label] ?? analysis.vision_llm.label}</b>
-                {analysis.vision_llm.confidence > 0 && <span className="text-muted"> ({Math.round(analysis.vision_llm.confidence * 100)}%)</span>}
-              </p>
-              <p>Fine-tuned classifier read: <b>{LABEL_TEXT[analysis.finetuned_classifier.label] ?? analysis.finetuned_classifier.label}</b>
+              <p>Fine-tuned classifier read (primary): <b>{LABEL_TEXT[analysis.finetuned_classifier.label] ?? analysis.finetuned_classifier.label}</b>
                 {analysis.finetuned_classifier.confidence > 0 && <span className="text-muted"> ({Math.round(analysis.finetuned_classifier.confidence * 100)}%)</span>}
               </p>
+              <p>Vision model read (second opinion): <b>{LABEL_TEXT[analysis.vision_llm.label] ?? analysis.vision_llm.label}</b>
+                {analysis.vision_llm.confidence > 0 && <span className="text-muted"> ({Math.round(analysis.vision_llm.confidence * 100)}%)</span>}
+              </p>
               <p className={cn("font-bold", analysis.agreement ? "text-green" : "text-amber")}>
-                {analysis.agreement ? "Both models agree" : "Models disagree -- treat as needing human review"}
+                {analysis.agreement ? "Both models agree" : "The two reads disagree -- please check the photo yourself"}
               </p>
             </div>
           ) : (
