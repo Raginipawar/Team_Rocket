@@ -4,9 +4,10 @@ as a stand-in for B's real arq job framework (app/jobs/worker.py, not built
 yet) -- swap `background_tasks.add_task` for a real job enqueue once that
 framework lands; the job body (domain/intake.process_emergency) doesn't change."""
 
+import base64
 import logging
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, Response, UploadFile
 
 from pydantic import BaseModel
 from sqlalchemy import text
@@ -210,6 +211,65 @@ async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_curre
         }}
     emergency = {**emergency, "ambulance": ambulance_view, **route_view}
     return project(user.role, emergency)
+
+
+# Generous for a real phone photo but caps what a Postgres bytea column (and
+# the base64-encoded copy sent to the ML service) has to carry -- this is
+# demo-scale storage (direct in Postgres), not a real object-storage bucket.
+MAX_PHOTO_BYTES = 4 * 1024 * 1024
+
+
+@router.post("/emergencies/{emergency_id}/photo", status_code=202)
+async def upload_photo(
+    emergency_id: str, background_tasks: BackgroundTasks,
+    photo: UploadFile = File(...), user: CurrentUser = Depends(get_current_user),
+) -> dict:
+    """Same 'never blocks the real thing' shape as the main SOS pipeline:
+    the photo itself is saved synchronously (so it's viewable immediately,
+    even if ML never responds), analysis runs after as a background
+    enrichment (domain/intake.process_photo)."""
+    photo_bytes = await photo.read()
+    if len(photo_bytes) > MAX_PHOTO_BYTES:
+        raise HTTPException(413, detail={"error": {"code": "PHOTO_TOO_LARGE", "message": "Photo must be under 4MB", "details": {}}})
+    mime = photo.content_type or "image/jpeg"
+
+    async with get_session() as session:
+        emergency = await emergencies_repo.get_emergency(session, emergency_id)
+        if emergency is None:
+            raise HTTPException(404, "emergency not found")
+        _authorize_emergency_access(user, emergency)
+        await emergencies_repo.save_photo(session, emergency_id, photo_bytes, mime)
+        await audit.write(
+            session, actor_type="user", actor_id=user.id, entity="emergencies", entity_id=emergency_id,
+            action="photo_uploaded", before=None, after={"mime": mime, "size_bytes": len(photo_bytes)},
+        )
+        await session.commit()
+
+    background_tasks.add_task(_run_process_photo, emergency_id, base64.b64encode(photo_bytes).decode())
+    return {"status": "uploaded"}
+
+
+async def _run_process_photo(emergency_id: str, image_b64: str) -> None:
+    async with get_session() as session:
+        try:
+            await intake.process_photo(session, emergency_id, image_b64)
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+
+
+@router.get("/emergencies/{emergency_id}/photo")
+async def get_photo(emergency_id: str, user: CurrentUser = Depends(get_current_user)) -> Response:
+    async with get_session() as session:
+        emergency = await emergencies_repo.get_emergency(session, emergency_id)
+        if emergency is None:
+            raise HTTPException(404, "emergency not found")
+        _authorize_emergency_access(user, emergency)
+        photo = await emergencies_repo.get_photo(session, emergency_id)
+    if photo is None:
+        raise HTTPException(404, "no photo on this emergency")
+    return Response(content=bytes(photo["photo_data"]), media_type=photo["photo_mime"] or "image/jpeg")
 
 
 @router.get("/emergencies/{emergency_id}/followup")

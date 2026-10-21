@@ -163,6 +163,8 @@ async def get_active_job(user: CurrentUser = Depends(require_role("paramedic")))
             "mlc_flag": em.get("mlc_flag"), "fragility": em.get("fragility"),
         },
         "transcript": em.get("transcript"),
+        "has_photo": bool(em.get("has_photo")),
+        "photo_analysis": em.get("photo_analysis"),
         "route": route_data.get("geometry") if route_data else None,
         # Real route's own eta_sec takes priority over the stored
         # eta_to_patient/hospital_sec columns (set once at an earlier dispatch

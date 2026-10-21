@@ -7,6 +7,7 @@ import type { RejectReason } from "@/lib/enums";
 import { ENUMS } from "@/lib/enums";
 import { errorText, post } from "@/lib/api";
 import { AcuityBadge, FacilityChip, WhyYou } from "@/components/emergency/badges";
+import PhotoCard from "@/components/emergency/PhotoCard";
 import CountdownRing from "@/components/ambulance/CountdownRing";
 import { Card, SectionLabel, Select, Textarea } from "@/components/ui/bits";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,8 @@ export default function RequestCard({ req, rooms, staff }: { req: HospitalReques
           {req.profile.medications.length ? ` · ${req.profile.medications.join(", ")}` : ""}
         </p>
       )}
+
+      {req.has_photo && <div className="mt-3"><PhotoCard emergencyId={req.emergency_id} hasPhoto={req.has_photo} analysis={req.photo_analysis} /></div>}
 
       {req.handover_note && (
         <div className="mt-3 rounded-2xl bg-soft p-4 text-[15px] leading-relaxed">

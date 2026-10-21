@@ -132,7 +132,10 @@ export type EmergencyView = {
   timeline?: Timeline;
   reroute?: RerouteNotice | null;
   route?: string | null; // polyline6 of the current leg
+  route_explanation?: string | null;
   leg?: "to_patient" | "to_hospital" | null;
+  has_photo?: boolean;
+  photo_analysis?: PhotoAnalysis;
   call_108_prompt?: boolean;
   escalation?: { type: string; message: string } | null;
 };
@@ -190,6 +193,8 @@ export type ActiveJob = {
   patient: PatientBrief;
   triage: Triage & { ai_acuity?: Acuity; ai_facility?: Facility; mlc_flag?: boolean; fragility?: boolean };
   transcript?: string | null;
+  has_photo?: boolean;
+  photo_analysis?: PhotoAnalysis;
   route?: string | null; // polyline6
   eta_sec?: number | null;
   distance_m?: number | null;
@@ -269,6 +274,17 @@ export type PrepItem = { item: string; prob: number };
 export type Sbar = { situation: string; background: string; assessment: string; recommendation: string };
 
 /** Incoming patient card (§7.5, WS hospital.request.new). */
+// services/ml's photo_triage capability: two independent reads of the same
+// photo (a vision LLM, a fine-tuned classifier) -- agreement is only true
+// when both land on the same label, so the UI never presents one read alone
+// as settled when the other disagrees.
+export type PhotoAnalysis = {
+  vision_llm: { label: string; description: string; confidence: number };
+  finetuned_classifier: { label: string; confidence: number };
+  agreement: boolean;
+  needs_review: boolean;
+} | null;
+
 export type HospitalRequestCard = {
   request_id: string;
   emergency_id: string;
@@ -299,6 +315,8 @@ export type HospitalRequestCard = {
   is_priority?: boolean;
   suggested_room_id?: string | null; // extra: the held room
   suggested_staff_ids?: string[]; // extra
+  has_photo?: boolean;
+  photo_analysis?: PhotoAnalysis;
 };
 
 export type IncomingAmbulance = {

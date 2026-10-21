@@ -154,6 +154,21 @@ async def triage(text: str, extracted: dict, profile_summary: str | None = None,
         }
 
 
+PHOTO_TRIAGE_TIMEOUT_S = 60.0  # moondream's cold load alone measured ~30s+; see photo_triage/model.py's own margin
+
+
+async def photo_triage(image_b64: str) -> dict | None:
+    """Photo attachment analysis (two independent reads: a vision LLM and a
+    fine-tuned classifier, see services/ml photo_triage capability). On
+    failure, the photo is still stored and viewable -- analysis is an
+    enrichment, never a gate on anything the photo feature does."""
+    try:
+        return await call_ml("POST", "/ml/v1/photo-triage", capability="photo_triage",
+                              timeout_s=PHOTO_TRIAGE_TIMEOUT_S, json={"image_b64": image_b64})
+    except MLUnavailable:
+        return None
+
+
 async def prank_score(features: dict) -> dict | None:
     """technical.md §9.4: policy is 'never block' -- on failure, treat as
     not-suspicious and let dispatch proceed."""

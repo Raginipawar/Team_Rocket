@@ -1,0 +1,11 @@
+{
+  "classes": [
+    "bleeding",
+    "bruise_fracture",
+    "burn",
+    "none_minor"
+  ],
+  "n_train": 480,
+  "n_val": 120,
+  "val_accuracy": 1.0
+}

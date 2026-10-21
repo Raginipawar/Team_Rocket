@@ -12,6 +12,8 @@ import { fetchEmergency, fetchFollowup, isFinal, trackUrlFor } from "@/lib/patie
 import { useChannel, useWsClient, useWsStatus } from "@/components/realtime/WsProvider";
 import Map from "@/components/map";
 import { AcuityBadge, Confidence, EtaRange, FacilityChip } from "@/components/emergency/badges";
+import RouteInfoButton from "@/components/emergency/RouteInfoButton";
+import PhotoCard from "@/components/emergency/PhotoCard";
 import { FirstAidCard, FollowupCard, StatusStepper } from "@/components/emergency/parts";
 import CprCoach from "@/components/emergency/CprCoach";
 import { Banner, Card, ErrorState, LoadingState, SectionLabel, SimulatedBadge } from "@/components/ui/bits";
@@ -220,6 +222,7 @@ export default function LiveEmergency() {
                 <EtaRange eta={loc.eta_sec} low={loc.eta_low_sec} high={loc.eta_high_sec} big />
               </div>
             )}
+            <RouteInfoButton explanation={e.route_explanation} />
           </div>
 
           <div className="relative z-10 -mt-5 flex flex-col rounded-t-[28px] bg-card px-4 pb-4 pt-2 shadow-[0_-10px_30px_-10px_rgba(0,0,0,.2)]">
@@ -256,19 +259,29 @@ export default function LiveEmergency() {
         </div>
       ) : (
         !final && (e.pickup || loc?.location) && (
-          <Map
-            height={260}
-            ambulance={loc?.location ? { ...loc.location, heading: loc.heading, signal: loc.signal, label: `Ambulance ${reg(loc.registration_no)}` } : null}
-            pickup={e.status === "dispatching" ? e.pickup ?? null : null}
-            destination={e.hospital?.location ? { ...e.hospital.location, name: e.hospital.name } : null}
-            route={e.route}
-            routeTone={e.leg === "to_hospital" ? "red" : "blue"}
-            label={hero.head}
-          />
+          <div className="relative">
+            <Map
+              height={260}
+              ambulance={loc?.location ? { ...loc.location, heading: loc.heading, signal: loc.signal, label: `Ambulance ${reg(loc.registration_no)}` } : null}
+              pickup={e.status === "dispatching" ? e.pickup ?? null : null}
+              destination={e.hospital?.location ? { ...e.hospital.location, name: e.hospital.name } : null}
+              route={e.route}
+              routeTone={e.leg === "to_hospital" ? "red" : "blue"}
+              label={hero.head}
+            />
+            <RouteInfoButton explanation={e.route_explanation} />
+          </div>
         )
       )}
 
       {!tracking && f?.question && !final && <FollowupCard q={f.question} onAnswer={(a) => void answer(a)} busy={answering} />}
+
+      {e.has_photo && (
+        <Card>
+          <SectionLabel>Photo you sent</SectionLabel>
+          <div className="mt-2"><PhotoCard emergencyId={e.id} hasPhoto={e.has_photo} analysis={e.photo_analysis} /></div>
+        </Card>
+      )}
 
       {e.hospital && (
         <Card>

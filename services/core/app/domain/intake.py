@@ -176,6 +176,30 @@ async def process_emergency(
         )
 
 
+async def process_photo(session: AsyncSession, emergency_id: str, image_b64: str) -> None:
+    """Photo attachment, same 'the real pipeline is never blocked by ML'
+    principle as process_emergency's own STT/triage calls -- the photo is
+    already saved (api/v1/emergencies.py's upload endpoint does that
+    synchronously, before this background task even starts) by the time
+    this runs, so a slow/unavailable ML service only delays the analysis
+    enrichment, never the upload itself."""
+    analysis = await ml.photo_triage(image_b64)
+    if analysis is None:
+        return  # ML unavailable -- photo stays viewable without an analysis, never a hard failure
+    fresh = await _update_retry(session, emergency_id, photo_analysis=_json(analysis))
+    if fresh is None:
+        return
+    await audit.write(
+        session, actor_type="ai", actor_id="photo_triage", entity="emergencies", entity_id=emergency_id,
+        action="photo_analysis_complete", before=None, after=analysis,
+    )
+    payload = {"photo_analysis": analysis}
+    await outbox.emit(session, channel=f"emergency:{emergency_id}", event="emergency.photo_analysis", data=payload)
+    if fresh.get("ambulance_id"):
+        await outbox.emit(session, channel=f"ambulance:{fresh['ambulance_id']}",
+                          event="emergency.photo_analysis", data={"emergency_id": emergency_id, **payload})
+
+
 def _json(obj: dict) -> str:
     import json
     return json.dumps(obj)

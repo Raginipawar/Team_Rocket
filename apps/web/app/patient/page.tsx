@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -37,6 +37,7 @@ export default function PatientHome() {
   const [sheet, setSheet] = useState<"voice" | "text" | null>(null);
   const [text, setText] = useState("");
   const [live, setLive] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   // an emergency still in progress gets a banner at the top
   const mine = useQuery({ queryKey: ["my-emergencies"], queryFn: () => get<Mine>("/me/emergencies"), retry: false });
@@ -49,7 +50,7 @@ export default function PatientHome() {
 
   const name = session?.user.name?.split(" ")[0];
 
-  const send = async (channel: "app_button" | "app_voice" | "app_text", extra: { text?: string; audio?: Blob } = {}) => {
+  const send = async (channel: "app_button" | "app_voice" | "app_text", extra: { text?: string; audio?: Blob; photo?: File } = {}) => {
     setBusy(true);
     const form = new FormData();
     form.set("channel", channel);
@@ -67,6 +68,20 @@ export default function PatientHome() {
     try {
       const r = await api<CreateEmergencyResponse>("/emergencies", { method: "POST", form });
       rememberEmergency(r.emergency_id, r.family_track_url);
+      if (extra.photo) {
+        // Separate call, after the emergency already exists -- a failed or
+        // slow photo upload must never hold up the SOS itself, same "the
+        // real thing is never gated on an enrichment" rule as everything
+        // else ML-adjacent here. Analysis runs in the background on the
+        // server; this call just saves the bytes so they're viewable.
+        const photoForm = new FormData();
+        photoForm.set("photo", extra.photo, extra.photo.name || "sos-photo.jpg");
+        try {
+          await api(`/emergencies/${r.emergency_id}/photo`, { method: "POST", form: photoForm });
+        } catch {
+          toast("Photo could not be attached, but your SOS was sent.", "error");
+        }
+      }
       router.push(`/patient/emergency/${r.emergency_id}`);
     } catch (e) {
       setBusy(false);
@@ -136,6 +151,18 @@ export default function PatientHome() {
             className="grid h-14 w-14 place-items-center rounded-full bg-soft shadow-md active:scale-95">
             <Icon name="keyboard" size={24} />
           </button>
+          <button onClick={() => photoInputRef.current?.click()} aria-label="Send a photo" disabled={busy}
+            className="grid h-14 w-14 place-items-center rounded-full bg-soft shadow-md active:scale-95 disabled:opacity-60">
+            <Icon name="camera" size={24} />
+          </button>
+          <input
+            ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (file) void send("app_button", { photo: file });
+            }}
+          />
         </div>
       </div>
       <p className="-mt-1 text-center text-[16px] text-muted">{forSelf ? t("meHint") : t("otherHint")}</p>

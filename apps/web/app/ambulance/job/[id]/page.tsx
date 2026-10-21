@@ -15,6 +15,8 @@ import { useNow, buzz } from "@/lib/hooks";
 import { useChannel } from "@/components/realtime/WsProvider";
 import Map from "@/components/map";
 import { AcuityBadge, Confidence, FacilityChip } from "@/components/emergency/badges";
+import RouteInfoButton from "@/components/emergency/RouteInfoButton";
+import PhotoCard from "@/components/emergency/PhotoCard";
 import { Banner, Card, ErrorState, LoadingState, SectionLabel, Textarea } from "@/components/ui/bits";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
@@ -259,17 +261,20 @@ export default function JobPage() {
       )}
 
       {s !== "arrived_hospital" && (
-        <Map
-          height={toHospital || s === "ambulance_assigned" ? 330 : 220}
-          dark={dark}
-          followDefault
-          ambulance={pos ? { ...pos, tone: "dark" } : null}
-          pickup={s === "ambulance_assigned" || s === "at_scene" ? job.pickup : null}
-          destination={job.destination?.hospital.location ? { ...job.destination.hospital.location, name: job.destination.hospital.name } : null}
-          route={job.route}
-          routeTone={toHospital ? "red" : "blue"}
-          routeDashed={!!job.hospital_selecting}
-        />
+        <div className="relative">
+          <Map
+            height={toHospital || s === "ambulance_assigned" ? 330 : 220}
+            dark={dark}
+            followDefault
+            ambulance={pos ? { ...pos, tone: "dark" } : null}
+            pickup={s === "ambulance_assigned" || s === "at_scene" ? job.pickup : null}
+            destination={job.destination?.hospital.location ? { ...job.destination.hospital.location, name: job.destination.hospital.name } : null}
+            route={job.route}
+            routeTone={toHospital ? "red" : "blue"}
+            routeDashed={!!job.hospital_selecting}
+          />
+          <RouteInfoButton explanation={job.route_explanation} />
+        </div>
       )}
 
       {/* stage card */}
@@ -342,6 +347,7 @@ export default function JobPage() {
           </div>
         )}
         {job.transcript && <p className="mt-3 rounded-2xl bg-soft px-4 py-3 text-[16px]">&ldquo;{job.transcript}&rdquo;</p>}
+        {job.has_photo && <div className="mt-3"><PhotoCard emergencyId={job.emergency_id} hasPhoto={job.has_photo} analysis={job.photo_analysis} /></div>}
         {job.caller_phone && s === "ambulance_assigned" && (
           <Button asChild variant="soft" block className="mt-3"><a href={`tel:${job.caller_phone}`}><Icon name="phone" size={20} />{t("callCaller")} · {phone(job.caller_phone)}</a></Button>
         )}

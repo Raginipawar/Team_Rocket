@@ -21,6 +21,7 @@ _CARD_COLUMNS = """
     res.room_id AS suggested_room_id,
     em.final_acuity, em.ai_acuity, em.final_facility, em.ai_facility, em.mlc_flag,
     em.eta_to_hospital_sec, em.eta_to_patient_sec, em.transcript, em.handover_note,
+    (em.photo_data IS NOT NULL) AS has_photo, em.photo_analysis,
     p.temp_id, p.est_age, p.sex,
     hp.blood_group, hp.allergies, hp.conditions, hp.medications,
     a.registration_no, a.type AS ambulance_type,
@@ -170,6 +171,8 @@ def _to_card_dict(r) -> dict:
         "is_priority": r["is_priority"],
         "suggested_room_id": str(r["suggested_room_id"]) if r["suggested_room_id"] else None,
         "suggested_staff_ids": [],
+        "has_photo": bool(r["has_photo"]),
+        "photo_analysis": r["photo_analysis"],
         "patient": {
             "display": display,
             "temp_id": r["temp_id"],

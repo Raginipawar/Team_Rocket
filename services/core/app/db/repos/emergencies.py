@@ -76,6 +76,7 @@ _EMERGENCY_FULL_COLUMNS = (
     "final_acuity, final_facility, "
     "required_ambulance_type, fragility, mlc_flag, prank_score, prank_verified, duplicate_of, "
     "predicted_resources, handover_note, "
+    "(photo_data IS NOT NULL) AS has_photo, photo_analysis, "
     "ambulance_id, hospital_id, reservation_id, "
     "eta_to_patient_sec, eta_to_hospital_sec, eta_low_sec, eta_high_sec, escalated, "
     "received_at, triaged_at, assigned_at, at_scene_at, on_board_at, "
@@ -108,7 +109,7 @@ async def get_emergency_by_track_token_hash(session: AsyncSession, token_hash: s
     return dict(row) if row else None
 
 
-JSONB_COLUMNS = {"extracted", "ai_probs", "predicted_resources", "handover_note"}
+JSONB_COLUMNS = {"extracted", "ai_probs", "predicted_resources", "handover_note", "photo_analysis"}
 
 
 async def update_emergency(session: AsyncSession, emergency_id: str, *, expected_version: int, **fields) -> dict:
@@ -136,6 +137,25 @@ async def update_emergency(session: AsyncSession, emergency_id: str, *, expected
         current = await get_emergency(session, emergency_id)
         raise VersionConflict(current)
     return dict(row)
+
+
+async def save_photo(session: AsyncSession, emergency_id: str, photo_bytes: bytes, mime: str) -> None:
+    """Separate from update_emergency's optimistic-locked generic path on
+    purpose -- photo bytes don't participate in the FSM/version semantics
+    anything else on this row cares about, so there's nothing to conflict
+    with and no reason to retry-on-version-mismatch for this write."""
+    await session.execute(
+        text("UPDATE emergencies SET photo_data = :data, photo_mime = :mime, photo_uploaded_at = now() WHERE id = :id"),
+        {"data": photo_bytes, "mime": mime, "id": emergency_id},
+    )
+
+
+async def get_photo(session: AsyncSession, emergency_id: str) -> dict | None:
+    row = (await session.execute(
+        text("SELECT photo_data, photo_mime FROM emergencies WHERE id = :id AND photo_data IS NOT NULL"),
+        {"id": emergency_id},
+    )).mappings().first()
+    return dict(row) if row else None
 
 
 class VersionConflict(Exception):

@@ -56,6 +56,7 @@ const P: Record<string, string> = {
   search: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4",
   edit: "M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4",
   trash: "M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3",
+  camera: "M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM12 18a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z",
 };
 
 export type IconName = keyof typeof P;
