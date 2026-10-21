@@ -5,7 +5,7 @@
     "burn",
     "none_minor"
   ],
-  "n_train": 480,
-  "n_val": 120,
-  "val_accuracy": 1.0
+  "n_train": 1049,
+  "n_val": 262,
+  "val_accuracy": 0.8969
 }

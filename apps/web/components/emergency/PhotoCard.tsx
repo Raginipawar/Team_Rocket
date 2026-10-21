@@ -34,6 +34,12 @@ export default function PhotoCard({ emergencyId, hasPhoto, analysis }: { emergen
   // classifier is the primary read for that reason, not by default --
   // moondream's read is still shown, as a second opinion.
   const label = analysis && analysis.finetuned_classifier.label !== "unclear" ? analysis.finetuned_classifier.label : null;
+  // Severity only comes from the vision LLM (the classifier is a 4-way
+  // label only, no severity head) -- shown as an add-on, not a replacement
+  // for the primary label, since it's the newer and less-tested of the two
+  // reads (see the AI-main-vs-second-opinion history above).
+  const severity = analysis?.vision_llm?.severity;
+  const showSeverity = severity && severity !== "unknown" && !(label === "none_minor" && severity === "mild");
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -42,7 +48,11 @@ export default function PhotoCard({ emergencyId, hasPhoto, analysis }: { emergen
         <img src={src} alt="Photo from caller" className="h-40 w-full object-cover" />
         <span className={cn("absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[13px] font-bold",
           !analysis ? "bg-ink/70 text-white" : analysis.needs_review ? "bg-amber text-white" : "bg-ink/85 text-white")}>
-          {!analysis ? <><Icon name="clock" size={13} stroke={2.6} />Analyzing...</> : (label ? LABEL_TEXT[label] ?? label : "AI uncertain -- check photo")}
+          {!analysis ? <><Icon name="clock" size={13} stroke={2.6} />Analyzing...</> : (
+            label
+              ? <>{LABEL_TEXT[label] ?? label}{showSeverity && ` · ${severity}`}</>
+              : "AI uncertain -- check photo"
+          )}
         </span>
       </button>
       {analysis && !analysis.agreement && (
@@ -62,6 +72,7 @@ export default function PhotoCard({ emergencyId, hasPhoto, analysis }: { emergen
               </p>
               <p>Vision model read (second opinion): <b>{LABEL_TEXT[analysis.vision_llm.label] ?? analysis.vision_llm.label}</b>
                 {analysis.vision_llm.confidence > 0 && <span className="text-muted"> ({Math.round(analysis.vision_llm.confidence * 100)}%)</span>}
+                {showSeverity && <span className="text-muted"> · looks {severity}</span>}
               </p>
               <p className={cn("font-bold", analysis.agreement ? "text-green" : "text-amber")}>
                 {analysis.agreement ? "Both models agree" : "The two reads disagree -- please check the photo yourself"}

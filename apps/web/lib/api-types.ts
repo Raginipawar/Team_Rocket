@@ -279,7 +279,7 @@ export type Sbar = { situation: string; background: string; assessment: string; 
 // when both land on the same label, so the UI never presents one read alone
 // as settled when the other disagrees.
 export type PhotoAnalysis = {
-  vision_llm: { label: string; description: string; confidence: number };
+  vision_llm: { label: string; severity?: string; description: string; confidence: number };
   finetuned_classifier: { label: string; confidence: number };
   agreement: boolean;
   needs_review: boolean;

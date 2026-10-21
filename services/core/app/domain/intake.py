@@ -176,6 +176,30 @@ async def process_emergency(
         )
 
 
+# What a confident photo read actually DOES, not just what it says --
+# labeling a visibly bleeding photo "bleeding" next to the photo itself is
+# redundant (anyone looking at it can already see that); feeding it into
+# the same resource-prediction/first-aid machinery the rest of intake.py
+# already has is not. Deliberately NOT touching ai_acuity/ai_facility here
+# -- those drive dispatch/hospital matching, which may already be acting on
+# the pre-photo values by the time this background analysis completes;
+# silently rewriting them after the fact would desync what's stored from
+# what dispatch actually did. Resources (advisory, additive, never gates
+# anything) and a direct first-aid tip (shown immediately, not routed
+# through the acuity-driven lookup) are safe regardless of what phase the
+# emergency is already in.
+PHOTO_RESOURCE_HINTS: dict[str, list[dict]] = {
+    "bleeding": [{"item": "pressure_bandage", "prob": 0.8}, {"item": "gauze", "prob": 0.8}],
+    "burn": [{"item": "burn_dressing", "prob": 0.8}, {"item": "saline", "prob": 0.7}],
+    "bruise_fracture": [{"item": "splint", "prob": 0.6}],
+}
+PHOTO_FIRST_AID: dict[str, str] = {
+    "bleeding": "Photo shows visible bleeding -- apply firm, direct pressure to the wound with a clean cloth and keep it elevated if possible until the ambulance arrives.",
+    "burn": "Photo shows a visible burn -- cool the area with clean running water for several minutes. Do not apply ice, butter, or ointments.",
+    "bruise_fracture": "Photo shows possible bruising or a suspected fracture -- keep the area still and supported. Do not try to straighten or move an injured limb.",
+}
+
+
 async def process_photo(session: AsyncSession, emergency_id: str, image_b64: str) -> None:
     """Photo attachment, same 'the real pipeline is never blocked by ML'
     principle as process_emergency's own STT/triage calls -- the photo is
@@ -192,12 +216,31 @@ async def process_photo(session: AsyncSession, emergency_id: str, image_b64: str
         # triage confidence-stuck-at-0 issue). An honest "couldn't analyze"
         # result the UI can render is better than a permanently pending one.
         analysis = {
-            "vision_llm": {"label": "unclear", "description": "AI photo analysis unavailable", "confidence": 0.0},
+            "vision_llm": {"label": "unclear", "severity": "unknown", "description": "AI photo analysis unavailable", "confidence": 0.0},
             "finetuned_classifier": {"label": "unclear", "confidence": 0.0},
             "agreement": False, "needs_review": True,
             "model_version": "fallback:photo-triage-unavailable",
         }
-    fresh = await _update_retry(session, emergency_id, photo_analysis=_json(analysis))
+
+    label = (analysis.get("finetuned_classifier") or {}).get("label", "unclear")
+    # Only act on a read that's actually trustworthy -- needs_review already
+    # encodes "the two models disagreed, or either was low-confidence,"
+    # exactly the case where auto-adding resources or pushing a first-aid
+    # tip could be acting on a wrong read.
+    confident = not analysis.get("needs_review") and label in PHOTO_RESOURCE_HINTS
+
+    update_fields: dict[str, str] = {"photo_analysis": _json(analysis)}
+    if confident:
+        current = await emergencies_repo.get_emergency(session, emergency_id)
+        existing = (current or {}).get("predicted_resources")
+        existing = existing if isinstance(existing, dict) else {}
+        existing_items = existing.get("resources", []) if isinstance(existing.get("resources"), list) else []
+        existing_names = {i.get("item") for i in existing_items if isinstance(i, dict)}
+        new_items = [h for h in PHOTO_RESOURCE_HINTS[label] if h["item"] not in existing_names]
+        if new_items:
+            update_fields["predicted_resources"] = _json({**existing, "resources": existing_items + new_items})
+
+    fresh = await _update_retry(session, emergency_id, **update_fields)
     if fresh is None:
         return
     await audit.write(
@@ -209,6 +252,10 @@ async def process_photo(session: AsyncSession, emergency_id: str, image_b64: str
     if fresh.get("ambulance_id"):
         await outbox.emit(session, channel=f"ambulance:{fresh['ambulance_id']}",
                           event="emergency.photo_analysis", data={"emergency_id": emergency_id, **payload})
+
+    if confident and label in PHOTO_FIRST_AID:
+        await outbox.emit(session, channel=f"emergency:{emergency_id}", event="alert",
+                          data={"message": PHOTO_FIRST_AID[label]})
 
 
 def _json(obj: dict) -> str:

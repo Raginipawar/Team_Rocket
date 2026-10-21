@@ -42,6 +42,7 @@ OLLAMA_TIMEOUT_S = 60.0
 CLASSIFIER_PATH = Path(__file__).parent.parent.parent.parent / "artifacts" / "photo_severity" / "mobilenet_v2_finetuned.pt"
 
 PHOTO_CLASSES = ["bleeding", "burn", "bruise_fracture", "none_minor"]
+SEVERITY_WORDS = ["mild", "moderate", "severe"]
 
 # moondream (1.7GB, CPU-friendly) is a small VLM -- tried Ollama's
 # format="json" constrained decoding here first, same as extract/triage use
@@ -50,6 +51,16 @@ PHOTO_CLASSES = ["bleeding", "burn", "bruise_fracture", "none_minor"]
 # difference, not a prompt bug). Asking for one bare word is something a
 # small VLM follows reliably; parsed with a strict match against the known
 # class list rather than trusted as free-form JSON.
+#
+# Tried folding severity into this SAME one-word ask (asking for two words
+# instead of one) to save a round trip -- measured, not assumed: it broke
+# the label's own reliability, label dropped to "unclear" on every single
+# real test image that previously worked. A small VLM given a harder
+# instruction got worse at the easier part of it too. Severity is now a
+# genuinely separate follow-up call (_call_severity_llm below), fired only
+# when the label itself came back confidently -- an extra ~1s only when
+# there's something worth asking about, instead of degrading the read that
+# already works.
 VISION_PROMPT = (
     "Look at this photo from a medical emergency call. Reply with exactly "
     "ONE of these words and nothing else: " + ", ".join(PHOTO_CLASSES) + ". "
@@ -88,13 +99,40 @@ async def _call_vision_llm(image_b64: str) -> dict:
     # the prompt asking for just the word -- find a known class as a whole
     # word in whatever it said, rather than requiring an exact-equals match.
     label = next((c for c in PHOTO_CLASSES if c in raw_text), "unclear")
+    severity = "unknown"
+    if label not in ("unclear", "none_minor"):
+        severity = await _call_severity_llm(image_b64)
     return {
         "label": label,
+        "severity": severity,
         "description": _DESCRIPTIONS[label],
         # A clean single-word match is a real (if coarse) confidence signal;
         # the model rambling or not matching any known class isn't.
         "confidence": 0.75 if label != "unclear" else 0.0,
     }
+
+
+SEVERITY_PROMPT = (
+    "Look at this injury photo. Reply with exactly ONE of these words and "
+    "nothing else, for how severe it looks: " + ", ".join(SEVERITY_WORDS) + "."
+)
+
+
+async def _call_severity_llm(image_b64: str) -> str:
+    """Separate call, fired only when the label call above already came
+    back confident -- see the comment on VISION_PROMPT for why this isn't
+    folded into that same call."""
+    try:
+        async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT_S) as client:
+            response = await client.post(f"{OLLAMA_URL}/api/generate", json={
+                "model": VISION_MODEL, "prompt": SEVERITY_PROMPT, "images": [image_b64],
+                "options": {"temperature": 0}, "stream": False,
+            })
+            response.raise_for_status()
+    except (httpx.ConnectError, httpx.TimeoutException):
+        return "unknown"
+    raw = response.json().get("response", "").strip().lower()
+    return next((s for s in SEVERITY_WORDS if s in raw), "unknown")
 
 
 _TRANSFORM = transforms.Compose([
@@ -139,7 +177,7 @@ async def real_photo_triage(payload: dict) -> dict:
         # Honest partial result, not a hard failure -- the fine-tuned
         # classifier still ran and still produces a real read even if the
         # vision LLM (a separate, heavier local dependency) is briefly down.
-        vision_read = {"label": "unclear", "description": "vision model unavailable", "confidence": 0.0}
+        vision_read = {"label": "unclear", "severity": "unknown", "description": "vision model unavailable", "confidence": 0.0}
 
     agreement = vision_read["label"] == classifier_read["label"] and vision_read["label"] != "unclear"
     result = PhotoTriageResult(

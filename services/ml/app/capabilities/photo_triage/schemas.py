@@ -7,6 +7,7 @@ class PhotoTriageRequest(BaseModel):
 
 class VisionLLMRead(BaseModel):
     label: str = "unclear"  # one of PHOTO_CLASSES, or "unclear" if the model couldn't tell
+    severity: str = "unknown"  # mild | moderate | severe | unknown -- a rough visual read, not a clinical measurement
     description: str = ""
     confidence: float = 0.0  # the model's own self-reported confidence, not independently calibrated
 

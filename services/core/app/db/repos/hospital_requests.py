@@ -20,7 +20,7 @@ _CARD_COLUMNS = """
     hr.is_family_choice, hr.is_priority, hr.expires_at, hr.created_at,
     res.room_id AS suggested_room_id,
     em.final_acuity, em.ai_acuity, em.final_facility, em.ai_facility, em.mlc_flag,
-    em.eta_to_hospital_sec, em.eta_to_patient_sec, em.transcript, em.handover_note,
+    em.eta_to_hospital_sec, em.eta_to_patient_sec, em.transcript, em.handover_note, em.predicted_resources,
     (em.photo_data IS NOT NULL) AS has_photo, em.photo_analysis,
     p.temp_id, p.est_age, p.sex,
     hp.blood_group, hp.allergies, hp.conditions, hp.medications,
@@ -192,7 +192,13 @@ def _to_card_dict(r) -> dict:
             else None
         ),
         "handover_note": r["handover_note"],
-        "prep_checklist": [],
+        # predicted_resources was computed by intake.py's own ml.resources()
+        # call and stored on the row the whole time -- this was always
+        # hardcoded to [] here, so the hospital's "Prepare" checklist never
+        # showed anything a real prediction had produced, for any emergency,
+        # ever. ResourceItem's own shape ({item, prob}) already matches
+        # what RequestCard.tsx reads.
+        "prep_checklist": (r["predicted_resources"] or {}).get("resources", []) if isinstance(r["predicted_resources"], dict) else [],
         "ambulance": {
             "registration_no": r["registration_no"] or "",
             "type": r["ambulance_type"],
