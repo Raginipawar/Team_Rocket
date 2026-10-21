@@ -185,7 +185,18 @@ async def process_photo(session: AsyncSession, emergency_id: str, image_b64: str
     enrichment, never the upload itself."""
     analysis = await ml.photo_triage(image_b64)
     if analysis is None:
-        return  # ML unavailable -- photo stays viewable without an analysis, never a hard failure
+        # ml.photo_triage() already retries once -- if it's still None here,
+        # don't leave the photo stuck on "Analyzing..." forever with no way
+        # for the client to ever resolve it (there is no later retry
+        # anywhere else in this pipeline, same bug class as the earlier
+        # triage confidence-stuck-at-0 issue). An honest "couldn't analyze"
+        # result the UI can render is better than a permanently pending one.
+        analysis = {
+            "vision_llm": {"label": "unclear", "description": "AI photo analysis unavailable", "confidence": 0.0},
+            "finetuned_classifier": {"label": "unclear", "confidence": 0.0},
+            "agreement": False, "needs_review": True,
+            "model_version": "fallback:photo-triage-unavailable",
+        }
     fresh = await _update_retry(session, emergency_id, photo_analysis=_json(analysis))
     if fresh is None:
         return

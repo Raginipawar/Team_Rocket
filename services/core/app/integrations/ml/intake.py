@@ -161,12 +161,21 @@ async def photo_triage(image_b64: str) -> dict | None:
     """Photo attachment analysis (two independent reads: a vision LLM and a
     fine-tuned classifier, see services/ml photo_triage capability). On
     failure, the photo is still stored and viewable -- analysis is an
-    enrichment, never a gate on anything the photo feature does."""
-    try:
-        return await call_ml("POST", "/ml/v1/photo-triage", capability="photo_triage",
-                              timeout_s=PHOTO_TRIAGE_TIMEOUT_S, json={"image_b64": image_b64})
-    except MLUnavailable:
-        return None
+    enrichment, never a gate on anything the photo feature does.
+
+    Same retry-once-on-timeout reasoning as triage() above: one attempt
+    timing out is usually transient (a flaky tunnel hop, Ollama still
+    warming moondream into memory), not a dead service, and there is no
+    later retry anywhere else in this pipeline -- without this, a single
+    bad attempt left a real emergency's photo stuck on "Analyzing..."
+    forever, with nothing to ever resolve it client-side."""
+    for timeout_s in (PHOTO_TRIAGE_TIMEOUT_S, PHOTO_TRIAGE_TIMEOUT_S / 2):
+        try:
+            return await call_ml("POST", "/ml/v1/photo-triage", capability="photo_triage",
+                                  timeout_s=timeout_s, json={"image_b64": image_b64})
+        except MLUnavailable:
+            continue
+    return None
 
 
 async def prank_score(features: dict) -> dict | None:
