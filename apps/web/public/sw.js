@@ -1,9 +1,19 @@
 // GoldenHour service worker: app-shell caching so the installed app opens even with
 // no signal (critical for paramedics in low-coverage areas), while API/WS calls always
 // go to the network — this app's data is live, not something to serve stale from cache.
-const CACHE = "goldenhour-shell-v1";
+//
+// v2: a real report ("why can't I open the hospital page??") traced back to
+// this file's old navigation fallback -- on ANY failed fetch (a one-off
+// network blip is enough), any URL with no cache entry of its own silently
+// fell back to whatever "/" had cached. That used to be harmless (this
+// app's own home page), but since "/" now reverse-proxies to the separate
+// marketing site (next.config.ts), a blip while loading e.g. /login
+// silently substituted the marketing homepage with zero indication
+// anything had gone wrong -- indistinguishable from a real routing bug.
+// Falls back to a dedicated offline page instead, which actually says so.
+const CACHE = "goldenhour-shell-v2";
 const SHELL = [
-  "/", "/patient", "/ambulance", "/hospital",
+  "/patient", "/ambulance", "/hospital", "/offline.html",
   "/manifest.webmanifest", "/ambulance/manifest.webmanifest", "/hospital/manifest.webmanifest",
   "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
 ];
@@ -39,7 +49,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
           return res;
         })
-        .catch(() => caches.match(req).then((r) => r ?? caches.match("/"))),
+        .catch(() => caches.match(req).then((r) => r ?? caches.match("/offline.html"))),
     );
     return;
   }
