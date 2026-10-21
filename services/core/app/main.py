@@ -339,6 +339,33 @@ async def rename_ambulance(phone: str, x_migrate_key: str = Header(default="")):
     return {"ambulance_id": str(ambulance_id), "old_registration_no": old_reg, "new_registration_no": new_reg}
 
 
+# No way to reproduce a real reported bug against production without a real
+# access token, and no way to get one without going through SMS OTP (no
+# debug endpoint ever exposed the fake-mode OTP code either) -- this issues
+# one directly for a phone, same token-issuing code login/OTP-verify
+# already use (api/v1/auth.py's _issue_tokens), skipping the OTP step
+# entirely. Guarded the same as every other /internal route; remove once
+# there's a faster way to debug a live account-specific report.
+@app.post("/internal/debug-login")
+async def debug_login(phone: str, role: str = "patient", x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    if role not in ("patient", "paramedic"):
+        raise HTTPException(400, "role must be patient or paramedic")
+    from app.db.repos import identity as identity_repo
+    from app.security.jwt import create_access_token
+    async with get_session() as session:
+        user = (await identity_repo.get_or_create_paramedic_user(session, phone)) if role == "paramedic" \
+            else (await identity_repo.get_or_create_patient_user(session, phone))
+        await session.commit()
+    access = create_access_token(
+        sub=str(user["id"]), role=user["role"],
+        hospital_id=str(user["hospital_id"]) if user.get("hospital_id") else None,
+        ambulance_id=str(user["ambulance_id"]) if user.get("ambulance_id") else None,
+    )
+    return {"access_token": access, "user": user}
+
+
 # OTP/login rate limits (security/rate_limit.py: 3 OTP requests per phone per
 # 10 min, 5 login attempts per 10 min) are correctly strict for real traffic,
 # but repeated manual testing on the same phone during demo rehearsal
