@@ -312,6 +312,33 @@ async def free_ambulance(ambulance_id: str, x_migrate_key: str = Header(default=
     return {"status": "freed", "cancelled_emergency": str(active_em) if active_em else None}
 
 
+# One-off for the ambulance already registered before the DEMO-AMB-#### ->
+# MH12AB#### cosmetic rename (ambulance.py's register_demo) -- that only
+# affects NEW registrations, this re-plates an existing one the same way
+# without touching anything else about it (status, kyc, dispatch history).
+@app.post("/internal/rename-ambulance")
+async def rename_ambulance(phone: str, x_migrate_key: str = Header(default="")):
+    if not settings.MIGRATE_KEY or x_migrate_key != settings.MIGRATE_KEY:
+        raise HTTPException(status_code=403, detail="forbidden")
+    import random
+    async with get_session() as session:
+        ambulance_id = (await session.execute(
+            text("SELECT ambulance_id FROM users WHERE phone = :phone AND role = 'paramedic'"), {"phone": phone},
+        )).scalar_one_or_none()
+        if not ambulance_id:
+            raise HTTPException(404, "no paramedic with that phone, or no ambulance registered to them")
+        old_reg = (await session.execute(
+            text("SELECT registration_no FROM ambulances WHERE id = :id"), {"id": ambulance_id},
+        )).scalar_one()
+        new_reg = f"MH12AB{random.randint(1000, 9999)}"
+        await session.execute(
+            text("UPDATE ambulances SET registration_no = :reg WHERE id = :id"),
+            {"reg": new_reg, "id": ambulance_id},
+        )
+        await session.commit()
+    return {"ambulance_id": str(ambulance_id), "old_registration_no": old_reg, "new_registration_no": new_reg}
+
+
 # Moves a hospital to a real, different location than wherever the demo
 # devices physically are -- the pickup leg of a route necessarily stays
 # short (ambulance+patient devices are together in the room for the demo

@@ -322,16 +322,21 @@ _DEMO_NAMES = ["Demo Operator", "Demo Fleet Services"]
 @router.post("/register/demo", status_code=201)
 async def register_demo(user: CurrentUser = Depends(require_role("paramedic"))) -> dict:
     """Demo registration: auto-fills and submits instantly, kyc_verified=true
-    right away (no real review -- that's the point of Demo), registration_no
-    recognisably fictitious (DEMO-AMB-xxxx) so it can never be confused with
-    a real plate number. Still goes through the exact same real dispatch
-    pipeline as every other ambulance in this system -- "demo" here means
-    "skipped the approval wait", not "fake backend"."""
+    right away (no real review -- that's the point of Demo). registration_no
+    is deliberately plate-shaped (MH12AB####), not DEMO-AMB-#### -- the old
+    literal "DEMO" prefix was the whole point internally but read badly on
+    screen during a live demo. "Is this a demo ambulance" is still tracked
+    for real via is_simulated=true below, which the rest of the system
+    (dispatch/tracking/ops) already keys off of -- nothing depends on the
+    registration_no string itself, so this is purely cosmetic. Still goes
+    through the exact same real dispatch pipeline as every other ambulance
+    in this system -- "demo" here means "skipped the approval wait", not
+    "fake backend"."""
     if user.ambulance_id:
         raise HTTPException(409, detail={"error": {"code": "ALREADY_REGISTERED", "message": "This account already has a registered ambulance", "details": {}}})
 
     suffix = f"{random.randint(1000, 9999)}"
-    reg_no = f"DEMO-AMB-{suffix}"
+    reg_no = f"MH12AB{suffix}"
     caps = ["general", "cardiac"]
     equipment = ["oxygen", "aed", "monitor", "stretcher"]
     demo_data = {

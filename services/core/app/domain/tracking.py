@@ -87,7 +87,9 @@ async def get_patient_route_view(session: AsyncSession, ambulance_id: str, emerg
             route_target = {"lat": hosp["lat"], "lng": hosp["lng"]}
 
     route = None
+    explanation = None
     if amb_loc and amb_loc["lat"] is not None and route_target:
         route_data = await get_route(None, {"lat": amb_loc["lat"], "lng": amb_loc["lng"]}, route_target)
         route = route_data.get("geometry") if route_data else None
-    return {"route": route, "leg": leg}
+        explanation = route_data.get("explanation") if route_data else None
+    return {"route": route, "route_explanation": explanation, "leg": leg}
