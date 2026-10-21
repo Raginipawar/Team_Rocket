@@ -6,6 +6,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models.dispatch import HospitalRequest
 
+# A real test surfaced this: predicted_resources carries every possible
+# resource type the model scores at all (every specialist role, every
+# equipment type, every blood type) -- 20+ probability bars down to 1% is
+# noise, not a usable "what to prepare" list for someone about to receive a
+# patient. Trimmed to the top N by probability. Photo-driven items
+# (domain/intake.py's PHOTO_RESOURCE_HINTS -- kept in sync manually here,
+# not imported, to avoid a domain->repo import cycle) are pinned regardless
+# of rank, so the photo feature's effect is never silently crowded out by a
+# higher-probability but less urgent item like "Anesthetist".
+_PHOTO_RESOURCE_ITEMS = {"pressure_bandage", "gauze", "burn_dressing", "saline", "splint"}
+_PREP_CHECKLIST_TOP_N = 6
+
+
+def _trim_prep_checklist(items: list) -> list:
+    items = [i for i in items if isinstance(i, dict) and "item" in i]
+    pinned = [i for i in items if i["item"] in _PHOTO_RESOURCE_ITEMS]
+    rest = sorted((i for i in items if i["item"] not in _PHOTO_RESOURCE_ITEMS), key=lambda i: i.get("prob", 0), reverse=True)
+    slots_left = max(0, _PREP_CHECKLIST_TOP_N - len(pinned))
+    return pinned + rest[:slots_left]
+
 # apps/web's RequestCard.tsx (HospitalRequestCard in lib/api-types.ts) reads
 # req.request_id / req.patient.{acuity,facility,mlc_flag,confirmed_by_paramedic,
 # display,temp_id} / req.ambulance.{registration_no,eta_sec} unconditionally --
@@ -197,8 +217,9 @@ def _to_card_dict(r) -> dict:
         # hardcoded to [] here, so the hospital's "Prepare" checklist never
         # showed anything a real prediction had produced, for any emergency,
         # ever. ResourceItem's own shape ({item, prob}) already matches
-        # what RequestCard.tsx reads.
-        "prep_checklist": (r["predicted_resources"] or {}).get("resources", []) if isinstance(r["predicted_resources"], dict) else [],
+        # what RequestCard.tsx reads; trimmed via _trim_prep_checklist so a
+        # real predicted_resources dump (20+ items) doesn't overwhelm it.
+        "prep_checklist": _trim_prep_checklist((r["predicted_resources"] or {}).get("resources", []) if isinstance(r["predicted_resources"], dict) else []),
         "ambulance": {
             "registration_no": r["registration_no"] or "",
             "type": r["ambulance_type"],
