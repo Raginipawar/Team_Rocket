@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { api, errorText, get } from "@/lib/api";
+import { compressImage } from "@/lib/image";
 import type { CreateEmergencyResponse } from "@/lib/api-types";
 import { useGeolocation } from "@/lib/hooks";
 import { isFinal, lastEmergency, rememberEmergency } from "@/lib/patient";
@@ -74,12 +75,13 @@ export default function PatientHome() {
         // real thing is never gated on an enrichment" rule as everything
         // else ML-adjacent here. Analysis runs in the background on the
         // server; this call just saves the bytes so they're viewable.
-        const photoForm = new FormData();
-        photoForm.set("photo", extra.photo, extra.photo.name || "sos-photo.jpg");
         try {
+          const compressed = await compressImage(extra.photo);
+          const photoForm = new FormData();
+          photoForm.set("photo", compressed, compressed.name);
           await api(`/emergencies/${r.emergency_id}/photo`, { method: "POST", form: photoForm });
-        } catch {
-          toast("Photo could not be attached, but your SOS was sent.", "error");
+        } catch (e) {
+          toast(`Photo could not be attached (SOS was still sent): ${errorText(e)}`, "error");
         }
       }
       router.push(`/patient/emergency/${r.emergency_id}`);

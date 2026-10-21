@@ -213,9 +213,13 @@ async def get_emergency(emergency_id: str, user: CurrentUser = Depends(get_curre
     return project(user.role, emergency)
 
 
-# Generous for a real phone photo but caps what a Postgres bytea column (and
-# the base64-encoded copy sent to the ML service) has to carry -- this is
-# demo-scale storage (direct in Postgres), not a real object-storage bucket.
+# Was the actual cause of "SOS sent but photo not attached" -- a real,
+# uncompressed phone photo is routinely 3-10MB and silently exceeded this,
+# while the frontend's generic catch swallowed the resulting 413 into an
+# unhelpful toast. The frontend now compresses to ~1280px JPEG before
+# upload (lib/image.ts), so a real photo should land well under this; kept
+# as a sane ceiling for a Postgres bytea column (demo-scale direct storage,
+# not a real object-storage bucket), not as the thing doing the compressing.
 MAX_PHOTO_BYTES = 4 * 1024 * 1024
 
 
